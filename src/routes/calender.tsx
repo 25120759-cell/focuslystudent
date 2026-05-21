@@ -42,8 +42,8 @@ function CalenderPage() {
             <div key={w} className="text-center text-xs font-semibold uppercase tracking-wider text-muted-foreground py-2">{w}</div>
           ))}
           {DAYS.map((day, dIdx) => (
-            <>
-              <div key={day} className="flex items-center justify-end text-xs font-semibold text-muted-foreground pr-2">{day}</div>
+            <Fragment key={day}>
+              <div className="flex items-center justify-end text-xs font-semibold text-muted-foreground pr-2">{day}</div>
               {WEEKS.map((_, wIdx) => {
                 const items = cells[`${wIdx}-${dIdx}`] ?? [];
                 return (
@@ -61,7 +61,7 @@ function CalenderPage() {
                   </div>
                 );
               })}
-            </>
+            </Fragment>
           ))}
         </div>
       </div>
