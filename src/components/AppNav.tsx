@@ -1,21 +1,23 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
+import { LogIn, LogOut, User as UserIcon } from "lucide-react";
 import { useT, useStore } from "@/lib/store";
+import { useAuth } from "@/lib/auth";
 import { SettingsModal } from "./SettingsModal";
 
-const PUBLIC_ROUTES = ["/landing", "/plans", "/updates"];
+const PUBLIC_ROUTES = ["/landing", "/plans", "/updates", "/login", "/signup"];
+
 
 
 
 export function AppNav() {
   const t = useT();
   const { state } = useStore();
+  const { user, signOut } = useAuth();
   const path = useRouterState({ select: (r) => r.location.pathname });
   const [openSettings, setOpenSettings] = useState(false);
 
   if (PUBLIC_ROUTES.includes(path)) return null;
-
-
 
   const linkClass = (active: boolean) =>
     `px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
@@ -35,9 +37,20 @@ export function AppNav() {
           <Link to="/rewards" className={linkClass(path === "/rewards")}>
             {t("rewards")} <span className="ml-1 text-xs opacity-70">{state.gamification.points}</span>
           </Link>
+          <span className="mx-1 h-5 w-px bg-border" />
+          {user ? (
+            <button onClick={signOut} title={user.email ?? "Sign out"} className={linkClass(false)}>
+              <LogOut className="inline h-3.5 w-3.5" />
+            </button>
+          ) : (
+            <Link to="/login" className={linkClass(false)} title="Sign in">
+              <LogIn className="inline h-3.5 w-3.5" />
+            </Link>
+          )}
         </nav>
       </header>
       <SettingsModal open={openSettings} onOpenChange={setOpenSettings} />
     </>
   );
 }
+
