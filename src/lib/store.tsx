@@ -191,6 +191,7 @@ type Action =
   | { type: "REPLACE"; state: State }
   | { type: "COMPLETE_ASSIGNMENT"; id: string }
   | { type: "LATE_ASSIGNMENT"; id: string }
+  | { type: "ADD_ASSIGNMENT"; assignment: Assignment }
   | { type: "REDEEM"; voucher: { id: string; name: string; cost: number; codePrefix: string } }
   | { type: "TIMER_TICK" }
   | { type: "TIMER_SET"; patch: Partial<State["timer"]> }
@@ -238,6 +239,8 @@ function reducer(state: State, action: Action): State {
         gamification: { ...state.gamification, points: Math.max(0, state.gamification.points - 5) },
       };
     }
+    case "ADD_ASSIGNMENT":
+      return { ...state, assignments: [action.assignment, ...state.assignments] };
     case "REDEEM": {
       if (state.gamification.points < action.voucher.cost) return state;
       const code = `${action.voucher.codePrefix}-${action.voucher.cost}-${Math.random()
