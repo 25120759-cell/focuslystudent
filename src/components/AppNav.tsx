@@ -3,11 +3,19 @@ import { useState } from "react";
 import { useT, useStore } from "@/lib/store";
 import { SettingsModal } from "./SettingsModal";
 
+const PUBLIC_ROUTES = ["/landing", "/plans", "/updates"];
+
+
+
 export function AppNav() {
   const t = useT();
   const { state } = useStore();
   const path = useRouterState({ select: (r) => r.location.pathname });
   const [openSettings, setOpenSettings] = useState(false);
+
+  if (PUBLIC_ROUTES.includes(path)) return null;
+
+
 
   const linkClass = (active: boolean) =>
     `px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
