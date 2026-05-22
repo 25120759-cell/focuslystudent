@@ -58,8 +58,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Focusly — Premium Study & Focus" },
-      { name: "description", content: "Focusly is a premium offline-first study app with a clock, timetable, Toddle sync, files, AI assistant, assignments, calendar and gamified rewards." },
+      { title: "Focusly — Study & Focus" },
+      { name: "description", content: "Focusly is a offline-first study app with a clock, timetable, Toddle sync, files, AI assistant, assignments, calendar and gamified rewards." },
+      { property: "og:title", content: "Focusly — Study & Focus" },
+      { name: "twitter:title", content: "Focusly — Study & Focus" },
+      { property: "og:description", content: "Focusly is a offline-first study app with a clock, timetable, Toddle sync, files, AI assistant, assignments, calendar and gamified rewards." },
+      { name: "twitter:description", content: "Focusly is a offline-first study app with a clock, timetable, Toddle sync, files, AI assistant, assignments, calendar and gamified rewards." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/9d42b122-f10b-4113-92b9-5133ac34ac46" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/9d42b122-f10b-4113-92b9-5133ac34ac46" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:type", content: "website" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
