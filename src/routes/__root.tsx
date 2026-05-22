@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import {
   Outlet,
   Link,
@@ -7,10 +7,14 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { useEffect } from "react";
 
 import appCss from "../styles.css?url";
 import { StoreProvider } from "@/lib/store";
+import { AuthProvider } from "@/lib/auth";
+import { supabase } from "@/integrations/supabase/client";
 import { AppNav } from "@/components/AppNav";
+
 
 function NotFoundComponent() {
   return (
@@ -82,14 +86,31 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <StoreProvider>
-        <div className="min-h-screen">
-          <AppNav />
-          <main className="px-4 pb-12 pt-6 max-w-7xl mx-auto">
-            <Outlet />
-          </main>
-        </div>
-      </StoreProvider>
+      <AuthProvider>
+        <StoreProvider>
+          <AuthSync />
+          <div className="min-h-screen">
+            <AppNav />
+            <main className="px-4 pb-12 pt-6 max-w-7xl mx-auto">
+              <Outlet />
+            </main>
+          </div>
+        </StoreProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
+
+function AuthSync() {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+      router.invalidate();
+      queryClient.invalidateQueries();
+    });
+    return () => subscription.unsubscribe();
+  }, [router, queryClient]);
+  return null;
+}
+
