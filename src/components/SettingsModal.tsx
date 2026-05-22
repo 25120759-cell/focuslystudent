@@ -98,16 +98,6 @@ export function SettingsModal({ open, onOpenChange }: { open: boolean; onOpenCha
               </button>
             </div>
           </Row>
-          <div className="border-t border-border pt-4">
-            <label className="block text-xs font-medium text-muted-foreground mb-1">Gemini API Key</label>
-            <input
-              type="password"
-              value={s.geminiKey}
-              onChange={(e) => patch({ geminiKey: e.target.value })}
-              placeholder="Paste your Gemini key..."
-              className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
-            />
-          </div>
           <Row label="AI Personality">
             <Seg<"tutor" | "coach" | "zen">
               value={s.assistantPersonality}
@@ -115,6 +105,9 @@ export function SettingsModal({ open, onOpenChange }: { open: boolean; onOpenCha
               onChange={(v) => patch({ assistantPersonality: v })}
             />
           </Row>
+          <div className="border-t border-border pt-3 text-xs text-muted-foreground">
+            AI is powered by Focusly Cloud — 100 free credits/month, 10/day. No API key required.
+          </div>
         </div>
       </DialogContent>
       <Dialog open={langOpen} onOpenChange={setLangOpen}>
