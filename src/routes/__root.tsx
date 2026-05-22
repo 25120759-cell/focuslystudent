@@ -14,6 +14,7 @@ import { StoreProvider } from "@/lib/store";
 import { AuthProvider } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { AppNav } from "@/components/AppNav";
+import { FloatingAI } from "@/components/FloatingAI";
 
 
 function NotFoundComponent() {
@@ -94,6 +95,7 @@ function RootComponent() {
             <main className="px-4 pb-12 pt-6 max-w-7xl mx-auto">
               <Outlet />
             </main>
+            <FloatingAI />
           </div>
         </StoreProvider>
       </AuthProvider>
