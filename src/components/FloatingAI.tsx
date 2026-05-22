@@ -8,7 +8,7 @@ const HIDDEN_ROUTES = ["/landing", "/plans", "/updates", "/login", "/signup"];
 export function FloatingAI() {
   const [open, setOpen] = useState(false);
   const loc = useLocation();
-  if (HIDDEN_ROUTES.some((r) => loc.pathname.startsWith(r))) return null;
+  const hidden = HIDDEN_ROUTES.some((r) => loc.pathname.startsWith(r));
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
@@ -20,6 +20,8 @@ export function FloatingAI() {
     window.addEventListener("keydown", h);
     return () => window.removeEventListener("keydown", h);
   }, []);
+
+  if (hidden) return null;
 
   return (
     <>
