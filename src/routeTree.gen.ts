@@ -9,14 +9,32 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UpdatesRouteImport } from './routes/updates'
 import { Route as RewardsRouteImport } from './routes/rewards'
+import { Route as PlansRouteImport } from './routes/plans'
+import { Route as LandingRouteImport } from './routes/landing'
 import { Route as CalenderRouteImport } from './routes/calender'
 import { Route as AssignmentsRouteImport } from './routes/assignments'
 import { Route as IndexRouteImport } from './routes/index'
 
+const UpdatesRoute = UpdatesRouteImport.update({
+  id: '/updates',
+  path: '/updates',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RewardsRoute = RewardsRouteImport.update({
   id: '/rewards',
   path: '/rewards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlansRoute = PlansRouteImport.update({
+  id: '/plans',
+  path: '/plans',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LandingRoute = LandingRouteImport.update({
+  id: '/landing',
+  path: '/landing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CalenderRoute = CalenderRouteImport.update({
@@ -39,43 +57,98 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/assignments': typeof AssignmentsRoute
   '/calender': typeof CalenderRoute
+  '/landing': typeof LandingRoute
+  '/plans': typeof PlansRoute
   '/rewards': typeof RewardsRoute
+  '/updates': typeof UpdatesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/assignments': typeof AssignmentsRoute
   '/calender': typeof CalenderRoute
+  '/landing': typeof LandingRoute
+  '/plans': typeof PlansRoute
   '/rewards': typeof RewardsRoute
+  '/updates': typeof UpdatesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/assignments': typeof AssignmentsRoute
   '/calender': typeof CalenderRoute
+  '/landing': typeof LandingRoute
+  '/plans': typeof PlansRoute
   '/rewards': typeof RewardsRoute
+  '/updates': typeof UpdatesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/assignments' | '/calender' | '/rewards'
+  fullPaths:
+    | '/'
+    | '/assignments'
+    | '/calender'
+    | '/landing'
+    | '/plans'
+    | '/rewards'
+    | '/updates'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/assignments' | '/calender' | '/rewards'
-  id: '__root__' | '/' | '/assignments' | '/calender' | '/rewards'
+  to:
+    | '/'
+    | '/assignments'
+    | '/calender'
+    | '/landing'
+    | '/plans'
+    | '/rewards'
+    | '/updates'
+  id:
+    | '__root__'
+    | '/'
+    | '/assignments'
+    | '/calender'
+    | '/landing'
+    | '/plans'
+    | '/rewards'
+    | '/updates'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AssignmentsRoute: typeof AssignmentsRoute
   CalenderRoute: typeof CalenderRoute
+  LandingRoute: typeof LandingRoute
+  PlansRoute: typeof PlansRoute
   RewardsRoute: typeof RewardsRoute
+  UpdatesRoute: typeof UpdatesRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/updates': {
+      id: '/updates'
+      path: '/updates'
+      fullPath: '/updates'
+      preLoaderRoute: typeof UpdatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/rewards': {
       id: '/rewards'
       path: '/rewards'
       fullPath: '/rewards'
       preLoaderRoute: typeof RewardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plans': {
+      id: '/plans'
+      path: '/plans'
+      fullPath: '/plans'
+      preLoaderRoute: typeof PlansRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/landing': {
+      id: '/landing'
+      path: '/landing'
+      fullPath: '/landing'
+      preLoaderRoute: typeof LandingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/calender': {
@@ -106,18 +179,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AssignmentsRoute: AssignmentsRoute,
   CalenderRoute: CalenderRoute,
+  LandingRoute: LandingRoute,
+  PlansRoute: PlansRoute,
   RewardsRoute: RewardsRoute,
+  UpdatesRoute: UpdatesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
