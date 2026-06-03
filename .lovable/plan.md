@@ -1,56 +1,88 @@
-# Focusly — Big Feature Batch Plan
+# Focusly — Feature Expansion Plan (finalized)
 
-Your request covers ~15 substantial features. Honest take: shipping all of it well in one pass would produce a shallow, buggy result. I'd like to split it into clear phases so each phase is shippable and testable. Please confirm the order (or change it) and I'll execute phase by phase.
+## 0. Admin bootstrap
+Grant `admin` role to `afhaigh76@gmail.com` and `25120759@sunwayeducation.info` once their profiles exist (insert into `user_roles`).
 
-## Phase 1 — Public site & legal (no auth required)
-- `/landing` — long-form marketing page (hero, AI features, non-AI features, CTA, footer).
-- `/plans` — Free (100 AI credits/mo, 10/day), Pro (1000/mo, "Coming soon"), Max (10000/mo, "Coming soon").
-- `/updates` — blog list + per-post view, stored in Lovable Cloud. Small "Sign in to post" button at the bottom (admin role only).
-- External chatbot widget on these public pages answering questions about plans/features (Lovable AI Gateway).
+## 1. Auth gating & landing flow
+- `/landing` becomes the public entry point. Root `/` redirects: signed-in → `/app`, signed-out → `/landing`.
+- Dashboard, assignments, calendar, rewards, task detail all move under `_authenticated/` (integration-managed gate, redirect target switched to `/landing`).
+- `signOut()` navigates to `/landing`.
+- "Open app" buttons → `/login` (signed-out) or `/app` (signed-in).
 
-## Phase 2 — Auth, accounts, legal acceptance
-- Enable Lovable Cloud.
-- Email/password + Google sign-in.
-- Forced acceptance of Lura ToS / Privacy / Content Policy (link to luraapps.base44.app/legal) at signup, stored on profile.
-- `profiles` + `user_roles` (admin role for posting updates).
-- RLS on everything user-owned. Offline-first store keeps working when signed out; syncs on sign-in.
+## 2. Hidden admin console
+- Route `/_authenticated/admin` gated by `has_role('admin')` in `beforeLoad`; non-admins get 404. Not linked from nav.
+- Features:
+  - Users table with inline plan switcher (Free / Pro / Max).
+  - "Generate post with AI" composer (prompt → AI drafts title + summary + body → review → publish).
+- Schema: add `plan` text + `monthly_credit_override` to `profiles`.
+- `ai.functions.ts` reads plan to compute limits: **Free 10/day · 100/mo, Pro 100/day · 1000/mo, Max 500/day · 10000/mo**.
 
-## Phase 3 — AI credit system (server-side)
-- Move all AI calls to a server function backed by Lovable AI Gateway (`google/gemini-3-flash-preview`).
-- `ai_usage` table; enforce 100/month + 10/day for Free. Surface remaining credits in the UI.
-- Remove the user-supplied Gemini key path (replace Settings field with "Powered by Lovable AI" + credit meter).
+## 3. Updates / posts
+- Add `slug` (unique) and `summary` to `posts`. Server fn `generatePostMeta` (admin-only) fills summary via Gemini.
+- New public route `/updates/$slug` rendering full markdown post with back link.
+- Updates index cards link to slug pages.
+- Admin composer supports manual + AI-draft modes.
 
-## Phase 4 — In-app AI assistant (floating icon)
-- Replace the side-panel chat with a floating bottom-right icon → expandable chat.
-- Tool-calling: create/edit/complete/delete tasks, query schedule, summarize, prioritize, reschedule, break down — implemented as a single server fn with a tool registry (~15 real tools that cover the "50+ actions" surface area; documented).
+## 4. Support page + free chatbot
+- New public route `/support` with sectioned Focusly Docs (Getting started, Timer, Toddle sync, AI, Rewards, Shortcuts, FAQ).
+- `SupportChat` component using new `aiSupport` server fn:
+  - Strict system prompt: **product help only**, refuses off-topic.
+  - Bypasses `ai_usage` (no credit cost).
+  - Rate-limited via new `support_usage` table (30/day per user) to prevent abuse.
+- Floating help button on the page.
 
-## Phase 5 — Core AI features
-- Natural-language task input ("remind me next Tuesday at noon" → ISO date).
-- Auto-breakdown of large tasks into subtask checklists.
-- Smart prioritization (scoring by urgency/importance/deadline).
-- Dynamic scheduling: fill free slots from timetable, reshuffle on conflict.
+## 5. AI chatbot upgrade (in-app)
+- Expanded tool catalog (multi-step loop, AI SDK `stepCountIs(8)`):
+  - `create_assignment`, `update_assignment`, `delete_assignment`, `complete_assignment`
+  - `add_subtask`, `toggle_subtask`
+  - `create_action_plan`, `add_timetable_entry`
+  - `start_timer`, `stop_timer`
+  - `redeem_reward`, `set_setting` (theme, font size, language, personality)
+  - `navigate(route)`
+- Tools execute client-side via store dispatch / Supabase mutations; results fed back for follow-ups.
+- **Out-of-credits animation**: input area swaps for a Framer Motion card with scale-in, pulsing gradient ring, sparkle sweep, and "Upgrade" CTA → `/plans`.
+- **Anti-refresh**: credits enforced server-side from immutable `ai_usage` rows (RLS has no delete policy). UI lockout reads from server every chat open.
 
-## Phase 6 — Missing app pieces from earlier scope
-- Polish Calendar grid to match the mockups exactly (share screenshot if you have one).
-- "Analyse from Toddle" sub-view → produce structured tasks from linked subjects.
-- Web Audio chimes (focus start/tick-down/finished) — fully offline.
-- Verify Settings (theme, font size, language) persist & re-render instantly.
+## 6. Tasks — Supabase-backed + detail pages
+- New `assignments` table (user-scoped): title, description, due, status, priority, tags[], notes, subtasks (jsonb), resources (jsonb), created_at, updated_at. RLS + grants.
+- Migrate `useStore` assignments to TanStack Query backed by Supabase. Timer / chat / rewards stay local.
+- Route `/_authenticated/assignments/$id`:
+  - Read mode: title, status badge, due countdown, description (markdown), subtasks checklist (add/toggle/delete), notes, tags, resources.
+  - Edit mode toggle flips fields into inputs; Save / Cancel.
+  - Delete with confirm dialog → return to list.
+- List rows are links; hover reveals delete + quick-complete buttons.
 
-## Phase 7 — Non-AI quality features
-- Robust offline mode (already partial via localStorage; add a sync queue once Cloud is on).
-- Keyboard shortcuts (N = new task, / = focus search, C = complete, etc.).
-- Shared lists + realtime (Supabase Realtime channels).
-- Geofencing reminders — **flag:** real geofencing needs a native mobile app; in a browser the best we can do is `geolocation.watchPosition` while the tab is open. I'll implement that and note the limitation, unless you want it skipped.
+## 7. Animations polish
+Sprinkle nice motion across the app (Framer Motion + the existing Tailwind keyframes):
+- Page transitions: fade + subtle slide-up on route change.
+- Landing hero: staggered fade-in, gradient orb drift, feature cards lift on hover.
+- Assignments list: list reorder + delete with `AnimatePresence`.
+- Timer: smooth ring tween, glow pulse on last 10s, confetti burst on complete.
+- Rewards: redeem coin-flip + voucher slide-in success overlay.
+- Chat messages: spring-in from below, typing-dot shimmer.
+- Admin console: row highlight on plan change.
+- Buttons: subtle scale + sheen on hover via `hover-scale` utility.
 
-## Phase 8 — Bug sweep & ship
-- Run through every page, fix what's broken, tighten responsive layout, verify dark mode, verify offline.
+## Migrations (single batch)
+1. `ALTER TABLE profiles ADD COLUMN plan text NOT NULL DEFAULT 'free', ADD COLUMN monthly_credit_override int`.
+2. `ALTER TABLE posts ADD COLUMN slug text UNIQUE, ADD COLUMN summary text` + backfill slugs from titles.
+3. `CREATE TABLE assignments (...)` + RLS (user owns own) + grants to authenticated/service_role.
+4. `CREATE TABLE support_usage (...)` + RLS + grants.
+5. `INSERT INTO user_roles` for the two admin emails (looked up by `auth.users.email`).
 
----
+## New server fns
+- `generatePostMeta(prompt|title+body)` — admin-only.
+- `adminGeneratePost(prompt)` — admin-only, returns draft {title, summary, body}.
+- `adminListUsers()`, `adminSetPlan(userId, plan)` — admin-only.
+- `aiSupport({history, message})` — free, rate-limited, product-scoped.
+- `listAssignments`, `createAssignment`, `updateAssignment`, `deleteAssignment`, `toggleSubtask`.
 
-## Questions before I start
-1. **Order:** OK to execute Phase 1 → 8 in this order, or do you want AI features (3–5) first?
-2. **Cloud:** OK to enable Lovable Cloud now? (Required for auth, blog, credits, sync, realtime.)
-3. **Geofencing:** Browser-only approximation, or skip?
-4. **Calendar mockup:** Do you have a screenshot/image of the exact grid you want? The current grid is weeks-as-columns × days-as-rows — confirm or share the target.
+## File moves / new routes
+- Move: `index.tsx`, `assignments.tsx`, `calender.tsx`, `rewards.tsx` → under `_authenticated/`.
+- New: `_authenticated/app.tsx` (dashboard), `_authenticated/assignments.$id.tsx`, `_authenticated/admin.tsx`, `updates.$slug.tsx`, `support.tsx`.
+- Root `index.tsx` becomes a redirect-only route.
 
-Reply with "go" + answers and I'll start with Phase 1.
+## Out of scope (ask later)
+- Real geofencing (currently stubbed).
+- Realtime collab on shared lists UI.
+- Paddle/Stripe checkout for Pro/Max — buttons stay "Coming soon".
