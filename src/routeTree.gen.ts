@@ -16,7 +16,11 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as LandingRouteImport } from './routes/landing'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRewardsRouteImport } from './routes/_authenticated/rewards'
+import { Route as AuthenticatedCalenderRouteImport } from './routes/_authenticated/calender'
+import { Route as AuthenticatedAssignmentsRouteImport } from './routes/_authenticated/assignments'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
+import { Route as AuthenticatedAssignmentsIdRouteImport } from './routes/_authenticated/assignments.$id'
 
 const UpdatesRoute = UpdatesRouteImport.update({
   id: '/updates',
@@ -52,11 +56,33 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRewardsRoute = AuthenticatedRewardsRouteImport.update({
+  id: '/rewards',
+  path: '/rewards',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCalenderRoute = AuthenticatedCalenderRouteImport.update({
+  id: '/calender',
+  path: '/calender',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAssignmentsRoute =
+  AuthenticatedAssignmentsRouteImport.update({
+    id: '/assignments',
+    path: '/assignments',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
   id: '/app',
   path: '/app',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAssignmentsIdRoute =
+  AuthenticatedAssignmentsIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAssignmentsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -66,6 +92,10 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/updates': typeof UpdatesRoute
   '/app': typeof AuthenticatedAppRoute
+  '/assignments': typeof AuthenticatedAssignmentsRouteWithChildren
+  '/calender': typeof AuthenticatedCalenderRoute
+  '/rewards': typeof AuthenticatedRewardsRoute
+  '/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -75,6 +105,10 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/updates': typeof UpdatesRoute
   '/app': typeof AuthenticatedAppRoute
+  '/assignments': typeof AuthenticatedAssignmentsRouteWithChildren
+  '/calender': typeof AuthenticatedCalenderRoute
+  '/rewards': typeof AuthenticatedRewardsRoute
+  '/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -86,6 +120,10 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/updates': typeof UpdatesRoute
   '/_authenticated/app': typeof AuthenticatedAppRoute
+  '/_authenticated/assignments': typeof AuthenticatedAssignmentsRouteWithChildren
+  '/_authenticated/calender': typeof AuthenticatedCalenderRoute
+  '/_authenticated/rewards': typeof AuthenticatedRewardsRoute
+  '/_authenticated/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -97,8 +135,23 @@ export interface FileRouteTypes {
     | '/signup'
     | '/updates'
     | '/app'
+    | '/assignments'
+    | '/calender'
+    | '/rewards'
+    | '/assignments/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/landing' | '/login' | '/plans' | '/signup' | '/updates' | '/app'
+  to:
+    | '/'
+    | '/landing'
+    | '/login'
+    | '/plans'
+    | '/signup'
+    | '/updates'
+    | '/app'
+    | '/assignments'
+    | '/calender'
+    | '/rewards'
+    | '/assignments/$id'
   id:
     | '__root__'
     | '/'
@@ -109,6 +162,10 @@ export interface FileRouteTypes {
     | '/signup'
     | '/updates'
     | '/_authenticated/app'
+    | '/_authenticated/assignments'
+    | '/_authenticated/calender'
+    | '/_authenticated/rewards'
+    | '/_authenticated/assignments/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -172,6 +229,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/rewards': {
+      id: '/_authenticated/rewards'
+      path: '/rewards'
+      fullPath: '/rewards'
+      preLoaderRoute: typeof AuthenticatedRewardsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/calender': {
+      id: '/_authenticated/calender'
+      path: '/calender'
+      fullPath: '/calender'
+      preLoaderRoute: typeof AuthenticatedCalenderRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/assignments': {
+      id: '/_authenticated/assignments'
+      path: '/assignments'
+      fullPath: '/assignments'
+      preLoaderRoute: typeof AuthenticatedAssignmentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app': {
       id: '/_authenticated/app'
       path: '/app'
@@ -179,15 +257,42 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/assignments/$id': {
+      id: '/_authenticated/assignments/$id'
+      path: '/$id'
+      fullPath: '/assignments/$id'
+      preLoaderRoute: typeof AuthenticatedAssignmentsIdRouteImport
+      parentRoute: typeof AuthenticatedAssignmentsRoute
+    }
   }
 }
 
+interface AuthenticatedAssignmentsRouteChildren {
+  AuthenticatedAssignmentsIdRoute: typeof AuthenticatedAssignmentsIdRoute
+}
+
+const AuthenticatedAssignmentsRouteChildren: AuthenticatedAssignmentsRouteChildren =
+  {
+    AuthenticatedAssignmentsIdRoute: AuthenticatedAssignmentsIdRoute,
+  }
+
+const AuthenticatedAssignmentsRouteWithChildren =
+  AuthenticatedAssignmentsRoute._addFileChildren(
+    AuthenticatedAssignmentsRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppRoute: typeof AuthenticatedAppRoute
+  AuthenticatedAssignmentsRoute: typeof AuthenticatedAssignmentsRouteWithChildren
+  AuthenticatedCalenderRoute: typeof AuthenticatedCalenderRoute
+  AuthenticatedRewardsRoute: typeof AuthenticatedRewardsRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppRoute: AuthenticatedAppRoute,
+  AuthenticatedAssignmentsRoute: AuthenticatedAssignmentsRouteWithChildren,
+  AuthenticatedCalenderRoute: AuthenticatedCalenderRoute,
+  AuthenticatedRewardsRoute: AuthenticatedRewardsRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
