@@ -10,28 +10,34 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UpdatesRouteImport } from './routes/updates'
+import { Route as SupportRouteImport } from './routes/support'
 import { Route as SignupRouteImport } from './routes/signup'
-import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as PlansRouteImport } from './routes/plans'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LandingRouteImport } from './routes/landing'
-import { Route as CalenderRouteImport } from './routes/calender'
-import { Route as AssignmentsRouteImport } from './routes/assignments'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UpdatesSlugRouteImport } from './routes/updates.$slug'
+import { Route as AuthenticatedRewardsRouteImport } from './routes/_authenticated/rewards'
+import { Route as AuthenticatedCalenderRouteImport } from './routes/_authenticated/calender'
+import { Route as AuthenticatedAssignmentsRouteImport } from './routes/_authenticated/assignments'
+import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAssignmentsIdRouteImport } from './routes/_authenticated/assignments.$id'
 
 const UpdatesRoute = UpdatesRouteImport.update({
   id: '/updates',
   path: '/updates',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RewardsRoute = RewardsRouteImport.update({
-  id: '/rewards',
-  path: '/rewards',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlansRoute = PlansRouteImport.update({
@@ -49,14 +55,8 @@ const LandingRoute = LandingRouteImport.update({
   path: '/landing',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CalenderRoute = CalenderRouteImport.update({
-  id: '/calender',
-  path: '/calender',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AssignmentsRoute = AssignmentsRouteImport.update({
-  id: '/assignments',
-  path: '/assignments',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -64,87 +64,155 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UpdatesSlugRoute = UpdatesSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => UpdatesRoute,
+} as any)
+const AuthenticatedRewardsRoute = AuthenticatedRewardsRouteImport.update({
+  id: '/rewards',
+  path: '/rewards',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCalenderRoute = AuthenticatedCalenderRouteImport.update({
+  id: '/calender',
+  path: '/calender',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAssignmentsRoute =
+  AuthenticatedAssignmentsRouteImport.update({
+    id: '/assignments',
+    path: '/assignments',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAssignmentsIdRoute =
+  AuthenticatedAssignmentsIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAssignmentsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/assignments': typeof AssignmentsRoute
-  '/calender': typeof CalenderRoute
   '/landing': typeof LandingRoute
   '/login': typeof LoginRoute
   '/plans': typeof PlansRoute
-  '/rewards': typeof RewardsRoute
   '/signup': typeof SignupRoute
-  '/updates': typeof UpdatesRoute
+  '/support': typeof SupportRoute
+  '/updates': typeof UpdatesRouteWithChildren
+  '/admin': typeof AuthenticatedAdminRoute
+  '/app': typeof AuthenticatedAppRoute
+  '/assignments': typeof AuthenticatedAssignmentsRouteWithChildren
+  '/calender': typeof AuthenticatedCalenderRoute
+  '/rewards': typeof AuthenticatedRewardsRoute
+  '/updates/$slug': typeof UpdatesSlugRoute
+  '/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/assignments': typeof AssignmentsRoute
-  '/calender': typeof CalenderRoute
   '/landing': typeof LandingRoute
   '/login': typeof LoginRoute
   '/plans': typeof PlansRoute
-  '/rewards': typeof RewardsRoute
   '/signup': typeof SignupRoute
-  '/updates': typeof UpdatesRoute
+  '/support': typeof SupportRoute
+  '/updates': typeof UpdatesRouteWithChildren
+  '/admin': typeof AuthenticatedAdminRoute
+  '/app': typeof AuthenticatedAppRoute
+  '/assignments': typeof AuthenticatedAssignmentsRouteWithChildren
+  '/calender': typeof AuthenticatedCalenderRoute
+  '/rewards': typeof AuthenticatedRewardsRoute
+  '/updates/$slug': typeof UpdatesSlugRoute
+  '/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/assignments': typeof AssignmentsRoute
-  '/calender': typeof CalenderRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/landing': typeof LandingRoute
   '/login': typeof LoginRoute
   '/plans': typeof PlansRoute
-  '/rewards': typeof RewardsRoute
   '/signup': typeof SignupRoute
-  '/updates': typeof UpdatesRoute
+  '/support': typeof SupportRoute
+  '/updates': typeof UpdatesRouteWithChildren
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/app': typeof AuthenticatedAppRoute
+  '/_authenticated/assignments': typeof AuthenticatedAssignmentsRouteWithChildren
+  '/_authenticated/calender': typeof AuthenticatedCalenderRoute
+  '/_authenticated/rewards': typeof AuthenticatedRewardsRoute
+  '/updates/$slug': typeof UpdatesSlugRoute
+  '/_authenticated/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/assignments'
-    | '/calender'
     | '/landing'
     | '/login'
     | '/plans'
-    | '/rewards'
     | '/signup'
+    | '/support'
     | '/updates'
+    | '/admin'
+    | '/app'
+    | '/assignments'
+    | '/calender'
+    | '/rewards'
+    | '/updates/$slug'
+    | '/assignments/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/assignments'
-    | '/calender'
     | '/landing'
     | '/login'
     | '/plans'
-    | '/rewards'
     | '/signup'
+    | '/support'
     | '/updates'
+    | '/admin'
+    | '/app'
+    | '/assignments'
+    | '/calender'
+    | '/rewards'
+    | '/updates/$slug'
+    | '/assignments/$id'
   id:
     | '__root__'
     | '/'
-    | '/assignments'
-    | '/calender'
+    | '/_authenticated'
     | '/landing'
     | '/login'
     | '/plans'
-    | '/rewards'
     | '/signup'
+    | '/support'
     | '/updates'
+    | '/_authenticated/admin'
+    | '/_authenticated/app'
+    | '/_authenticated/assignments'
+    | '/_authenticated/calender'
+    | '/_authenticated/rewards'
+    | '/updates/$slug'
+    | '/_authenticated/assignments/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AssignmentsRoute: typeof AssignmentsRoute
-  CalenderRoute: typeof CalenderRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   LandingRoute: typeof LandingRoute
   LoginRoute: typeof LoginRoute
   PlansRoute: typeof PlansRoute
-  RewardsRoute: typeof RewardsRoute
   SignupRoute: typeof SignupRoute
-  UpdatesRoute: typeof UpdatesRoute
+  SupportRoute: typeof SupportRoute
+  UpdatesRoute: typeof UpdatesRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -156,18 +224,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UpdatesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/rewards': {
-      id: '/rewards'
-      path: '/rewards'
-      fullPath: '/rewards'
-      preLoaderRoute: typeof RewardsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/plans': {
@@ -191,18 +259,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LandingRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/calender': {
-      id: '/calender'
-      path: '/calender'
-      fullPath: '/calender'
-      preLoaderRoute: typeof CalenderRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/assignments': {
-      id: '/assignments'
-      path: '/assignments'
-      fullPath: '/assignments'
-      preLoaderRoute: typeof AssignmentsRouteImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -212,30 +273,112 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/updates/$slug': {
+      id: '/updates/$slug'
+      path: '/$slug'
+      fullPath: '/updates/$slug'
+      preLoaderRoute: typeof UpdatesSlugRouteImport
+      parentRoute: typeof UpdatesRoute
+    }
+    '/_authenticated/rewards': {
+      id: '/_authenticated/rewards'
+      path: '/rewards'
+      fullPath: '/rewards'
+      preLoaderRoute: typeof AuthenticatedRewardsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/calender': {
+      id: '/_authenticated/calender'
+      path: '/calender'
+      fullPath: '/calender'
+      preLoaderRoute: typeof AuthenticatedCalenderRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/assignments': {
+      id: '/_authenticated/assignments'
+      path: '/assignments'
+      fullPath: '/assignments'
+      preLoaderRoute: typeof AuthenticatedAssignmentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app': {
+      id: '/_authenticated/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AuthenticatedAppRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/assignments/$id': {
+      id: '/_authenticated/assignments/$id'
+      path: '/$id'
+      fullPath: '/assignments/$id'
+      preLoaderRoute: typeof AuthenticatedAssignmentsIdRouteImport
+      parentRoute: typeof AuthenticatedAssignmentsRoute
+    }
   }
 }
 
+interface AuthenticatedAssignmentsRouteChildren {
+  AuthenticatedAssignmentsIdRoute: typeof AuthenticatedAssignmentsIdRoute
+}
+
+const AuthenticatedAssignmentsRouteChildren: AuthenticatedAssignmentsRouteChildren =
+  {
+    AuthenticatedAssignmentsIdRoute: AuthenticatedAssignmentsIdRoute,
+  }
+
+const AuthenticatedAssignmentsRouteWithChildren =
+  AuthenticatedAssignmentsRoute._addFileChildren(
+    AuthenticatedAssignmentsRouteChildren,
+  )
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAppRoute: typeof AuthenticatedAppRoute
+  AuthenticatedAssignmentsRoute: typeof AuthenticatedAssignmentsRouteWithChildren
+  AuthenticatedCalenderRoute: typeof AuthenticatedCalenderRoute
+  AuthenticatedRewardsRoute: typeof AuthenticatedRewardsRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAppRoute: AuthenticatedAppRoute,
+  AuthenticatedAssignmentsRoute: AuthenticatedAssignmentsRouteWithChildren,
+  AuthenticatedCalenderRoute: AuthenticatedCalenderRoute,
+  AuthenticatedRewardsRoute: AuthenticatedRewardsRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
+interface UpdatesRouteChildren {
+  UpdatesSlugRoute: typeof UpdatesSlugRoute
+}
+
+const UpdatesRouteChildren: UpdatesRouteChildren = {
+  UpdatesSlugRoute: UpdatesSlugRoute,
+}
+
+const UpdatesRouteWithChildren =
+  UpdatesRoute._addFileChildren(UpdatesRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AssignmentsRoute: AssignmentsRoute,
-  CalenderRoute: CalenderRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   LandingRoute: LandingRoute,
   LoginRoute: LoginRoute,
   PlansRoute: PlansRoute,
-  RewardsRoute: RewardsRoute,
   SignupRoute: SignupRoute,
-  UpdatesRoute: UpdatesRoute,
+  SupportRoute: SupportRoute,
+  UpdatesRoute: UpdatesRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

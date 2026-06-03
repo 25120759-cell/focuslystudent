@@ -45,7 +45,7 @@ function SignupPage() {
     if (error) { setLoading(false); return setErr(error.message); }
     await markAccepted();
     setLoading(false);
-    navigate({ to: "/" });
+    navigate({ to: "/app" });
   }
 
   async function onGoogle() {
@@ -58,7 +58,7 @@ function SignupPage() {
     if (result.error) setErr(result.error.message || "Google sign-in failed");
     else if (!result.redirected) {
       await markAccepted();
-      navigate({ to: "/" });
+      navigate({ to: "/app" });
     }
   }
 

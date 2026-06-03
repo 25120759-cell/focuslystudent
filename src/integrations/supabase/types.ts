@@ -47,6 +47,54 @@ export type Database = {
         }
         Relationships: []
       }
+      assignments: {
+        Row: {
+          created_at: string
+          description: string
+          due: string | null
+          id: string
+          notes: string
+          priority: string
+          resources: Json
+          status: string
+          subtasks: Json
+          tags: string[]
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          due?: string | null
+          id?: string
+          notes?: string
+          priority?: string
+          resources?: Json
+          status?: string
+          subtasks?: Json
+          tags?: string[]
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          due?: string | null
+          id?: string
+          notes?: string
+          priority?: string
+          resources?: Json
+          status?: string
+          subtasks?: Json
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       posts: {
         Row: {
           author_id: string
@@ -54,6 +102,8 @@ export type Database = {
           created_at: string
           id: string
           published: boolean
+          slug: string
+          summary: string | null
           title: string
           updated_at: string
         }
@@ -63,6 +113,8 @@ export type Database = {
           created_at?: string
           id?: string
           published?: boolean
+          slug: string
+          summary?: string | null
           title: string
           updated_at?: string
         }
@@ -72,6 +124,8 @@ export type Database = {
           created_at?: string
           id?: string
           published?: boolean
+          slug?: string
+          summary?: string | null
           title?: string
           updated_at?: string
         }
@@ -87,6 +141,8 @@ export type Database = {
           display_name: string | null
           id: string
           legal_version: string | null
+          monthly_credit_override: number | null
+          plan: string
           updated_at: string
         }
         Insert: {
@@ -98,6 +154,8 @@ export type Database = {
           display_name?: string | null
           id: string
           legal_version?: string | null
+          monthly_credit_override?: number | null
+          plan?: string
           updated_at?: string
         }
         Update: {
@@ -109,6 +167,8 @@ export type Database = {
           display_name?: string | null
           id?: string
           legal_version?: string | null
+          monthly_credit_override?: number | null
+          plan?: string
           updated_at?: string
         }
         Relationships: []
@@ -207,6 +267,27 @@ export type Database = {
           owner_id?: string
           title?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      support_usage: {
+        Row: {
+          created_at: string
+          day: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          day?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          id?: string
+          user_id?: string
         }
         Relationships: []
       }

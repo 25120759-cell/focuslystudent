@@ -24,7 +24,7 @@ function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) return setErr(error.message);
-    navigate({ to: "/" });
+    navigate({ to: "/app" });
   }
 
   async function onGoogle() {
@@ -33,7 +33,7 @@ function LoginPage() {
       redirect_uri: window.location.origin,
     });
     if (result.error) setErr(result.error.message || "Google sign-in failed");
-    else if (!result.redirected) navigate({ to: "/" });
+    else if (!result.redirected) navigate({ to: "/app" });
   }
 
   return (

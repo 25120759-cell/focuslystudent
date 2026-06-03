@@ -1,8 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Calendar, LogIn, LogOut, Plus, Sparkles } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useServerFn } from "@tanstack/react-start";
+import { Calendar, LogIn, LogOut, Plus, Wand2, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
+import { slugify } from "@/lib/slug";
+import { adminGeneratePost, generatePostSummary } from "@/lib/ai.functions";
 
 export const Route = createFileRoute("/updates")({
   ssr: false,
@@ -17,22 +21,7 @@ export const Route = createFileRoute("/updates")({
   }),
 });
 
-interface Post { id: string; title: string; body: string; created_at: string; }
-
-const SEED_POSTS: Post[] = [
-  {
-    id: "seed-launch",
-    title: "Focusly v1 — hello, world.",
-    body: "We're launching Focusly: a premium, offline-first study app with a focus timer, Toddle sync, a real calendar, a rewards system, and an AI assistant that does the boring planning for you.",
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "seed-credits",
-    title: "AI credits, explained.",
-    body: "Every Focusly account starts with 100 AI credits per month (max 10 per day). Pro and Max plans with 1,000 and 10,000 credits are coming soon.",
-    created_at: new Date().toISOString(),
-  },
-];
+interface Post { id: string; title: string; body: string; created_at: string; slug: string; summary: string | null }
 
 function UpdatesPage() {
   const { user, isAdmin, signOut } = useAuth();
@@ -41,29 +30,57 @@ function UpdatesPage() {
   const [composing, setComposing] = useState(false);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+  const [summary, setSummary] = useState("");
   const [err, setErr] = useState<string | null>(null);
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [generating, setGenerating] = useState(false);
+  const genFn = useServerFn(adminGeneratePost);
+  const sumFn = useServerFn(generatePostSummary);
 
   async function load() {
     const { data } = await supabase
       .from("posts")
-      .select("id,title,body,created_at")
+      .select("id,title,body,created_at,slug,summary")
       .eq("published", true)
       .order("created_at", { ascending: false });
-    setPosts(data?.length ? data : SEED_POSTS);
+    setPosts((data as Post[]) ?? []);
     setLoaded(true);
   }
 
   useEffect(() => { load(); }, [user?.id]);
 
+  async function aiDraft() {
+    if (!aiPrompt.trim()) return;
+    setGenerating(true); setErr(null);
+    try {
+      const r: any = await genFn({ data: { prompt: aiPrompt } });
+      setTitle(r.title || ""); setBody(r.body || ""); setSummary(r.summary || "");
+    } catch (e: any) { setErr(e.message); }
+    finally { setGenerating(false); }
+  }
+
+  async function autoSummary() {
+    if (!title.trim() || !body.trim()) return;
+    setGenerating(true);
+    try { const r: any = await sumFn({ data: { title, body } }); setSummary(r.summary); }
+    catch (e: any) { setErr(e.message); }
+    finally { setGenerating(false); }
+  }
+
   async function submit() {
     if (!user) return;
     setErr(null);
     if (!title.trim() || !body.trim()) return setErr("Title and body required.");
-    const { error } = await supabase
-      .from("posts")
-      .insert({ author_id: user.id, title: title.trim(), body: body.trim(), published: true });
+    let finalSummary = summary;
+    if (!finalSummary.trim()) {
+      try { const r: any = await sumFn({ data: { title, body } }); finalSummary = r.summary; } catch {}
+    }
+    const slug = slugify(title) + "-" + Math.random().toString(36).slice(2, 6);
+    const { error } = await supabase.from("posts").insert({
+      author_id: user.id, title: title.trim(), body: body.trim(), published: true, slug, summary: finalSummary,
+    } as any);
     if (error) return setErr(error.message);
-    setTitle(""); setBody(""); setComposing(false);
+    setTitle(""); setBody(""); setSummary(""); setAiPrompt(""); setComposing(false);
     load();
   }
 
@@ -75,7 +92,10 @@ function UpdatesPage() {
           <nav className="flex items-center gap-1 text-sm">
             <Link to="/landing" className="rounded-full px-3 py-1.5 hover:bg-accent">Home</Link>
             <Link to="/plans" className="rounded-full px-3 py-1.5 hover:bg-accent">Plans</Link>
-            <Link to="/" className="ml-2 rounded-full bg-primary px-4 py-1.5 text-primary-foreground hover:opacity-90">Open app</Link>
+            <Link to="/support" className="rounded-full px-3 py-1.5 hover:bg-accent">Support</Link>
+            <Link to={user ? "/app" : "/login"} className="ml-2 rounded-full bg-primary px-4 py-1.5 text-primary-foreground hover:opacity-90">
+              {user ? "Open app" : "Sign in"}
+            </Link>
           </nav>
         </div>
       </header>
@@ -93,13 +113,27 @@ function UpdatesPage() {
               </button>
             ) : (
               <div className="rounded-3xl glass p-5 space-y-3">
+                <div className="rounded-xl border border-dashed border-primary/40 bg-primary/5 p-3 space-y-2">
+                  <label className="text-xs font-medium text-primary flex items-center gap-1"><Wand2 className="h-3 w-3" /> Generate with AI</label>
+                  <div className="flex gap-2">
+                    <input value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)} placeholder="What's the update about? e.g. 'Calendar got drag-and-drop'"
+                      className="flex-1 rounded-xl border border-input bg-background px-3 py-2 text-sm" />
+                    <button onClick={aiDraft} disabled={generating || !aiPrompt.trim()}
+                      className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-2 text-xs text-primary-foreground disabled:opacity-50">
+                      {generating ? <Loader2 className="h-3 w-3 animate-spin" /> : <Wand2 className="h-3 w-3" />} Draft
+                    </button>
+                  </div>
+                </div>
                 <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title"
                   className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm" />
-                <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Write your update..." rows={6}
+                <input value={summary} onChange={(e) => setSummary(e.target.value)} placeholder="Summary (auto-generated if blank)"
+                  className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm" />
+                <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Write your update (markdown supported)..." rows={8}
                   className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm" />
                 {err && <p className="text-xs text-destructive">{err}</p>}
                 <div className="flex gap-2">
                   <button onClick={submit} className="rounded-full bg-primary px-4 py-2 text-sm text-primary-foreground">Publish</button>
+                  <button onClick={autoSummary} disabled={generating} className="rounded-full border border-border bg-card px-4 py-2 text-sm">Auto-summary</button>
                   <button onClick={() => { setComposing(false); setErr(null); }} className="rounded-full border border-border bg-card px-4 py-2 text-sm">Cancel</button>
                 </div>
               </div>
@@ -107,25 +141,34 @@ function UpdatesPage() {
           </div>
         )}
 
-        <div className="mt-12 space-y-10">
+        <div className="mt-12 space-y-6">
           {!loaded ? (
             <p className="text-sm text-muted-foreground">Loading...</p>
+          ) : posts.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No updates yet.</p>
           ) : (
-            posts.map((p) => (
-              <article key={p.id} className="rounded-3xl glass p-7">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Calendar className="h-3.5 w-3.5" />
-                  <time dateTime={p.created_at}>{new Date(p.created_at).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}</time>
-                  {p.id.startsWith("seed-") && (
-                    <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] text-primary">
-                      <Sparkles className="h-2.5 w-2.5" /> Seed
-                    </span>
-                  )}
-                </div>
-                <h2 className="mt-3 font-display text-2xl font-semibold">{p.title}</h2>
-                <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">{p.body}</p>
-              </article>
-            ))
+            <AnimatePresence>
+              {posts.map((p, i) => (
+                <motion.article
+                  key={p.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  whileHover={{ y: -2 }}
+                  className="rounded-3xl glass p-7"
+                >
+                  <Link to="/updates/$slug" params={{ slug: p.slug }} className="block group">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Calendar className="h-3.5 w-3.5" />
+                      <time dateTime={p.created_at}>{new Date(p.created_at).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}</time>
+                    </div>
+                    <h2 className="mt-3 font-display text-2xl font-semibold group-hover:text-primary transition-colors">{p.title}</h2>
+                    {p.summary && <p className="mt-2 text-sm text-muted-foreground">{p.summary}</p>}
+                    <span className="mt-3 inline-block text-xs text-primary">Read more →</span>
+                  </Link>
+                </motion.article>
+              ))}
+            </AnimatePresence>
           )}
         </div>
 
@@ -136,7 +179,7 @@ function UpdatesPage() {
             </button>
           ) : (
             <Link to="/login" className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-xs hover:bg-accent">
-              <LogIn className="h-3.5 w-3.5" /> Sign in to post
+              <LogIn className="h-3.5 w-3.5" /> Sign in
             </Link>
           )}
         </div>

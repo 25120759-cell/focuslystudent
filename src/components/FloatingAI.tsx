@@ -3,7 +3,7 @@ import { Sparkles } from "lucide-react";
 import { useLocation } from "@tanstack/react-router";
 import { AIChat } from "./AIChat";
 
-const HIDDEN_ROUTES = ["/landing", "/plans", "/updates", "/login", "/signup"];
+const HIDDEN_ROUTES = ["/landing", "/plans", "/updates", "/login", "/signup", "/support"];
 
 export function FloatingAI() {
   const [open, setOpen] = useState(false);

@@ -88,7 +88,7 @@ function PlansPage() {
           <nav className="flex items-center gap-1 text-sm">
             <Link to="/landing" className="rounded-full px-3 py-1.5 hover:bg-accent">Home</Link>
             <Link to="/updates" className="rounded-full px-3 py-1.5 hover:bg-accent">Updates</Link>
-            <Link to="/" className="ml-2 rounded-full bg-primary px-4 py-1.5 text-primary-foreground hover:opacity-90">Open app</Link>
+            <Link to="/app" className="ml-2 rounded-full bg-primary px-4 py-1.5 text-primary-foreground hover:opacity-90">Open app</Link>
           </nav>
         </div>
       </header>

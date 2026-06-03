@@ -1,23 +1,20 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
-import { LogIn, LogOut, User as UserIcon } from "lucide-react";
+import { LogIn, LogOut, Shield } from "lucide-react";
 import { useT, useStore } from "@/lib/store";
 import { useAuth } from "@/lib/auth";
 import { SettingsModal } from "./SettingsModal";
 
-const PUBLIC_ROUTES = ["/landing", "/plans", "/updates", "/login", "/signup"];
-
-
-
+const PUBLIC_ROUTES = ["/landing", "/plans", "/updates", "/login", "/signup", "/support"];
 
 export function AppNav() {
   const t = useT();
   const { state } = useStore();
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAdmin } = useAuth();
   const path = useRouterState({ select: (r) => r.location.pathname });
   const [openSettings, setOpenSettings] = useState(false);
 
-  if (PUBLIC_ROUTES.includes(path)) return null;
+  if (PUBLIC_ROUTES.includes(path) || path.startsWith("/updates/")) return null;
 
   const linkClass = (active: boolean) =>
     `px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
@@ -28,15 +25,20 @@ export function AppNav() {
     <>
       <header className="sticky top-0 z-40 flex justify-center px-4 pt-4">
         <nav className="nav-pill flex items-center gap-1 rounded-full px-3 py-2 shadow-sm">
-          <span className="px-2 font-display text-base font-semibold tracking-tight">Focusly:</span>
-          <Link to="/" className={linkClass(path === "/")}>{t("console")}</Link>
-          <Link to="/assignments" className={linkClass(path === "/assignments")}>{t("assignments")}</Link>
+          <Link to="/app" className="px-2 font-display text-base font-semibold tracking-tight">Focusly:</Link>
+          <Link to="/app" className={linkClass(path === "/app")}>{t("console")}</Link>
+          <Link to="/assignments" className={linkClass(path.startsWith("/assignments"))}>{t("assignments")}</Link>
           <Link to="/calender" className={linkClass(path === "/calender")}>{t("calender")}</Link>
           <span className="mx-1 h-5 w-px bg-border" />
           <button onClick={() => setOpenSettings(true)} className={linkClass(false)}>{t("settings")}</button>
           <Link to="/rewards" className={linkClass(path === "/rewards")}>
             {t("rewards")} <span className="ml-1 text-xs opacity-70">{state.gamification.points}</span>
           </Link>
+          {isAdmin && (
+            <Link to="/admin" className={linkClass(path === "/admin")} title="Admin">
+              <Shield className="inline h-3.5 w-3.5" />
+            </Link>
+          )}
           <span className="mx-1 h-5 w-px bg-border" />
           {user ? (
             <button onClick={signOut} title={user.email ?? "Sign out"} className={linkClass(false)}>
@@ -53,4 +55,3 @@ export function AppNav() {
     </>
   );
 }
-
