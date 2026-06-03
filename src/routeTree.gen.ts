@@ -10,21 +10,29 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UpdatesRouteImport } from './routes/updates'
+import { Route as SupportRouteImport } from './routes/support'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as PlansRouteImport } from './routes/plans'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LandingRouteImport } from './routes/landing'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UpdatesSlugRouteImport } from './routes/updates.$slug'
 import { Route as AuthenticatedRewardsRouteImport } from './routes/_authenticated/rewards'
 import { Route as AuthenticatedCalenderRouteImport } from './routes/_authenticated/calender'
 import { Route as AuthenticatedAssignmentsRouteImport } from './routes/_authenticated/assignments'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAssignmentsIdRouteImport } from './routes/_authenticated/assignments.$id'
 
 const UpdatesRoute = UpdatesRouteImport.update({
   id: '/updates',
   path: '/updates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -56,6 +64,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UpdatesSlugRoute = UpdatesSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => UpdatesRoute,
+} as any)
 const AuthenticatedRewardsRoute = AuthenticatedRewardsRouteImport.update({
   id: '/rewards',
   path: '/rewards',
@@ -77,6 +90,11 @@ const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
   path: '/app',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAssignmentsIdRoute =
   AuthenticatedAssignmentsIdRouteImport.update({
     id: '/$id',
@@ -90,11 +108,14 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/plans': typeof PlansRoute
   '/signup': typeof SignupRoute
-  '/updates': typeof UpdatesRoute
+  '/support': typeof SupportRoute
+  '/updates': typeof UpdatesRouteWithChildren
+  '/admin': typeof AuthenticatedAdminRoute
   '/app': typeof AuthenticatedAppRoute
   '/assignments': typeof AuthenticatedAssignmentsRouteWithChildren
   '/calender': typeof AuthenticatedCalenderRoute
   '/rewards': typeof AuthenticatedRewardsRoute
+  '/updates/$slug': typeof UpdatesSlugRoute
   '/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
 }
 export interface FileRoutesByTo {
@@ -103,11 +124,14 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/plans': typeof PlansRoute
   '/signup': typeof SignupRoute
-  '/updates': typeof UpdatesRoute
+  '/support': typeof SupportRoute
+  '/updates': typeof UpdatesRouteWithChildren
+  '/admin': typeof AuthenticatedAdminRoute
   '/app': typeof AuthenticatedAppRoute
   '/assignments': typeof AuthenticatedAssignmentsRouteWithChildren
   '/calender': typeof AuthenticatedCalenderRoute
   '/rewards': typeof AuthenticatedRewardsRoute
+  '/updates/$slug': typeof UpdatesSlugRoute
   '/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
 }
 export interface FileRoutesById {
@@ -118,11 +142,14 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/plans': typeof PlansRoute
   '/signup': typeof SignupRoute
-  '/updates': typeof UpdatesRoute
+  '/support': typeof SupportRoute
+  '/updates': typeof UpdatesRouteWithChildren
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/app': typeof AuthenticatedAppRoute
   '/_authenticated/assignments': typeof AuthenticatedAssignmentsRouteWithChildren
   '/_authenticated/calender': typeof AuthenticatedCalenderRoute
   '/_authenticated/rewards': typeof AuthenticatedRewardsRoute
+  '/updates/$slug': typeof UpdatesSlugRoute
   '/_authenticated/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
 }
 export interface FileRouteTypes {
@@ -133,11 +160,14 @@ export interface FileRouteTypes {
     | '/login'
     | '/plans'
     | '/signup'
+    | '/support'
     | '/updates'
+    | '/admin'
     | '/app'
     | '/assignments'
     | '/calender'
     | '/rewards'
+    | '/updates/$slug'
     | '/assignments/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -146,11 +176,14 @@ export interface FileRouteTypes {
     | '/login'
     | '/plans'
     | '/signup'
+    | '/support'
     | '/updates'
+    | '/admin'
     | '/app'
     | '/assignments'
     | '/calender'
     | '/rewards'
+    | '/updates/$slug'
     | '/assignments/$id'
   id:
     | '__root__'
@@ -160,11 +193,14 @@ export interface FileRouteTypes {
     | '/login'
     | '/plans'
     | '/signup'
+    | '/support'
     | '/updates'
+    | '/_authenticated/admin'
     | '/_authenticated/app'
     | '/_authenticated/assignments'
     | '/_authenticated/calender'
     | '/_authenticated/rewards'
+    | '/updates/$slug'
     | '/_authenticated/assignments/$id'
   fileRoutesById: FileRoutesById
 }
@@ -175,7 +211,8 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PlansRoute: typeof PlansRoute
   SignupRoute: typeof SignupRoute
-  UpdatesRoute: typeof UpdatesRoute
+  SupportRoute: typeof SupportRoute
+  UpdatesRoute: typeof UpdatesRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -185,6 +222,13 @@ declare module '@tanstack/react-router' {
       path: '/updates'
       fullPath: '/updates'
       preLoaderRoute: typeof UpdatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -229,6 +273,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/updates/$slug': {
+      id: '/updates/$slug'
+      path: '/$slug'
+      fullPath: '/updates/$slug'
+      preLoaderRoute: typeof UpdatesSlugRouteImport
+      parentRoute: typeof UpdatesRoute
+    }
     '/_authenticated/rewards': {
       id: '/_authenticated/rewards'
       path: '/rewards'
@@ -257,6 +308,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/assignments/$id': {
       id: '/_authenticated/assignments/$id'
       path: '/$id'
@@ -282,6 +340,7 @@ const AuthenticatedAssignmentsRouteWithChildren =
   )
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedAppRoute: typeof AuthenticatedAppRoute
   AuthenticatedAssignmentsRoute: typeof AuthenticatedAssignmentsRouteWithChildren
   AuthenticatedCalenderRoute: typeof AuthenticatedCalenderRoute
@@ -289,6 +348,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedAppRoute: AuthenticatedAppRoute,
   AuthenticatedAssignmentsRoute: AuthenticatedAssignmentsRouteWithChildren,
   AuthenticatedCalenderRoute: AuthenticatedCalenderRoute,
@@ -298,6 +358,17 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface UpdatesRouteChildren {
+  UpdatesSlugRoute: typeof UpdatesSlugRoute
+}
+
+const UpdatesRouteChildren: UpdatesRouteChildren = {
+  UpdatesSlugRoute: UpdatesSlugRoute,
+}
+
+const UpdatesRouteWithChildren =
+  UpdatesRoute._addFileChildren(UpdatesRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -305,8 +376,19 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PlansRoute: PlansRoute,
   SignupRoute: SignupRoute,
-  UpdatesRoute: UpdatesRoute,
+  SupportRoute: SupportRoute,
+  UpdatesRoute: UpdatesRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

@@ -11,11 +11,7 @@ interface AuthCtx {
 }
 
 const Ctx = createContext<AuthCtx>({
-  user: null,
-  session: null,
-  loading: true,
-  isAdmin: false,
-  signOut: async () => {},
+  user: null, session: null, loading: true, isAdmin: false, signOut: async () => {},
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -29,14 +25,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(s);
       setUser(s?.user ?? null);
       if (s?.user) {
-        // Defer DB query to avoid deadlock inside listener
         setTimeout(async () => {
           const { data } = await supabase
-            .from("user_roles")
-            .select("role")
-            .eq("user_id", s.user.id)
-            .eq("role", "admin")
-            .maybeSingle();
+            .from("user_roles").select("role").eq("user_id", s.user.id).eq("role", "admin").maybeSingle();
           setIsAdmin(!!data);
         }, 0);
       } else {
@@ -44,28 +35,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     });
     supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setUser(data.session?.user ?? null);
-      setLoading(false);
+      setSession(data.session); setUser(data.session?.user ?? null); setLoading(false);
     });
     return () => subscription.unsubscribe();
   }, []);
 
   return (
-    <Ctx.Provider
-      value={{
-        user,
-        session,
-        loading,
-        isAdmin,
-        signOut: async () => { await supabase.auth.signOut(); },
-      }}
-    >
+    <Ctx.Provider value={{
+      user, session, loading, isAdmin,
+      signOut: async () => {
+        await supabase.auth.signOut();
+        if (typeof window !== "undefined") window.location.href = "/landing";
+      },
+    }}>
       {children}
     </Ctx.Provider>
   );
 }
 
-export function useAuth() {
-  return useContext(Ctx);
-}
+export function useAuth() { return useContext(Ctx); }
