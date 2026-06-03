@@ -5,6 +5,7 @@ export type FontSize = "small" | "medium" | "large";
 export type CalendarView = "yearly" | "monthly" | "weekly";
 export type Language = "english" | "mandarin";
 
+export interface Subtask { id: string; title: string; done: boolean }
 export interface Assignment {
   id: string;
   title: string;
@@ -12,6 +13,10 @@ export interface Assignment {
   status: "Opened" | "Completed" | "Late";
   description: string;
   resources: { name: string; link: string }[];
+  subtasks?: Subtask[];
+  priority?: "low" | "medium" | "high";
+  tags?: string[];
+  notes?: string;
 }
 
 export interface ActionPlanStep {
@@ -192,6 +197,8 @@ type Action =
   | { type: "COMPLETE_ASSIGNMENT"; id: string }
   | { type: "LATE_ASSIGNMENT"; id: string }
   | { type: "ADD_ASSIGNMENT"; assignment: Assignment }
+  | { type: "UPDATE_ASSIGNMENT"; id: string; patch: Partial<Assignment> }
+  | { type: "DELETE_ASSIGNMENT"; id: string }
   | { type: "REDEEM"; voucher: { id: string; name: string; cost: number; codePrefix: string } }
   | { type: "TIMER_TICK" }
   | { type: "TIMER_SET"; patch: Partial<State["timer"]> }
@@ -241,6 +248,10 @@ function reducer(state: State, action: Action): State {
     }
     case "ADD_ASSIGNMENT":
       return { ...state, assignments: [action.assignment, ...state.assignments] };
+    case "UPDATE_ASSIGNMENT":
+      return { ...state, assignments: state.assignments.map((a) => a.id === action.id ? { ...a, ...action.patch } : a) };
+    case "DELETE_ASSIGNMENT":
+      return { ...state, assignments: state.assignments.filter((a) => a.id !== action.id) };
     case "REDEEM": {
       if (state.gamification.points < action.voucher.cost) return state;
       const code = `${action.voucher.codePrefix}-${action.voucher.cost}-${Math.random()

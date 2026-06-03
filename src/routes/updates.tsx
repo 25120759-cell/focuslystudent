@@ -1,8 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Calendar, LogIn, LogOut, Plus, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
+import { useServerFn } from "@tanstack/react-start";
+import { Calendar, LogIn, LogOut, Plus, Sparkles, Wand2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
+import { slugify } from "@/lib/slug";
+import { adminGeneratePost } from "@/lib/ai.functions";
 
 export const Route = createFileRoute("/updates")({
   ssr: false,
