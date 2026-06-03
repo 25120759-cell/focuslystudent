@@ -11,12 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UpdatesRouteImport } from './routes/updates'
 import { Route as SignupRouteImport } from './routes/signup'
-import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as PlansRouteImport } from './routes/plans'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LandingRouteImport } from './routes/landing'
-import { Route as CalenderRouteImport } from './routes/calender'
-import { Route as AssignmentsRouteImport } from './routes/assignments'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
@@ -29,11 +26,6 @@ const UpdatesRoute = UpdatesRouteImport.update({
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RewardsRoute = RewardsRouteImport.update({
-  id: '/rewards',
-  path: '/rewards',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlansRoute = PlansRouteImport.update({
@@ -49,16 +41,6 @@ const LoginRoute = LoginRouteImport.update({
 const LandingRoute = LandingRouteImport.update({
   id: '/landing',
   path: '/landing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CalenderRoute = CalenderRouteImport.update({
-  id: '/calender',
-  path: '/calender',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AssignmentsRoute = AssignmentsRouteImport.update({
-  id: '/assignments',
-  path: '/assignments',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -78,24 +60,18 @@ const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/assignments': typeof AssignmentsRoute
-  '/calender': typeof CalenderRoute
   '/landing': typeof LandingRoute
   '/login': typeof LoginRoute
   '/plans': typeof PlansRoute
-  '/rewards': typeof RewardsRoute
   '/signup': typeof SignupRoute
   '/updates': typeof UpdatesRoute
   '/app': typeof AuthenticatedAppRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/assignments': typeof AssignmentsRoute
-  '/calender': typeof CalenderRoute
   '/landing': typeof LandingRoute
   '/login': typeof LoginRoute
   '/plans': typeof PlansRoute
-  '/rewards': typeof RewardsRoute
   '/signup': typeof SignupRoute
   '/updates': typeof UpdatesRoute
   '/app': typeof AuthenticatedAppRoute
@@ -104,12 +80,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/assignments': typeof AssignmentsRoute
-  '/calender': typeof CalenderRoute
   '/landing': typeof LandingRoute
   '/login': typeof LoginRoute
   '/plans': typeof PlansRoute
-  '/rewards': typeof RewardsRoute
   '/signup': typeof SignupRoute
   '/updates': typeof UpdatesRoute
   '/_authenticated/app': typeof AuthenticatedAppRoute
@@ -118,37 +91,21 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/assignments'
-    | '/calender'
     | '/landing'
     | '/login'
     | '/plans'
-    | '/rewards'
     | '/signup'
     | '/updates'
     | '/app'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/assignments'
-    | '/calender'
-    | '/landing'
-    | '/login'
-    | '/plans'
-    | '/rewards'
-    | '/signup'
-    | '/updates'
-    | '/app'
+  to: '/' | '/landing' | '/login' | '/plans' | '/signup' | '/updates' | '/app'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
-    | '/assignments'
-    | '/calender'
     | '/landing'
     | '/login'
     | '/plans'
-    | '/rewards'
     | '/signup'
     | '/updates'
     | '/_authenticated/app'
@@ -157,12 +114,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  AssignmentsRoute: typeof AssignmentsRoute
-  CalenderRoute: typeof CalenderRoute
   LandingRoute: typeof LandingRoute
   LoginRoute: typeof LoginRoute
   PlansRoute: typeof PlansRoute
-  RewardsRoute: typeof RewardsRoute
   SignupRoute: typeof SignupRoute
   UpdatesRoute: typeof UpdatesRoute
 }
@@ -181,13 +135,6 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/rewards': {
-      id: '/rewards'
-      path: '/rewards'
-      fullPath: '/rewards'
-      preLoaderRoute: typeof RewardsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/plans': {
@@ -209,20 +156,6 @@ declare module '@tanstack/react-router' {
       path: '/landing'
       fullPath: '/landing'
       preLoaderRoute: typeof LandingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/calender': {
-      id: '/calender'
-      path: '/calender'
-      fullPath: '/calender'
-      preLoaderRoute: typeof CalenderRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/assignments': {
-      id: '/assignments'
-      path: '/assignments'
-      fullPath: '/assignments'
-      preLoaderRoute: typeof AssignmentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -263,12 +196,9 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  AssignmentsRoute: AssignmentsRoute,
-  CalenderRoute: CalenderRoute,
   LandingRoute: LandingRoute,
   LoginRoute: LoginRoute,
   PlansRoute: PlansRoute,
-  RewardsRoute: RewardsRoute,
   SignupRoute: SignupRoute,
   UpdatesRoute: UpdatesRoute,
 }
