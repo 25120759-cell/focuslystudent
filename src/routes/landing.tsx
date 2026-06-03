@@ -43,7 +43,7 @@ function LandingPage() {
           <nav className="flex items-center gap-1 text-sm">
             <Link to="/plans" className="rounded-full px-3 py-1.5 hover:bg-accent">Plans</Link>
             <Link to="/updates" className="rounded-full px-3 py-1.5 hover:bg-accent">Updates</Link>
-            <Link to="/" className="ml-2 rounded-full bg-primary px-4 py-1.5 text-primary-foreground hover:opacity-90">Open app</Link>
+            <Link to="/app" className="ml-2 rounded-full bg-primary px-4 py-1.5 text-primary-foreground hover:opacity-90">Open app</Link>
           </nav>
         </div>
       </header>
@@ -64,7 +64,7 @@ function LandingPage() {
           plan — scheduled around your timetable, broken into steps, and ordered by what matters now.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link to="/" className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90">
+          <Link to="/app" className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90">
             Open Focusly <ArrowRight className="h-4 w-4" />
           </Link>
           <Link to="/plans" className="inline-flex items-center rounded-full border border-border bg-card px-6 py-3 text-sm font-medium hover:bg-accent">
@@ -114,7 +114,7 @@ function LandingPage() {
             Earn points for completed assignments. Redeem them for real rewards — McDonald's,
             Starbucks, and more drop in as you level up.
           </p>
-          <Link to="/" className="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90">
+          <Link to="/app" className="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90">
             Start earning <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
