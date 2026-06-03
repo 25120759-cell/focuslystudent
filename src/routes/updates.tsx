@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useServerFn } from "@tanstack/react-start";
-import { Calendar, LogIn, LogOut, Plus, Sparkles, Wand2, Loader2 } from "lucide-react";
+import { Calendar, LogIn, LogOut, Plus, Wand2, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { slugify } from "@/lib/slug";

@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useServerFn } from "@tanstack/react-start";
@@ -16,7 +16,7 @@ function AssignmentsPage() {
   const { state, dispatch } = useStore();
   const { user } = useAuth();
   const t = useT();
-  const navigate = useNavigate();
+  
   const parseFn = useServerFn(parseTask);
   const [nlInput, setNlInput] = useState("");
   const [parsing, setParsing] = useState(false);
