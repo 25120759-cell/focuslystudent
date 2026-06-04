@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
-import { Sparkles, Send, X, ListTodo, Zap } from "lucide-react";
+import { Send, X, ListTodo, Lock } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useStore } from "@/lib/store";
 import { useAuth } from "@/lib/auth";
 import { aiChat, aiCredits } from "@/lib/ai.functions";
+import { AICreditCard } from "./AICreditCard";
+import { FocuslyAIWordmark } from "./FocuslyAILogo";
 
-const ROUTES = ["/app", "/assignments", "/calender", "/rewards"] as const;
+const ROUTES = ["/app", "/assignments", "/calender", "/rewards", "/social", "/cards", "/support"] as const;
 
 export function AIChat({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { state, dispatch } = useStore();
@@ -134,18 +136,12 @@ export function AIChat({ open, onClose }: { open: boolean; onClose: () => void }
         >
           <div className="flex h-full flex-col">
             <div className="flex items-center justify-between border-b border-border px-4 py-3">
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-primary" />
-                <span className="font-display text-lg font-semibold">Ask AI for help</span>
-                {credits && <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary uppercase">{credits.plan}</span>}
-              </div>
+              <FocuslyAIWordmark className="text-base" />
               <button onClick={onClose} className="rounded-full p-1 hover:bg-accent"><X className="h-4 w-4" /></button>
             </div>
             {credits && (
-              <div className="border-b border-border bg-muted/40 px-4 py-2 text-[11px] text-muted-foreground flex items-center justify-between">
-                <span>Today: {credits.dayUsed}/{credits.dayLimit}</span>
-                <span>Month: {credits.monthUsed}/{credits.monthLimit}</span>
-                <Link to="/plans" className="text-primary underline">Upgrade</Link>
+              <div className="p-3 border-b border-border">
+                <AICreditCard {...credits} />
               </div>
             )}
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
@@ -187,22 +183,10 @@ export function AIChat({ open, onClose }: { open: boolean; onClose: () => void }
             </div>
             <div className="border-t border-border p-3 space-y-2">
               {outOfCredits ? (
-                <motion.div
-                  initial={{ scale: 0.92, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                  className="relative overflow-hidden rounded-2xl border border-primary/40 bg-gradient-to-br from-primary/15 via-card to-[color:var(--gold)]/10 p-4 text-center"
-                >
-                  <motion.div
-                    className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                    animate={{ x: ["-100%", "200%"] }}
-                    transition={{ repeat: Infinity, duration: 2.5, ease: "linear" }}
-                  />
-                  <motion.div animate={{ scale: [1, 1.08, 1] }} transition={{ repeat: Infinity, duration: 1.6 }} className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-primary">
-                    <Zap className="h-5 w-5" />
-                  </motion.div>
-                  <p className="mt-2 text-sm font-medium">You're out of AI credits</p>
-                  <p className="text-xs text-muted-foreground">Upgrade for higher limits — Pro: 100/day, Max: 500/day.</p>
-                  <Link to="/plans" className="mt-3 inline-block rounded-full bg-primary px-4 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90">Upgrade</Link>
-                </motion.div>
+                <div className="flex items-center gap-2 rounded-full border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+                  <Lock className="h-3 w-3" /> AI is locked until you upgrade or daily limit resets.
+                  <Link to="/plans" className="ml-auto rounded-full bg-destructive px-3 py-1 text-[10px] font-medium text-destructive-foreground">Upgrade</Link>
+                </div>
               ) : (
                 <div className="flex items-center gap-2">
                   <input
