@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useReducer, useRef, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useReducer, useRef, useState, type ReactNode } from "react";
 
 export type Theme = "light" | "dark";
 export type FontSize = "small" | "medium" | "large";
@@ -294,13 +294,14 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-const Ctx = createContext<{ state: State; dispatch: React.Dispatch<Action> } | null>(null);
+const Ctx = createContext<{ state: State; dispatch: React.Dispatch<Action>; hydrated: boolean } | null>(null);
 
 const STORAGE_KEY = "focusly-state-v1";
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, DEFAULT_STATE);
-  const hydrated = useRef(false);
+  const hydratedRef = useRef(false);
+  const [hydrated, setHydrated] = useState(false);
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -311,12 +312,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         dispatch({ type: "REPLACE", state: { ...DEFAULT_STATE, ...parsed, settings: { ...DEFAULT_STATE.settings, ...parsed.settings } } });
       }
     } catch {}
-    hydrated.current = true;
+    hydratedRef.current = true;
+    setHydrated(true);
   }, []);
 
   // Persist
   useEffect(() => {
-    if (!hydrated.current) return;
+    if (!hydratedRef.current) return;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch {}
@@ -338,7 +340,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(id);
   }, [state.timer.isRunning, state.timer.isPaused]);
 
-  return <Ctx.Provider value={{ state, dispatch }}>{children}</Ctx.Provider>;
+  return <Ctx.Provider value={{ state, dispatch, hydrated }}>{children}</Ctx.Provider>;
 }
 
 export function useStore() {
