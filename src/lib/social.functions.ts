@@ -53,7 +53,6 @@ export const toggleLike = createServerFn({ method: "POST" })
       .from("feed_post_likes").select("post_id").eq("post_id", data.post_id).eq("user_id", userId).maybeSingle();
     if (existing) {
       await supabase.from("feed_post_likes").delete().eq("post_id", data.post_id).eq("user_id", userId);
-      await supabaseAdmin.rpc as any; // skip rpc; do manual decrement
       const { data: row } = await supabaseAdmin.from("feed_posts").select("like_count").eq("id", data.post_id).maybeSingle();
       await supabaseAdmin.from("feed_posts").update({ like_count: Math.max(0, (row?.like_count ?? 1) - 1) }).eq("id", data.post_id);
       return { liked: false };
