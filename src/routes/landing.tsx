@@ -41,8 +41,10 @@ function LandingPage() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
           <Link to="/landing" className="font-display text-xl font-semibold tracking-tight">Focusly</Link>
           <nav className="flex items-center gap-1 text-sm">
+            <Link to="/engagement" className="rounded-full px-3 py-1.5 hover:bg-accent">Community</Link>
             <Link to="/plans" className="rounded-full px-3 py-1.5 hover:bg-accent">Plans</Link>
             <Link to="/updates" className="rounded-full px-3 py-1.5 hover:bg-accent">Updates</Link>
+            <Link to="/support" className="rounded-full px-3 py-1.5 hover:bg-accent">Support</Link>
             <Link to="/app" className="ml-2 rounded-full bg-primary px-4 py-1.5 text-primary-foreground hover:opacity-90">Open app</Link>
           </nav>
         </div>
@@ -125,8 +127,10 @@ function LandingPage() {
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 text-sm text-muted-foreground">
           <span>© {new Date().getFullYear()} Focusly · A Lura app</span>
           <div className="flex gap-4">
+            <Link to="/engagement" className="hover:text-foreground">Community</Link>
             <Link to="/plans" className="hover:text-foreground">Plans</Link>
             <Link to="/updates" className="hover:text-foreground">Updates</Link>
+            <Link to="/support" className="hover:text-foreground">Support</Link>
             <a href="https://luraapps.base44.app/legal" target="_blank" rel="noreferrer" className="hover:text-foreground">Legal</a>
           </div>
         </div>

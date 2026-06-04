@@ -15,6 +15,7 @@ import { AuthProvider } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { AppNav } from "@/components/AppNav";
 import { FloatingAI } from "@/components/FloatingAI";
+import { NewPostToast } from "@/components/NewPostToast";
 
 
 function NotFoundComponent() {
@@ -104,6 +105,7 @@ function RootComponent() {
               <Outlet />
             </main>
             <FloatingAI />
+            <NewPostToast />
           </div>
         </StoreProvider>
       </AuthProvider>
