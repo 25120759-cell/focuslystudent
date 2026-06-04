@@ -16,17 +16,21 @@ export const Route = createFileRoute("/_authenticated/assignments/$id")({
 
 function AssignmentDetail() {
   const { id } = Route.useParams();
-  const { state, dispatch } = useStore();
+  const { state, dispatch, hydrated } = useStore();
   const navigate = useNavigate();
   const a = state.assignments.find((x) => x.id === id);
   const [edit, setEdit] = useState(false);
   const [draft, setDraft] = useState<Assignment | null>(a ?? null);
   const [newSub, setNewSub] = useState("");
 
+  if (!hydrated) {
+    return <div className="py-16 text-center text-sm text-muted-foreground">Loading…</div>;
+  }
   if (!a) {
     return (
       <div className="py-16 text-center">
         <h1 className="font-display text-2xl">Assignment not found</h1>
+        <p className="mt-2 text-sm text-muted-foreground">It may have been deleted, or the link is from a different device.</p>
         <Link to="/assignments" className="mt-4 inline-block text-primary underline">← Back to assignments</Link>
       </div>
     );
