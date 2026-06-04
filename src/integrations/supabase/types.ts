@@ -95,6 +95,153 @@ export type Database = {
         }
         Relationships: []
       }
+      card_trades: {
+        Row: {
+          created_at: string
+          from_user: string
+          id: string
+          offer_user_card_id: string
+          request_card_id: number
+          resolved_at: string | null
+          status: string
+          to_user: string
+        }
+        Insert: {
+          created_at?: string
+          from_user: string
+          id?: string
+          offer_user_card_id: string
+          request_card_id: number
+          resolved_at?: string | null
+          status?: string
+          to_user: string
+        }
+        Update: {
+          created_at?: string
+          from_user?: string
+          id?: string
+          offer_user_card_id?: string
+          request_card_id?: number
+          resolved_at?: string | null
+          status?: string
+          to_user?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "card_trades_offer_user_card_id_fkey"
+            columns: ["offer_user_card_id"]
+            isOneToOne: false
+            referencedRelation: "user_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversation_messages: {
+        Row: {
+          body: string
+          conversation_id: string
+          created_at: string
+          id: string
+          sender_id: string
+        }
+        Insert: {
+          body: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          sender_id: string
+        }
+        Update: {
+          body?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          created_at: string
+          id: string
+          last_message_at: string
+          user_a: string
+          user_b: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          user_a: string
+          user_b: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          user_a?: string
+          user_b?: string
+        }
+        Relationships: []
+      }
+      feed_post_likes: {
+        Row: {
+          created_at: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feed_post_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "feed_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feed_posts: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          like_count: number
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          like_count?: number
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          like_count?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       posts: {
         Row: {
           author_id: string
@@ -137,11 +284,14 @@ export type Database = {
           accepted_privacy_at: string | null
           accepted_terms_at: string | null
           avatar_url: string | null
+          coins: number
           created_at: string
           display_name: string | null
           id: string
           legal_version: string | null
           monthly_credit_override: number | null
+          pack_opens_day: string | null
+          pack_opens_today: number
           plan: string
           updated_at: string
         }
@@ -150,11 +300,14 @@ export type Database = {
           accepted_privacy_at?: string | null
           accepted_terms_at?: string | null
           avatar_url?: string | null
+          coins?: number
           created_at?: string
           display_name?: string | null
           id: string
           legal_version?: string | null
           monthly_credit_override?: number | null
+          pack_opens_day?: string | null
+          pack_opens_today?: number
           plan?: string
           updated_at?: string
         }
@@ -163,11 +316,14 @@ export type Database = {
           accepted_privacy_at?: string | null
           accepted_terms_at?: string | null
           avatar_url?: string | null
+          coins?: number
           created_at?: string
           display_name?: string | null
           id?: string
           legal_version?: string | null
           monthly_credit_override?: number | null
+          pack_opens_day?: string | null
+          pack_opens_today?: number
           plan?: string
           updated_at?: string
         }
@@ -287,6 +443,27 @@ export type Database = {
           created_at?: string
           day?: string
           id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_cards: {
+        Row: {
+          card_id: number
+          id: string
+          obtained_at: string
+          user_id: string
+        }
+        Insert: {
+          card_id: number
+          id?: string
+          obtained_at?: string
+          user_id: string
+        }
+        Update: {
+          card_id?: number
+          id?: string
+          obtained_at?: string
           user_id?: string
         }
         Relationships: []
