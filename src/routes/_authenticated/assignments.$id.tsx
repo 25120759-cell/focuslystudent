@@ -1,8 +1,22 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Edit2, Trash2, Save, X, Check, Plus, Calendar } from "lucide-react";
-import { useStore, type Assignment } from "@/lib/store";
+import { useServerFn } from "@tanstack/react-start";
+import { deleteAssignment, getAssignment, updateAssignment } from "@/lib/assignments.functions";
+
+interface AssignmentDetailRow {
+  id: string;
+  title: string;
+  due: string | null;
+  status: "Opened" | "Completed" | "Late";
+  description: string;
+  resources: { name: string; link: string }[];
+  subtasks: { id: string; title: string; done: boolean }[];
+  priority?: "low" | "medium" | "high";
+  tags?: string[];
+  notes?: string;
+}
 
 export const Route = createFileRoute("/_authenticated/assignments/$id")({
   component: AssignmentDetail,
@@ -16,48 +30,73 @@ export const Route = createFileRoute("/_authenticated/assignments/$id")({
 
 function AssignmentDetail() {
   const { id } = Route.useParams();
-  const { state, dispatch, hydrated } = useStore();
+  const getFn = useServerFn(getAssignment);
+  const updateFn = useServerFn(updateAssignment);
+  const deleteFn = useServerFn(deleteAssignment);
   const navigate = useNavigate();
-  const a = state.assignments.find((x) => x.id === id);
+  const [a, setA] = useState<AssignmentDetailRow | null>(null);
+  const [loaded, setLoaded] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
   const [edit, setEdit] = useState(false);
-  const [draft, setDraft] = useState<Assignment | null>(a ?? null);
+  const [draft, setDraft] = useState<AssignmentDetailRow | null>(null);
   const [newSub, setNewSub] = useState("");
 
-  if (!hydrated) {
+  async function load() {
+    setLoaded(false);
+    setErr(null);
+    try {
+      const r: any = await getFn({ data: { id } });
+      setA(r.assignment ? { ...r.assignment, subtasks: r.assignment.subtasks ?? [], resources: r.assignment.resources ?? [] } : null);
+    } catch (e: any) {
+      setErr(e.message || "Failed to load assignment");
+    } finally {
+      setLoaded(true);
+    }
+  }
+
+  useEffect(() => { load(); }, [id]);
+
+  if (!loaded) {
     return <div className="py-16 text-center text-sm text-muted-foreground">Loading…</div>;
   }
   if (!a) {
     return (
       <div className="py-16 text-center">
         <h1 className="font-display text-2xl">Assignment not found</h1>
-        <p className="mt-2 text-sm text-muted-foreground">It may have been deleted, or the link is from a different device.</p>
+        <p className="mt-2 text-sm text-muted-foreground">{err || "It may have been deleted, or the link is from a different account."}</p>
         <Link to="/assignments" className="mt-4 inline-block text-primary underline">← Back to assignments</Link>
       </div>
     );
   }
 
   const current = edit ? draft! : a;
-  const subtasks = (a as any).subtasks as Array<{ id: string; title: string; done: boolean }> | undefined ?? [];
+  const subtasks = a.subtasks ?? [];
 
-  function save() {
+  async function save() {
     if (!draft) return;
-    dispatch({ type: "UPDATE_ASSIGNMENT", id: a!.id, patch: draft });
+    const r: any = await updateFn({ data: { id: a.id, patch: draft } });
+    setA({ ...r.assignment, subtasks: r.assignment.subtasks ?? [], resources: r.assignment.resources ?? [] });
     setEdit(false);
   }
 
-  function addSub() {
+  async function saveSubtasks(next: AssignmentDetailRow["subtasks"]) {
+    const r: any = await updateFn({ data: { id: a.id, patch: { subtasks: next } } });
+    setA({ ...r.assignment, subtasks: r.assignment.subtasks ?? [], resources: r.assignment.resources ?? [] });
+  }
+
+  async function addSub() {
     if (!newSub.trim()) return;
     const sub = { id: `s-${Date.now()}`, title: newSub.trim(), done: false };
     const next = [...subtasks, sub];
-    dispatch({ type: "UPDATE_ASSIGNMENT", id: a!.id, patch: { subtasks: next } as any });
+    await saveSubtasks(next);
     setNewSub("");
   }
-  function toggleSub(sid: string) {
+  async function toggleSub(sid: string) {
     const next = subtasks.map((s) => (s.id === sid ? { ...s, done: !s.done } : s));
-    dispatch({ type: "UPDATE_ASSIGNMENT", id: a!.id, patch: { subtasks: next } as any });
+    await saveSubtasks(next);
   }
-  function delSub(sid: string) {
-    dispatch({ type: "UPDATE_ASSIGNMENT", id: a!.id, patch: { subtasks: subtasks.filter((s) => s.id !== sid) } as any });
+  async function delSub(sid: string) {
+    await saveSubtasks(subtasks.filter((s) => s.id !== sid));
   }
 
   return (
@@ -73,7 +112,7 @@ function AssignmentDetail() {
                 <Edit2 className="h-3 w-3" /> Edit
               </button>
               <button
-                onClick={() => { if (confirm("Delete this assignment?")) { dispatch({ type: "DELETE_ASSIGNMENT", id: a.id }); navigate({ to: "/assignments" }); } }}
+                onClick={async () => { if (confirm("Delete this assignment?")) { await deleteFn({ data: { id: a.id } }); navigate({ to: "/assignments" }); } }}
                 className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs hover:bg-destructive hover:text-destructive-foreground"
               >
                 <Trash2 className="h-3 w-3" /> Delete
@@ -106,7 +145,7 @@ function AssignmentDetail() {
                 <input
                   type="datetime-local"
                   value={draft!.due ? new Date(draft!.due).toISOString().slice(0, 16) : ""}
-                  onChange={(e) => setDraft({ ...draft!, due: new Date(e.target.value).toISOString() })}
+                  onChange={(e) => setDraft({ ...draft!, due: e.target.value ? new Date(e.target.value).toISOString() : null })}
                   className="rounded-md border border-input bg-background px-2 py-1 text-sm"
                 />
               </label>
@@ -114,7 +153,7 @@ function AssignmentDetail() {
                 <span className="block text-muted-foreground mb-1">Status</span>
                 <select
                   value={draft!.status}
-                  onChange={(e) => setDraft({ ...draft!, status: e.target.value as Assignment["status"] })}
+                  onChange={(e) => setDraft({ ...draft!, status: e.target.value as AssignmentDetailRow["status"] })}
                   className="rounded-md border border-input bg-background px-2 py-1 text-sm"
                 >
                   <option>Opened</option><option>Completed</option><option>Late</option>
@@ -136,7 +175,7 @@ function AssignmentDetail() {
             </span>
             <h1 className="font-display text-3xl font-semibold">{current.title}</h1>
             <p className="text-sm text-muted-foreground flex items-center gap-1">
-              <Calendar className="h-3.5 w-3.5" /> Due {new Date(current.due).toLocaleString()}
+              <Calendar className="h-3.5 w-3.5" /> {current.due ? `Due ${new Date(current.due).toLocaleString()}` : "No due date"}
             </p>
             {current.description && <p className="text-sm leading-relaxed whitespace-pre-wrap">{current.description}</p>}
           </>
