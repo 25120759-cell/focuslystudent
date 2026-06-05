@@ -28,8 +28,6 @@ function AssignmentsPage() {
   const [parsing, setParsing] = useState(false);
   const [parseErr, setParseErr] = useState<string | null>(null);
 
-  if (path !== "/assignments") return <Outlet />;
-
   async function load() {
     const r: any = await listFn();
     setAssignments(r.assignments ?? []);
@@ -37,6 +35,8 @@ function AssignmentsPage() {
   }
 
   useEffect(() => { load().catch((e) => { setParseErr(e.message); setLoaded(true); }); }, []);
+
+  if (path !== "/assignments") return <Outlet />;
 
   async function quickAdd() {
     if (!nlInput.trim()) return;
