@@ -69,18 +69,19 @@ function AssignmentDetail() {
     );
   }
 
-  const current = edit ? draft! : a;
-  const subtasks = a.subtasks ?? [];
+  const assignment = a;
+  const current = edit ? draft! : assignment;
+  const subtasks = assignment.subtasks ?? [];
 
   async function save() {
     if (!draft) return;
-    const r: any = await updateFn({ data: { id: a.id, patch: draft } });
+    const r: any = await updateFn({ data: { id: assignment.id, patch: draft } });
     setA({ ...r.assignment, subtasks: r.assignment.subtasks ?? [], resources: r.assignment.resources ?? [] });
     setEdit(false);
   }
 
   async function saveSubtasks(next: AssignmentDetailRow["subtasks"]) {
-    const r: any = await updateFn({ data: { id: a.id, patch: { subtasks: next } } });
+    const r: any = await updateFn({ data: { id: assignment.id, patch: { subtasks: next } } });
     setA({ ...r.assignment, subtasks: r.assignment.subtasks ?? [], resources: r.assignment.resources ?? [] });
   }
 
@@ -108,11 +109,11 @@ function AssignmentDetail() {
         <div className="flex gap-2">
           {!edit ? (
             <>
-              <button onClick={() => { setDraft(a); setEdit(true); }} className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs hover:bg-accent">
+              <button onClick={() => { setDraft(assignment); setEdit(true); }} className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs hover:bg-accent">
                 <Edit2 className="h-3 w-3" /> Edit
               </button>
               <button
-                onClick={async () => { if (confirm("Delete this assignment?")) { await deleteFn({ data: { id: a.id } }); navigate({ to: "/assignments" }); } }}
+                onClick={async () => { if (confirm("Delete this assignment?")) { await deleteFn({ data: { id: assignment.id } }); navigate({ to: "/assignments" }); } }}
                 className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs hover:bg-destructive hover:text-destructive-foreground"
               >
                 <Trash2 className="h-3 w-3" /> Delete
