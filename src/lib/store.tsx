@@ -239,10 +239,6 @@ function reducer(state: State, action: Action): State {
       return { ...state, timer: { ...state.timer, timeLeft: state.timer.timeLeft - 1 } };
     case "TIMER_SET":
       return { ...state, timer: { ...state.timer, ...action.patch } };
-    case "TOGGLE_TODDLE":
-      return { ...state, toddle: { ...state.toddle, linked: !state.toddle.linked } };
-    case "SET_ACTIVE_SUBJECT":
-      return { ...state, toddle: { ...state.toddle, activeSubject: action.id } };
     case "UPLOAD_TIMETABLE":
       return { ...state, timetable: { ...state.timetable, hasData: true } };
     case "ADD_ACTION_PLAN":
@@ -320,11 +316,9 @@ const DICT = {
     settings: "Settings",
     rewards: "Rewards",
     askAI: "Ask AI for help",
-    linkToddle: "Link to Toddle",
     timetable: "Timetable",
     files: "Files",
     studyClock: "Study Clock",
-    analyseToddle: "Analyse from Toddle",
     noTimetable: "No Timetable",
     uploadFile: "Upload file",
     takePicture: "Take Picture",
@@ -370,11 +364,9 @@ const DICT = {
     settings: "设置",
     rewards: "奖励",
     askAI: "向AI求助",
-    linkToddle: "连接 Toddle",
     timetable: "课程表",
     files: "文件",
     studyClock: "学习计时器",
-    analyseToddle: "Toddle 分析",
     noTimetable: "无课程表",
     uploadFile: "上传文件",
     takePicture: "拍照",
