@@ -80,6 +80,23 @@ function LandingPage() {
         </div>
       </Section>
 
+      <Section className="border-t border-border/50">
+        <div className="mb-12 text-center">
+          <span className="text-xs font-semibold uppercase tracking-widest text-primary">New engagement features</span>
+          <h2 className="mt-2 font-display text-3xl font-semibold md:text-4xl">Social, Cards, and AI in one study loop</h2>
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground">Non-signed-in visitors can preview the biggest features here, then jump straight into an account when ready.</p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-3">
+          <Feature icon={Users} title="Social study feed" body="Post wins, message classmates, and keep study momentum visible without leaving Focusly." />
+          <Feature icon={Trophy} title="Collectible cards" body="Earn coins from study progress, open animated packs, sell duplicates, and trade with friends." />
+          <Feature icon={Brain} title="Focusly AI" body="Use credits for task parsing, planning, summaries, coaching, and admin-generated update posts." />
+        </div>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <Link to="/engagement" className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-6 py-3 text-sm font-medium hover:bg-accent">Explore features <ArrowRight className="h-4 w-4" /></Link>
+          <Link to="/login" className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90">Sign in to start</Link>
+        </div>
+      </Section>
+
       {/* Non-AI Features */}
       <Section className="border-t border-border/50">
         <div className="mb-12 text-center">
