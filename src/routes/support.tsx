@@ -39,14 +39,21 @@ function SupportPage() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [outOfCredits, setOutOfCredits] = useState(false);
   const supportFn = useServerFn(aiSupport);
+  const creditsFn = useServerFn(aiCredits);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages.length, loading]);
+  useEffect(() => {
+    if (!user) return;
+    creditsFn().then((r: any) => setOutOfCredits(r.dayUsed >= r.dayLimit || r.monthUsed >= r.monthLimit)).catch(() => {});
+  }, [user]);
 
   async function send() {
     if (!input.trim() || loading) return;
     if (!user) { setErr("Please sign in to use support chat."); return; }
+    if (outOfCredits) { setErr("AI support is paused because your AI credits are out."); return; }
     const msg = input.trim();
     setInput(""); setErr(null);
     const next = [...messages, { role: "user" as const, content: msg }];
@@ -55,25 +62,14 @@ function SupportPage() {
     try {
       const r: any = await supportFn({ data: { history: messages.slice(-10), message: msg } });
       setMessages([...next, { role: "assistant", content: r.text || "..." }]);
+      creditsFn().then((c: any) => setOutOfCredits(c.dayUsed >= c.dayLimit || c.monthUsed >= c.monthLimit)).catch(() => {});
     } catch (e: any) { setErr(e.message); }
     finally { setLoading(false); }
   }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/50">
-        <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-3">
-          <Link to="/landing" className="font-display text-xl font-semibold tracking-tight">Focusly</Link>
-          <nav className="flex items-center gap-1 text-sm">
-            <Link to="/landing" className="rounded-full px-3 py-1.5 hover:bg-accent">Home</Link>
-            <Link to="/updates" className="rounded-full px-3 py-1.5 hover:bg-accent">Updates</Link>
-            <Link to="/plans" className="rounded-full px-3 py-1.5 hover:bg-accent">Plans</Link>
-            <Link to={user ? "/app" : "/login"} className="ml-2 rounded-full bg-primary px-4 py-1.5 text-primary-foreground hover:opacity-90">
-              {user ? "Open app" : "Sign in"}
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <PublicHeader />
 
       <section className="mx-auto max-w-3xl px-6 py-16">
         <span className="text-xs font-semibold uppercase tracking-widest text-primary">Support</span>
@@ -141,9 +137,9 @@ function SupportPage() {
             </div>
             <div className="border-t border-border p-2 flex gap-2">
               <input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()}
-                placeholder={user ? "Ask about Focusly..." : "Sign in to chat"} disabled={!user || loading}
+                placeholder={outOfCredits ? "AI credits are out" : user ? "Ask about Focusly..." : "Sign in to chat"} disabled={!user || loading || outOfCredits}
                 className="flex-1 rounded-full border border-input bg-background px-3 py-1.5 text-sm disabled:opacity-50" />
-              <button onClick={send} disabled={!user || loading}
+              <button onClick={send} disabled={!user || loading || outOfCredits}
                 className="rounded-full bg-primary p-2 text-primary-foreground disabled:opacity-50">
                 <Send className="h-4 w-4" />
               </button>
