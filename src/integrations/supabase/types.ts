@@ -577,6 +577,10 @@ export type Database = {
         Returns: boolean
       }
       redeem_plan_code: { Args: { _code: string }; Returns: Json }
+      redeem_plan_code_for_user: {
+        Args: { _code: string; _user_id: string }
+        Returns: Json
+      }
     }
     Enums: {
       app_role: "admin" | "user"
