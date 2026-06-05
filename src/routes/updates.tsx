@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useServerFn } from "@tanstack/react-start";
@@ -24,6 +24,7 @@ export const Route = createFileRoute("/updates")({
 interface Post { id: string; title: string; body: string; created_at: string; slug: string; summary: string | null }
 
 function UpdatesPage() {
+  const path = useRouterState({ select: (r) => r.location.pathname });
   const { user, isAdmin, signOut } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loaded, setLoaded] = useState(false);
@@ -36,6 +37,8 @@ function UpdatesPage() {
   const [generating, setGenerating] = useState(false);
   const genFn = useServerFn(adminGeneratePost);
   const sumFn = useServerFn(generatePostSummary);
+
+  if (path !== "/updates") return <Outlet />;
 
   async function load() {
     const { data } = await supabase
