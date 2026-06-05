@@ -61,12 +61,6 @@ export interface State {
     hasData: boolean;
     schedule: Record<string, string[]>;
   };
-  toddle: {
-    linked: boolean;
-    activeSubject: string | null;
-    subjects: { id: string; name: string }[];
-    extractedTasks: Record<string, { title: string; description: string; due: string; group: string }[]>;
-  };
   timer: {
     isRunning: boolean;
     isPaused: boolean;
@@ -127,36 +121,6 @@ const DEFAULT_STATE: State = {
       Friday: ["Host Country", "Leadership", "Break", "Study Hall", "Explorations"],
     },
   },
-  toddle: {
-    linked: false,
-    activeSubject: null,
-    subjects: [
-      { id: "english", name: "7B English: Language and Literature" },
-      { id: "maths", name: "7B Maths" },
-      { id: "indsoc", name: "7B Induvisuals and Societies" },
-      { id: "science", name: "7B Science" },
-      { id: "arts", name: "7B Arts" },
-      { id: "swimming", name: "7B Swimming" },
-      { id: "design", name: "7B Design" },
-      { id: "pe", name: "7B Physical Education" },
-    ],
-    extractedTasks: {
-      english: [
-        {
-          title: "Analyzing Scene 1-8 of Hatchet",
-          description: "Analyse the conflict and main character, explain how he changes through out the story",
-          due: "18 of November 9:30 AM",
-          group: "Induvisual work",
-        },
-        {
-          title: "Read chapters 8-10 of Hatchet",
-          description: "Read through chapters 8-10 of the Book Hatchet. Take notes. on the setting, plot and mood.",
-          due: "22nd of November 8:30 PM",
-          group: "Induvisual work",
-        },
-      ],
-    },
-  },
   timer: { isRunning: false, isPaused: false, timeLeft: 30 * 60, isBreak: false, isFullscreen: false },
   gamification: { points: 150, level: 1, assignmentsToNextLevel: 5, completedCount: 0, redeemedVouchers: [] },
   actionPlans: {
@@ -202,8 +166,6 @@ type Action =
   | { type: "REDEEM"; voucher: { id: string; name: string; cost: number; codePrefix: string } }
   | { type: "TIMER_TICK" }
   | { type: "TIMER_SET"; patch: Partial<State["timer"]> }
-  | { type: "TOGGLE_TODDLE" }
-  | { type: "SET_ACTIVE_SUBJECT"; id: string | null }
   | { type: "UPLOAD_TIMETABLE" }
   | { type: "ADD_ACTION_PLAN"; plan: ActionPlan }
   | { type: "PUSH_CHAT"; msg: ChatMessage }
