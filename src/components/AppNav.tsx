@@ -5,7 +5,7 @@ import { useT, useStore } from "@/lib/store";
 import { useAuth } from "@/lib/auth";
 import { SettingsModal } from "./SettingsModal";
 
-const NAV_HIDDEN = ["/landing", "/plans", "/updates", "/login", "/signup", "/engagement"];
+const NAV_HIDDEN = ["/landing", "/plans", "/updates", "/login", "/signup", "/engagement", "/support"];
 
 export function AppNav() {
   const t = useT();
