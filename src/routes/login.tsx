@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { Sparkles } from "lucide-react";
@@ -16,6 +16,12 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data, error }) => {
+      if (!error && data.user) navigate({ to: "/app", replace: true });
+    });
+  }, [navigate]);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
