@@ -55,8 +55,8 @@ function LandingPage() {
           plan — scheduled around your timetable, broken into steps, and ordered by what matters now.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link to="/app" className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90">
-            Open Focusly <ArrowRight className="h-4 w-4" />
+          <Link to="/login" className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90">
+            Sign in to Focusly <ArrowRight className="h-4 w-4" />
           </Link>
           <Link to="/plans" className="inline-flex items-center rounded-full border border-border bg-card px-6 py-3 text-sm font-medium hover:bg-accent">
             See plans
@@ -122,7 +122,7 @@ function LandingPage() {
             Earn points for completed assignments. Redeem them for real rewards — McDonald's,
             Starbucks, and more drop in as you level up.
           </p>
-          <Link to="/app" className="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90">
+          <Link to="/login" className="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90">
             Start earning <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
