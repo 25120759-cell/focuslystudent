@@ -1,10 +1,11 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useServerFn } from "@tanstack/react-start";
-import { useStore, useT } from "@/lib/store";
+import { useT } from "@/lib/store";
 import { useAuth } from "@/lib/auth";
 import { parseTask } from "@/lib/ai.functions";
+import { createAssignment, deleteAssignment, listAssignments, updateAssignment } from "@/lib/assignments.functions";
 import { FileText, Check, AlertTriangle, Sparkles, Plus, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/assignments")({
@@ -13,34 +14,43 @@ export const Route = createFileRoute("/_authenticated/assignments")({
 });
 
 function AssignmentsPage() {
-  const { state, dispatch } = useStore();
+  const path = useRouterState({ select: (r) => r.location.pathname });
   const { user } = useAuth();
   const t = useT();
-  
+  const listFn = useServerFn(listAssignments);
+  const createFn = useServerFn(createAssignment);
+  const updateFn = useServerFn(updateAssignment);
+  const deleteFn = useServerFn(deleteAssignment);
   const parseFn = useServerFn(parseTask);
+  const [assignments, setAssignments] = useState<any[]>([]);
+  const [loaded, setLoaded] = useState(false);
   const [nlInput, setNlInput] = useState("");
   const [parsing, setParsing] = useState(false);
   const [parseErr, setParseErr] = useState<string | null>(null);
+
+  if (path !== "/assignments") return <Outlet />;
+
+  async function load() {
+    const r: any = await listFn();
+    setAssignments(r.assignments ?? []);
+    setLoaded(true);
+  }
+
+  useEffect(() => { load().catch((e) => { setParseErr(e.message); setLoaded(true); }); }, []);
 
   async function quickAdd() {
     if (!nlInput.trim()) return;
     setParseErr(null);
     if (!user) {
-      dispatch({
-        type: "ADD_ASSIGNMENT",
-        assignment: { id: `a-${Date.now()}`, title: nlInput, description: "", due: new Date(Date.now() + 86400000).toISOString(), status: "Opened", resources: [] },
-      });
       setNlInput("");
       return;
     }
     setParsing(true);
     try {
       const r: any = await parseFn({ data: { text: nlInput } });
-      dispatch({
-        type: "ADD_ASSIGNMENT",
-        assignment: { id: `a-${Date.now()}`, title: r.title || nlInput, description: r.description || "", due: r.due || new Date(Date.now() + 86400000).toISOString(), status: "Opened", resources: [] },
-      });
+      await createFn({ data: { title: r.title || nlInput, description: r.description || "", due: r.due || new Date(Date.now() + 86400000).toISOString(), status: "Opened", resources: [] } });
       setNlInput("");
+      await load();
     } catch (e: any) {
       setParseErr(e.message || "Failed to parse");
     } finally {
@@ -78,7 +88,7 @@ function AssignmentsPage() {
 
       <div className="grid gap-4">
         <AnimatePresence>
-          {state.assignments.map((a) => (
+          {assignments.map((a) => (
             <motion.article
               layout
               key={a.id}
@@ -96,21 +106,21 @@ function AssignmentsPage() {
                   <p className="text-xs text-muted-foreground mt-1">{t("dueDate")}: {new Date(a.due).toLocaleString()}</p>
                 </Link>
                 <div className="flex gap-2 opacity-80 group-hover:opacity-100">
-                  <button onClick={() => dispatch({ type: "COMPLETE_ASSIGNMENT", id: a.id })} className="flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90">
+                  <button onClick={async () => { await updateFn({ data: { id: a.id, patch: { status: "Completed" } } }); await load(); }} className="flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90">
                     <Check className="h-3 w-3" /> {t("markComplete")}
                   </button>
-                  <button onClick={() => dispatch({ type: "LATE_ASSIGNMENT", id: a.id })} className="flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-accent">
+                  <button onClick={async () => { await updateFn({ data: { id: a.id, patch: { status: "Late" } } }); await load(); }} className="flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-accent">
                     <AlertTriangle className="h-3 w-3" /> {t("markLate")}
                   </button>
-                  <button onClick={() => { if (confirm("Delete this assignment?")) dispatch({ type: "DELETE_ASSIGNMENT", id: a.id }); }} className="flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-destructive hover:text-destructive-foreground" title="Delete">
+                  <button onClick={async () => { if (confirm("Delete this assignment?")) { await deleteFn({ data: { id: a.id } }); await load(); } }} className="flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-destructive hover:text-destructive-foreground" title="Delete">
                     <Trash2 className="h-3 w-3" />
                   </button>
                 </div>
               </div>
               {a.description && <p className="text-sm text-foreground/80 leading-relaxed line-clamp-2">{a.description}</p>}
-              {a.resources.length > 0 && (
+              {(a.resources ?? []).length > 0 && (
                 <div className="mt-4 flex flex-wrap gap-2">
-                  {a.resources.map((r) => (
+                  {(a.resources ?? []).map((r: any) => (
                     <a key={r.name} href={r.link} className="flex items-center gap-1 rounded-full bg-accent px-3 py-1 text-xs hover:bg-accent/80">
                       <FileText className="h-3 w-3" /> {r.name}
                     </a>
@@ -120,7 +130,8 @@ function AssignmentsPage() {
             </motion.article>
           ))}
         </AnimatePresence>
-        {state.assignments.length === 0 && (
+        {!loaded && <div className="rounded-3xl glass p-12 text-center text-muted-foreground text-sm">Loading assignments…</div>}
+        {loaded && assignments.length === 0 && (
           <div className="rounded-3xl glass p-12 text-center text-muted-foreground text-sm">
             No assignments yet. Add one above.
           </div>
