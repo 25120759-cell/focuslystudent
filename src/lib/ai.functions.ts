@@ -218,6 +218,7 @@ export const adminGeneratePost = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context as any;
     await requireAdmin(supabase, userId);
+    await checkCredits(supabase, userId);
     const json = await callGateway({
       messages: [
         { role: "system", content: 'You are the Focusly changelog writer. Generate a release note. Return ONLY JSON: {"title":string (under 80 chars),"summary":string (under 160 chars, plain),"body":string (markdown, 2-4 short paragraphs)}' },
@@ -226,6 +227,8 @@ export const adminGeneratePost = createServerFn({ method: "POST" })
       response_format: { type: "json_object" },
     });
     const raw = json.choices?.[0]?.message?.content ?? "{}";
+    const usage = json.usage ?? {};
+    await recordUsage(supabase, userId, usage.prompt_tokens ?? 0, usage.completion_tokens ?? 0);
     try { return JSON.parse(raw); }
     catch { return { title: data.prompt.slice(0, 60), summary: "", body: data.prompt }; }
   });
@@ -236,12 +239,15 @@ export const generatePostSummary = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context as any;
     await requireAdmin(supabase, userId);
+    await checkCredits(supabase, userId);
     const json = await callGateway({
       messages: [
         { role: "system", content: "Write a one-sentence summary under 160 characters. Return ONLY the sentence, no quotes." },
         { role: "user", content: `Title: ${data.title}\n\n${data.body}` },
       ],
     });
+    const usage = json.usage ?? {};
+    await recordUsage(supabase, userId, usage.prompt_tokens ?? 0, usage.completion_tokens ?? 0);
     return { summary: (json.choices?.[0]?.message?.content ?? "").trim().slice(0, 200) };
   });
 
