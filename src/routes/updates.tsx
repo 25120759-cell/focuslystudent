@@ -38,8 +38,6 @@ function UpdatesPage() {
   const genFn = useServerFn(adminGeneratePost);
   const sumFn = useServerFn(generatePostSummary);
 
-  if (path !== "/updates") return <Outlet />;
-
   async function load() {
     const { data } = await supabase
       .from("posts")
@@ -51,6 +49,8 @@ function UpdatesPage() {
   }
 
   useEffect(() => { load(); }, [user?.id]);
+
+  if (path !== "/updates") return <Outlet />;
 
   async function aiDraft() {
     if (!aiPrompt.trim()) return;
