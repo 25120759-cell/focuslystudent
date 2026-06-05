@@ -144,38 +144,14 @@ export const parseTask = createServerFn({ method: "POST" })
     catch { return { title: data.text, description: "", due: new Date(Date.now() + 86400000).toISOString() }; }
   });
 
-export const breakdownToddleSubject = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((input) =>
-    z.object({
-      subject: z.string().min(1).max(200),
-      tasks: z.array(z.object({ title: z.string(), description: z.string(), due: z.string() })).max(20),
-    }).parse(input),
-  )
-  .handler(async ({ data, context }) => {
-    const { supabase, userId } = context as any;
-    await checkCredits(supabase, userId);
-    const json = await callGateway({
-      messages: [
-        { role: "system", content: 'Analyse a subject\'s assignments and produce a structured study plan. Return ONLY JSON: {"title":string,"steps":[{"action":string,"date":string,"progress":string,"status":string}]}' },
-        { role: "user", content: `Subject: ${data.subject}\nAssignments:\n${data.tasks.map((t) => `- ${t.title} (due ${t.due}): ${t.description}`).join("\n")}` },
-      ],
-      response_format: { type: "json_object" },
-    });
-    const raw = json.choices?.[0]?.message?.content ?? "{}";
-    const usage = json.usage ?? {};
-    await recordUsage(supabase, userId, usage.prompt_tokens ?? 0, usage.completion_tokens ?? 0);
-    try { return JSON.parse(raw); } catch { return { title: `Plan: ${data.subject}`, steps: [] }; }
-  });
-
 // ---- Support chatbot (free, product-help only, rate-limited) ----
 
 const SUPPORT_PROMPT = `You are the Focusly Support assistant. You ONLY answer questions about how to use the Focusly app:
 - The Study Clock (Pomodoro timer with chimes)
-- Timetable, Toddle sync, Files
+- Timetable and Files
 - Assignments (creating, editing, deleting, subtasks, AI quick-add)
-- Calendar, Rewards (points & vouchers)
-- AI assistant (credits, plans), Settings (theme, font size, language)
+- Calendar, Rewards (points & vouchers), Social, Cards
+- AI assistant (credits, plan codes), Settings (theme, font size, language)
 - Account / sign-in / privacy
 
 If the user asks anything unrelated (general schoolwork, jokes, code help, world knowledge), politely refuse in one sentence and steer them back to Focusly support. Be concise. Use bullets for steps.`;
@@ -190,6 +166,7 @@ export const aiSupport = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context as any;
+    await checkCredits(supabase, userId);
     const today = new Date().toISOString().slice(0, 10);
     const { count } = await supabase.from("support_usage").select("id", { count: "exact", head: true }).eq("user_id", userId).eq("day", today);
     if ((count ?? 0) >= SUPPORT_DAY_LIMIT) throw new Error(`Free support limit reached (${SUPPORT_DAY_LIMIT}/day). Try again tomorrow.`);
@@ -201,6 +178,8 @@ export const aiSupport = createServerFn({ method: "POST" })
       ],
     });
     await supabase.from("support_usage").insert({ user_id: userId });
+    const usage = json.usage ?? {};
+    await recordUsage(supabase, userId, usage.prompt_tokens ?? 0, usage.completion_tokens ?? 0);
     const text = json.choices?.[0]?.message?.content ?? "";
     return { text };
   });
