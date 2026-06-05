@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useServerFn } from "@tanstack/react-start";
 import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
-import { useStore, useT } from "@/lib/store";
+import { useT } from "@/lib/store";
+import { listAssignments } from "@/lib/assignments.functions";
 
 export const Route = createFileRoute("/_authenticated/calender")({
   component: CalendarPage,
@@ -12,8 +14,9 @@ export const Route = createFileRoute("/_authenticated/calender")({
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 function CalendarPage() {
-  const { state } = useStore();
   const t = useT();
+  const listFn = useServerFn(listAssignments);
+  const [assignments, setAssignments] = useState<any[]>([]);
   const [cursor, setCursor] = useState(() => new Date());
 
   const year = cursor.getFullYear();
@@ -22,9 +25,11 @@ function CalendarPage() {
   const startWeekday = first.getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
+  useEffect(() => { listFn().then((r: any) => setAssignments(r.assignments ?? [])).catch(() => setAssignments([])); }, []);
+
   const byDay = useMemo(() => {
-    const map: Record<string, typeof state.assignments> = {};
-    state.assignments.forEach((a) => {
+    const map: Record<string, any[]> = {};
+    assignments.forEach((a) => {
       if (!a.due) return;
       const d = new Date(a.due);
       if (d.getFullYear() === year && d.getMonth() === month) {
@@ -33,7 +38,7 @@ function CalendarPage() {
       }
     });
     return map;
-  }, [state.assignments, year, month]);
+  }, [assignments, year, month]);
 
   const cells: Array<{ day?: number }> = [];
   for (let i = 0; i < startWeekday; i++) cells.push({});
