@@ -61,12 +61,6 @@ export interface State {
     hasData: boolean;
     schedule: Record<string, string[]>;
   };
-  toddle: {
-    linked: boolean;
-    activeSubject: string | null;
-    subjects: { id: string; name: string }[];
-    extractedTasks: Record<string, { title: string; description: string; due: string; group: string }[]>;
-  };
   timer: {
     isRunning: boolean;
     isPaused: boolean;
@@ -127,36 +121,6 @@ const DEFAULT_STATE: State = {
       Friday: ["Host Country", "Leadership", "Break", "Study Hall", "Explorations"],
     },
   },
-  toddle: {
-    linked: false,
-    activeSubject: null,
-    subjects: [
-      { id: "english", name: "7B English: Language and Literature" },
-      { id: "maths", name: "7B Maths" },
-      { id: "indsoc", name: "7B Induvisuals and Societies" },
-      { id: "science", name: "7B Science" },
-      { id: "arts", name: "7B Arts" },
-      { id: "swimming", name: "7B Swimming" },
-      { id: "design", name: "7B Design" },
-      { id: "pe", name: "7B Physical Education" },
-    ],
-    extractedTasks: {
-      english: [
-        {
-          title: "Analyzing Scene 1-8 of Hatchet",
-          description: "Analyse the conflict and main character, explain how he changes through out the story",
-          due: "18 of November 9:30 AM",
-          group: "Induvisual work",
-        },
-        {
-          title: "Read chapters 8-10 of Hatchet",
-          description: "Read through chapters 8-10 of the Book Hatchet. Take notes. on the setting, plot and mood.",
-          due: "22nd of November 8:30 PM",
-          group: "Induvisual work",
-        },
-      ],
-    },
-  },
   timer: { isRunning: false, isPaused: false, timeLeft: 30 * 60, isBreak: false, isFullscreen: false },
   gamification: { points: 150, level: 1, assignmentsToNextLevel: 5, completedCount: 0, redeemedVouchers: [] },
   actionPlans: {
@@ -202,8 +166,6 @@ type Action =
   | { type: "REDEEM"; voucher: { id: string; name: string; cost: number; codePrefix: string } }
   | { type: "TIMER_TICK" }
   | { type: "TIMER_SET"; patch: Partial<State["timer"]> }
-  | { type: "TOGGLE_TODDLE" }
-  | { type: "SET_ACTIVE_SUBJECT"; id: string | null }
   | { type: "UPLOAD_TIMETABLE" }
   | { type: "ADD_ACTION_PLAN"; plan: ActionPlan }
   | { type: "PUSH_CHAT"; msg: ChatMessage }
@@ -277,10 +239,6 @@ function reducer(state: State, action: Action): State {
       return { ...state, timer: { ...state.timer, timeLeft: state.timer.timeLeft - 1 } };
     case "TIMER_SET":
       return { ...state, timer: { ...state.timer, ...action.patch } };
-    case "TOGGLE_TODDLE":
-      return { ...state, toddle: { ...state.toddle, linked: !state.toddle.linked } };
-    case "SET_ACTIVE_SUBJECT":
-      return { ...state, toddle: { ...state.toddle, activeSubject: action.id } };
     case "UPLOAD_TIMETABLE":
       return { ...state, timetable: { ...state.timetable, hasData: true } };
     case "ADD_ACTION_PLAN":
@@ -358,11 +316,9 @@ const DICT = {
     settings: "Settings",
     rewards: "Rewards",
     askAI: "Ask AI for help",
-    linkToddle: "Link to Toddle",
     timetable: "Timetable",
     files: "Files",
     studyClock: "Study Clock",
-    analyseToddle: "Analyse from Toddle",
     noTimetable: "No Timetable",
     uploadFile: "Upload file",
     takePicture: "Take Picture",
@@ -408,11 +364,9 @@ const DICT = {
     settings: "设置",
     rewards: "奖励",
     askAI: "向AI求助",
-    linkToddle: "连接 Toddle",
     timetable: "课程表",
     files: "文件",
     studyClock: "学习计时器",
-    analyseToddle: "Toddle 分析",
     noTimetable: "无课程表",
     uploadFile: "上传文件",
     takePicture: "拍照",

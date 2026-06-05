@@ -1,10 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Link2, CalendarDays, FolderOpen, Clock } from "lucide-react";
+import { Sparkles, CalendarDays, FolderOpen, Clock } from "lucide-react";
 import { StudyClock } from "@/components/console/StudyClock";
 import { Timetable } from "@/components/console/Timetable";
-import { ToddleView } from "@/components/console/ToddleView";
 import { FilesView } from "@/components/console/FilesView";
 import { AIChat } from "@/components/AIChat";
 
@@ -12,12 +11,11 @@ export const Route = createFileRoute("/_authenticated/app")({
   component: Console,
 });
 
-type View = "clock" | "timetable" | "toddle" | "files";
+type View = "clock" | "timetable" | "files";
 
 const VIEW_LABEL: Record<View, string> = {
   clock: "Study Clock",
   timetable: "Timetable",
-  toddle: "Analyse from Toddle",
   files: "Files",
 };
 
@@ -48,7 +46,6 @@ function Console() {
         >
           {view === "clock" && <StudyClock />}
           {view === "timetable" && <Timetable />}
-          {view === "toddle" && <ToddleView />}
           {view === "files" && <FilesView />}
         </motion.div>
       </AnimatePresence>
@@ -56,7 +53,6 @@ function Console() {
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30">
         <div className="nav-pill flex items-center gap-1 rounded-full px-2 py-2 shadow-lg">
           <UBtn icon={<Sparkles className="h-4 w-4" />} label="Ask AI for help" onClick={() => setAiOpen(true)} />
-          <UBtn icon={<Link2 className="h-4 w-4" />} label="Link to Toddle" active={view === "toddle"} onClick={() => setView("toddle")} />
           <UBtn icon={<CalendarDays className="h-4 w-4" />} label="Timetable" active={view === "timetable"} onClick={() => setView("timetable")} />
           <UBtn icon={<Clock className="h-4 w-4" />} label="Study Clock" active={view === "clock"} onClick={() => setView("clock")} />
           <UBtn icon={<FolderOpen className="h-4 w-4" />} label="Files" active={view === "files"} onClick={() => setView("files")} />

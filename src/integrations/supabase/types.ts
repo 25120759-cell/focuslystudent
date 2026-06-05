@@ -242,6 +242,77 @@ export type Database = {
         }
         Relationships: []
       }
+      plan_code_redemptions: {
+        Row: {
+          code_id: string
+          id: string
+          redeemed_at: string
+          user_id: string
+        }
+        Insert: {
+          code_id: string
+          id?: string
+          redeemed_at?: string
+          user_id: string
+        }
+        Update: {
+          code_id?: string
+          id?: string
+          redeemed_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_code_redemptions_code_id_fkey"
+            columns: ["code_id"]
+            isOneToOne: false
+            referencedRelation: "plan_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plan_codes: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          created_by: string
+          expires_at: string | null
+          id: string
+          max_redemptions: number
+          monthly_credit_override: number | null
+          plan: string
+          redeemed_count: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          created_by: string
+          expires_at?: string | null
+          id?: string
+          max_redemptions?: number
+          monthly_credit_override?: number | null
+          plan: string
+          redeemed_count?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          created_by?: string
+          expires_at?: string | null
+          id?: string
+          max_redemptions?: number
+          monthly_credit_override?: number | null
+          plan?: string
+          redeemed_count?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       posts: {
         Row: {
           author_id: string
@@ -504,6 +575,11 @@ export type Database = {
       is_list_member: {
         Args: { _list_id: string; _user_id: string }
         Returns: boolean
+      }
+      redeem_plan_code: { Args: { _code: string }; Returns: Json }
+      redeem_plan_code_for_user: {
+        Args: { _code: string; _user_id: string }
+        Returns: Json
       }
     }
     Enums: {

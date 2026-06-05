@@ -24,7 +24,7 @@ Grant `admin` role to `afhaigh76@gmail.com` and `25120759@sunwayeducation.info` 
 - Admin composer supports manual + AI-draft modes.
 
 ## 4. Support page + free chatbot
-- New public route `/support` with sectioned Focusly Docs (Getting started, Timer, Toddle sync, AI, Rewards, Shortcuts, FAQ).
+- New public route `/support` with sectioned Focusly Docs (Getting started, Timer, Assignments, Social & Cards, AI, Rewards, Shortcuts, FAQ).
 - `SupportChat` component using new `aiSupport` server fn:
   - Strict system prompt: **product help only**, refuses off-topic.
   - Bypasses `ai_usage` (no credit cost).

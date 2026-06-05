@@ -3,6 +3,7 @@ import {
   Sparkles, Brain, CalendarClock, Target, MessageCircle,
   WifiOff, MapPin, Keyboard, Users, ArrowRight, Clock, BookOpen, Trophy,
 } from "lucide-react";
+import { PublicHeader } from "@/components/PublicHeader";
 
 export const Route = createFileRoute("/landing")({
   ssr: false,
@@ -10,9 +11,9 @@ export const Route = createFileRoute("/landing")({
   head: () => ({
     meta: [
       { title: "Focusly — The AI study app that thinks ahead" },
-      { name: "description", content: "Plan, focus, and finish your schoolwork with an offline-first study app powered by AI. Natural-language tasks, smart scheduling, focus timer, Toddle sync, and gamified rewards." },
+      { name: "description", content: "Plan, focus, and finish your schoolwork with an offline-first study app powered by AI, social tools, collectible cards, and gamified rewards." },
       { property: "og:title", content: "Focusly — The AI study app that thinks ahead" },
-      { property: "og:description", content: "Offline-first AI study app: natural-language tasks, smart scheduling, focus timer, Toddle sync, and gamified rewards." },
+      { property: "og:description", content: "Offline-first AI study app: natural-language tasks, smart scheduling, focus timer, social tools, cards, and gamified rewards." },
     ],
   }),
 });
@@ -36,19 +37,7 @@ function Feature({ icon: Icon, title, body }: { icon: any; title: string; body: 
 function LandingPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Top bar */}
-      <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/50">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-          <Link to="/landing" className="font-display text-xl font-semibold tracking-tight">Focusly</Link>
-          <nav className="flex items-center gap-1 text-sm">
-            <Link to="/engagement" className="rounded-full px-3 py-1.5 hover:bg-accent">Community</Link>
-            <Link to="/plans" className="rounded-full px-3 py-1.5 hover:bg-accent">Plans</Link>
-            <Link to="/updates" className="rounded-full px-3 py-1.5 hover:bg-accent">Updates</Link>
-            <Link to="/support" className="rounded-full px-3 py-1.5 hover:bg-accent">Support</Link>
-            <Link to="/app" className="ml-2 rounded-full bg-primary px-4 py-1.5 text-primary-foreground hover:opacity-90">Open app</Link>
-          </nav>
-        </div>
-      </header>
+      <PublicHeader />
 
       {/* Hero */}
       <Section className="text-center">
@@ -66,8 +55,8 @@ function LandingPage() {
           plan — scheduled around your timetable, broken into steps, and ordered by what matters now.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link to="/app" className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90">
-            Open Focusly <ArrowRight className="h-4 w-4" />
+          <Link to="/login" className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90">
+            Sign in to Focusly <ArrowRight className="h-4 w-4" />
           </Link>
           <Link to="/plans" className="inline-flex items-center rounded-full border border-border bg-card px-6 py-3 text-sm font-medium hover:bg-accent">
             See plans
@@ -91,6 +80,23 @@ function LandingPage() {
         </div>
       </Section>
 
+      <Section className="border-t border-border/50">
+        <div className="mb-12 text-center">
+          <span className="text-xs font-semibold uppercase tracking-widest text-primary">New engagement features</span>
+          <h2 className="mt-2 font-display text-3xl font-semibold md:text-4xl">Social, Cards, and AI in one study loop</h2>
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground">Non-signed-in visitors can preview the biggest features here, then jump straight into an account when ready.</p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-3">
+          <Feature icon={Users} title="Social study feed" body="Post wins, message classmates, and keep study momentum visible without leaving Focusly." />
+          <Feature icon={Trophy} title="Collectible cards" body="Earn coins from study progress, open animated packs, sell duplicates, and trade with friends." />
+          <Feature icon={Brain} title="Focusly AI" body="Use credits for task parsing, planning, summaries, coaching, and admin-generated update posts." />
+        </div>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <Link to="/engagement" className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-6 py-3 text-sm font-medium hover:bg-accent">Explore features <ArrowRight className="h-4 w-4" /></Link>
+          <Link to="/login" className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90">Sign in to start</Link>
+        </div>
+      </Section>
+
       {/* Non-AI Features */}
       <Section className="border-t border-border/50">
         <div className="mb-12 text-center">
@@ -103,7 +109,7 @@ function LandingPage() {
           <Feature icon={Keyboard} title="Keyboard shortcuts" body="Power users get full hotkey control. New task, complete, navigate — without touching the mouse." />
           <Feature icon={Users} title="Shared lists & realtime" body="Plan with study buddies. Assign tasks, see updates instantly, no refresh required." />
           <Feature icon={Clock} title="Focus timer + chimes" body="Pomodoro-style sessions with offline audio chimes and a full distraction-free fullscreen mode." />
-          <Feature icon={BookOpen} title="Toddle sync" body="Pull assignments straight out of Toddle. No more copy-pasting deadlines." />
+          <Feature icon={BookOpen} title="Smart files" body="Keep notes, links, and study materials beside the work they belong to, without digging through tabs." />
         </div>
       </Section>
 
@@ -116,7 +122,7 @@ function LandingPage() {
             Earn points for completed assignments. Redeem them for real rewards — McDonald's,
             Starbucks, and more drop in as you level up.
           </p>
-          <Link to="/app" className="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90">
+          <Link to="/login" className="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90">
             Start earning <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

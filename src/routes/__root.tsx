@@ -6,6 +6,7 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  useRouterState,
 } from "@tanstack/react-router";
 import { useEffect } from "react";
 
@@ -60,11 +61,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Focusly Student" },
-      { name: "description", content: "Focusly is a study app with a clock, timetable, Toddle sync, files, AI assistant, assignments, calendar and gamified rewards." },
+      { name: "description", content: "Focusly is a study app with a clock, timetable, files, AI assistant, assignments, calendar, social features, cards, and gamified rewards." },
       { property: "og:title", content: "Focusly Student" },
       { name: "twitter:title", content: "Focusly Student" },
-      { property: "og:description", content: "Focusly is a study app with a clock, timetable, Toddle sync, files, AI assistant, assignments, calendar and gamified rewards." },
-      { name: "twitter:description", content: "Focusly is a study app with a clock, timetable, Toddle sync, files, AI assistant, assignments, calendar and gamified rewards." },
+      { property: "og:description", content: "Focusly is a study app with a clock, timetable, files, AI assistant, assignments, calendar, social features, cards, and gamified rewards." },
+      { name: "twitter:description", content: "Focusly is a study app with a clock, timetable, files, AI assistant, assignments, calendar, social features, cards, and gamified rewards." },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/9d42b122-f10b-4113-92b9-5133ac34ac46" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/9d42b122-f10b-4113-92b9-5133ac34ac46" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -94,6 +95,8 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const path = useRouterState({ select: (r) => r.location.pathname });
+  const isPublicPage = ["/landing", "/plans", "/updates", "/login", "/signup", "/engagement", "/support"].some((p) => path === p || path.startsWith(`${p}/`));
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
@@ -101,7 +104,7 @@ function RootComponent() {
           <AuthSync />
           <div className="min-h-screen">
             <AppNav />
-            <main className="px-4 pb-12 pt-6 max-w-7xl mx-auto">
+            <main className={isPublicPage ? "" : "px-4 pb-12 pt-6 max-w-7xl mx-auto"}>
               <Outlet />
             </main>
             <FloatingAI />

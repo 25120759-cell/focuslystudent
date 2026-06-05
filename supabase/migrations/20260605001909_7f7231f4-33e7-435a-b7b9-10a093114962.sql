@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Users can read active redeemable codes" ON public.plan_codes;

@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Users, MessageCircle, Sparkles, ArrowRight, Trophy, Layers } from "lucide-react";
 import eclipseArt from "@/assets/eclipse-card.jpg";
+import { PublicHeader } from "@/components/PublicHeader";
 
 export const Route = createFileRoute("/engagement")({
   ssr: false,
@@ -19,18 +20,7 @@ export const Route = createFileRoute("/engagement")({
 function EngagementPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/50">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-          <Link to="/landing" className="font-display text-xl font-semibold tracking-tight">Focusly</Link>
-          <nav className="flex items-center gap-1 text-sm">
-            <Link to="/landing" className="rounded-full px-3 py-1.5 hover:bg-accent">Home</Link>
-            <Link to="/plans" className="rounded-full px-3 py-1.5 hover:bg-accent">Plans</Link>
-            <Link to="/updates" className="rounded-full px-3 py-1.5 hover:bg-accent">Updates</Link>
-            <Link to="/support" className="rounded-full px-3 py-1.5 hover:bg-accent">Support</Link>
-            <Link to="/login" className="ml-2 rounded-full bg-primary px-4 py-1.5 text-primary-foreground hover:opacity-90">Sign in</Link>
-          </nav>
-        </div>
-      </header>
+      <PublicHeader />
 
       <section className="mx-auto max-w-6xl px-6 py-20 text-center">
         <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground">

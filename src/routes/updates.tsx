@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useServerFn } from "@tanstack/react-start";
@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { slugify } from "@/lib/slug";
 import { adminGeneratePost, generatePostSummary } from "@/lib/ai.functions";
+import { PublicHeader } from "@/components/PublicHeader";
 
 export const Route = createFileRoute("/updates")({
   ssr: false,
@@ -24,6 +25,7 @@ export const Route = createFileRoute("/updates")({
 interface Post { id: string; title: string; body: string; created_at: string; slug: string; summary: string | null }
 
 function UpdatesPage() {
+  const path = useRouterState({ select: (r) => r.location.pathname });
   const { user, isAdmin, signOut } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loaded, setLoaded] = useState(false);
@@ -48,6 +50,8 @@ function UpdatesPage() {
   }
 
   useEffect(() => { load(); }, [user?.id]);
+
+  if (path !== "/updates") return <Outlet />;
 
   async function aiDraft() {
     if (!aiPrompt.trim()) return;
@@ -86,19 +90,7 @@ function UpdatesPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/50">
-        <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-3">
-          <Link to="/landing" className="font-display text-xl font-semibold tracking-tight">Focusly</Link>
-          <nav className="flex items-center gap-1 text-sm">
-            <Link to="/landing" className="rounded-full px-3 py-1.5 hover:bg-accent">Home</Link>
-            <Link to="/plans" className="rounded-full px-3 py-1.5 hover:bg-accent">Plans</Link>
-            <Link to="/support" className="rounded-full px-3 py-1.5 hover:bg-accent">Support</Link>
-            <Link to={user ? "/app" : "/login"} className="ml-2 rounded-full bg-primary px-4 py-1.5 text-primary-foreground hover:opacity-90">
-              {user ? "Open app" : "Sign in"}
-            </Link>
-          </nav>
-        </div>
-      </header>
+      <PublicHeader />
 
       <section className="mx-auto max-w-3xl px-6 py-16">
         <span className="text-xs font-semibold uppercase tracking-widest text-primary">Changelog</span>
