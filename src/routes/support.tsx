@@ -5,7 +5,8 @@ import ReactMarkdown from "react-markdown";
 import { useServerFn } from "@tanstack/react-start";
 import { LifeBuoy, Send, MessageCircle, BookOpen, Clock, Trophy, Settings, Brain, X } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import { aiSupport } from "@/lib/ai.functions";
+import { aiCredits, aiSupport } from "@/lib/ai.functions";
+import { PublicHeader } from "@/components/PublicHeader";
 
 export const Route = createFileRoute("/support")({
   ssr: false,
@@ -13,17 +14,17 @@ export const Route = createFileRoute("/support")({
   head: () => ({
     meta: [
       { title: "Support — Focusly" },
-      { name: "description", content: "Help & docs for Focusly: study clock, Toddle sync, assignments, AI assistant, rewards, and settings." },
+      { name: "description", content: "Help & docs for Focusly: study clock, assignments, AI assistant, rewards, cards, social, and settings." },
     ],
   }),
 });
 
 const SECTIONS = [
-  { icon: Clock, title: "Getting started", body: "Sign in with Google or email. The dashboard is the Study Clock by default — open the bottom pill to switch to Timetable, Toddle, or Files." },
+  { icon: Clock, title: "Getting started", body: "Sign in with Google or email. The dashboard is the Study Clock by default — open the bottom pill to switch to Timetable or Files." },
   { icon: Clock, title: "Study Clock", body: "A Pomodoro timer with offline chimes and a fullscreen distraction-free mode. Customize study/break minutes in Settings." },
-  { icon: BookOpen, title: "Toddle sync", body: "Open Toddle from the bottom pill, link your account, then pick a subject. Hit 'Analyse from Toddle' to get an AI action plan." },
   { icon: Brain, title: "AI assistant & credits", body: "Open the floating ✦ button or press ⌘K. Free plan: 10 credits/day, 100/month. Pro: 100/day, 1000/month. Max: 500/day, 10000/month. The assistant can create, update, complete, and delete tasks for you." },
   { icon: BookOpen, title: "Assignments", body: "Type a task naturally — 'read Hatchet ch 8 by Tue 9pm' — and Focusly parses the date. Click any assignment for its detail page with subtasks, notes, and edit/delete." },
+  { icon: MessageCircle, title: "Social & Cards", body: "Post on the Social feed, message classmates, earn coins, open card packs, and trade with other users." },
   { icon: Trophy, title: "Rewards", body: "Complete assignments to earn points (+3 each). Spend them on real vouchers (Starbucks, McDonald's, Amazon). Late submissions cost -5." },
   { icon: Settings, title: "Settings", body: "Theme (light/dark), font size, language (English/Mandarin), and AI personality. All settings persist across refresh." },
   { icon: LifeBuoy, title: "Keyboard shortcuts", body: "⌘K — open AI assistant. Enter — submit. Esc — close panels." },
