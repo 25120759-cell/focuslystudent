@@ -34,7 +34,10 @@ function AssignmentsPage() {
     setLoaded(true);
   }
 
-  useEffect(() => { load().catch((e) => { setParseErr(e.message); setLoaded(true); }); }, []);
+  useEffect(() => {
+    if (path !== "/assignments") return;
+    load().catch((e) => { setParseErr(e.message); setLoaded(true); });
+  }, [path]);
 
   if (path !== "/assignments") return <Outlet />;
 
