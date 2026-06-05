@@ -7,7 +7,7 @@ const ADMIN_EMAILS = new Set(["afhaigh76@gmail.com", "25120759@sunwayeducation.i
 async function ensureAdmin(userId: string, email?: string | null) {
   if (email && ADMIN_EMAILS.has(email.toLowerCase())) return;
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await (supabaseAdmin as any)
     .from("user_roles")
     .select("role")
     .eq("user_id", userId)
@@ -28,7 +28,7 @@ export const adminListPlanCodes = createServerFn({ method: "GET" })
     const { userId, claims } = context as any;
     await ensureAdmin(userId, claims?.email);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await (supabaseAdmin as any)
       .from("plan_codes")
       .select("id, code, plan, monthly_credit_override, max_redemptions, redeemed_count, active, expires_at, created_at")
       .order("created_at", { ascending: false })
@@ -50,7 +50,7 @@ export const adminCreatePlanCode = createServerFn({ method: "POST" })
     const { userId, claims } = context as any;
     await ensureAdmin(userId, claims?.email);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: row, error } = await supabaseAdmin
+    const { data: row, error } = await (supabaseAdmin as any)
       .from("plan_codes")
       .insert({
         code: makeCode(data.code),
@@ -73,7 +73,7 @@ export const adminTogglePlanCode = createServerFn({ method: "POST" })
     const { userId, claims } = context as any;
     await ensureAdmin(userId, claims?.email);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.from("plan_codes").update({ active: data.active }).eq("id", data.id);
+    const { error } = await (supabaseAdmin as any).from("plan_codes").update({ active: data.active }).eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
@@ -84,7 +84,7 @@ export const redeemPlanCode = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { userId } = context as any;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: result, error } = await supabaseAdmin.rpc("redeem_plan_code_for_user", {
+    const { data: result, error } = await (supabaseAdmin as any).rpc("redeem_plan_code_for_user", {
       _user_id: userId,
       _code: data.code,
     });
