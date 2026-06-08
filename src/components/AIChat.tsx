@@ -129,11 +129,22 @@ export function AIChat({ open, onClose }: { open: boolean; onClose: () => void }
   return (
     <AnimatePresence>
       {open && (
-        <motion.div
-          initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
-          transition={{ type: "spring", damping: 28, stiffness: 240 }}
-          className="fixed inset-y-0 right-0 z-50 w-full max-w-md glass border-l border-border"
-        >
+        <>
+          {/* Backdrop to dismiss on click */}
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            onClick={onClose}
+            className="fixed inset-0 z-40 bg-background/40 backdrop-blur-sm"
+          />
+          {/* Floating slide-out card — detached from the edge */}
+          <motion.div
+            initial={{ x: 40, opacity: 0, scale: 0.96 }}
+            animate={{ x: 0, opacity: 1, scale: 1 }}
+            exit={{ x: 40, opacity: 0, scale: 0.96 }}
+            transition={{ type: "spring", damping: 26, stiffness: 260 }}
+            className="fixed bottom-24 right-4 top-20 z-50 w-[min(420px,calc(100vw-2rem))] flex flex-col rounded-3xl border border-border bg-card shadow-2xl overflow-hidden"
+          >
           <div className="flex h-full flex-col">
             <div className="flex items-center justify-between border-b border-border px-4 py-3">
               <FocuslyAIWordmark className="text-base" />
@@ -207,7 +218,8 @@ export function AIChat({ open, onClose }: { open: boolean; onClose: () => void }
               )}
             </div>
           </div>
-        </motion.div>
+          </motion.div>
+        </>
       )}
     </AnimatePresence>
   );

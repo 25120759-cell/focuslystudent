@@ -9,7 +9,7 @@ import toastImg from "@/assets/update-toast.jpg";
 const STORAGE_KEY = "focusly-seen-posts-v1";
 const HIDDEN_PATHS = ["/updates", "/landing", "/plans", "/login", "/signup", "/support", "/engagement"];
 
-interface LatestPost { id: string; title: string; slug: string; summary: string | null; created_at: string }
+interface LatestPost { id: string; title: string; slug: string; summary: string | null; created_at: string; cover_url: string | null }
 
 export function NewPostToast() {
   const { user } = useAuth();
@@ -26,7 +26,7 @@ export function NewPostToast() {
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
     (async () => {
-      const { data } = await supabase
+      const { data } = await (supabase as any)
         .from("posts").select("id, title, slug, summary, created_at")
         .eq("published", true).order("created_at", { ascending: false }).limit(1).maybeSingle();
       if (cancelled || !data) return;
@@ -76,7 +76,7 @@ export function NewPostToast() {
           className="fixed bottom-6 left-6 z-50 w-[340px] max-w-[calc(100vw-3rem)] overflow-hidden rounded-2xl border border-border bg-card shadow-2xl"
         >
           <div className="relative h-28 w-full overflow-hidden">
-            <img src={toastImg} alt={`AI artwork for ${post.title}`} loading="lazy" width={512} height={512} className="h-full w-full object-cover" />
+            <img src={post.cover_url || toastImg} alt={`Cover artwork for ${post.title}`} loading="lazy" width={512} height={256} className="h-full w-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
             <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-background/90 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary backdrop-blur">
               <Sparkles className="h-3 w-3" /> New update

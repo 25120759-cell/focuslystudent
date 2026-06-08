@@ -1,11 +1,10 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
-import { LogIn, LogOut, Shield, Users, Layers, LifeBuoy } from "lucide-react";
+import { LogIn, LogOut, Shield, Users, Layers, LifeBuoy, FileText } from "lucide-react";
 import { useT, useStore } from "@/lib/store";
 import { useAuth } from "@/lib/auth";
+import { isPublicPath } from "@/lib/publicRoutes";
 import { SettingsModal } from "./SettingsModal";
-
-const NAV_HIDDEN = ["/landing", "/plans", "/updates", "/login", "/signup", "/engagement", "/support"];
 
 export function AppNav() {
   const t = useT();
@@ -14,8 +13,9 @@ export function AppNav() {
   const path = useRouterState({ select: (r) => r.location.pathname });
   const [openSettings, setOpenSettings] = useState(false);
 
-  // Hide on fully public marketing pages and on dynamic /updates/$slug
-  if (NAV_HIDDEN.includes(path) || path.startsWith("/updates/")) return null;
+  // Public marketing pages get the PublicHeader from inside the page; never show AppNav there.
+  if (isPublicPath(path)) return null;
+
 
   const linkClass = (active: boolean) =>
     `px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
@@ -35,6 +35,9 @@ export function AppNav() {
           </Link>
           <Link to="/cards" className={linkClass(path === "/cards")} title="Cards">
             <Layers className="inline h-3.5 w-3.5" /> <span className="hidden sm:inline">Cards</span>
+          </Link>
+          <Link to="/docs" className={linkClass(path.startsWith("/docs") && !path.startsWith("/docs/share"))} title="Focusly Docs">
+            <FileText className="inline h-3.5 w-3.5" /> <span className="hidden sm:inline">Docs</span>
           </Link>
           <span className="mx-1 h-5 w-px bg-border" />
           <button onClick={() => setOpenSettings(true)} className={linkClass(false)}>{t("settings")}</button>

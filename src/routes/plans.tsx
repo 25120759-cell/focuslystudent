@@ -1,9 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
-import { Check, Sparkles, Ticket } from "lucide-react";
+import { motion } from "framer-motion";
+import { Check, Sparkles, Crown, Zap } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import { redeemPlanCode } from "@/lib/plans.functions";
 import { PublicHeader } from "@/components/PublicHeader";
 
 export const Route = createFileRoute("/plans")({
@@ -14,174 +13,147 @@ export const Route = createFileRoute("/plans")({
       { title: "Plans & Pricing — Focusly" },
       { name: "description", content: "Free, Pro, and Max plans for Focusly. Start with 100 AI credits per month, free forever." },
       { property: "og:title", content: "Plans & Pricing — Focusly" },
-      { property: "og:description", content: "Free, Pro, and Max plans. 100 AI credits free monthly. Pro and Max coming soon." },
+      { property: "og:description", content: "Free, Pro, and Max plans. 100 AI credits free monthly. Pro and Max activate via redemption code." },
     ],
   }),
 });
 
-interface Plan {
-  name: string;
-  price: string;
-  cadence: string;
-  blurb: string;
-  features: string[];
-  cta: string;
-  ctaDisabled?: boolean;
-  highlight?: boolean;
-  soon?: boolean;
-}
-
-const PLANS: Plan[] = [
+const PLANS = [
   {
+    key: "free",
     name: "Free",
     price: "$0",
     cadence: "forever",
     blurb: "Everything you need to study smarter — no card required.",
-    features: [
-      "100 AI credits / month",
-      "Max 10 AI credits / day",
-      "Full study clock + timetable",
-      "Assignments, calendar, social, cards",
-      "Offline-first storage",
-      "Gamified rewards & redemptions",
-    ],
-    cta: "Start free",
+    perks: ["100 AI credits / month", "Max 10 AI credits / day", "Full study clock + timetable", "Assignments, calendar, social, cards", "Offline-first storage", "Gamified rewards & redemptions"],
+    cta: "Open Focusly",
+    href: "/app",
+    icon: Zap,
   },
   {
+    key: "pro",
     name: "Pro",
     price: "$6",
     cadence: "/ month",
     blurb: "10× more AI for serious students who plan ahead.",
-    features: [
-      "1,000 AI credits / month",
-      "No daily cap",
-      "Priority AI response",
-      "Realtime shared lists",
-      "Advanced keyboard shortcuts",
-      "Everything in Free",
-    ],
-    cta: "Coming soon",
-    ctaDisabled: true,
+    perks: ["1,000 AI credits / month", "No daily cap", "10 packs / day", "Priority AI response", "Realtime shared lists", "Everything in Free"],
+    cta: "Go Pro",
+    href: "/redeem?plan=pro",
+    icon: Sparkles,
     highlight: true,
-    soon: true,
   },
   {
+    key: "max",
     name: "Max",
     price: "$19",
     cadence: "/ month",
-    blurb: "For power users running their whole academic life on AI.",
-    features: [
-      "10,000 AI credits / month",
-      "Largest reasoning models",
-      "Smart scheduling across calendars",
-      "Auto-breakdown unlimited",
-      "Early access to new tools",
-      "Everything in Pro",
-    ],
-    cta: "Coming soon",
-    ctaDisabled: true,
-    soon: true,
+    blurb: "Power users running their whole academic life on AI.",
+    perks: ["10,000 AI credits / month", "50 packs / day", "Largest reasoning models", "Smart scheduling across calendars", "Early access to new tools", "Everything in Pro"],
+    cta: "Go Max",
+    href: "/redeem?plan=max",
+    icon: Crown,
   },
 ];
 
 function PlansPage() {
   const { user } = useAuth();
-  const redeemFn = useServerFn(redeemPlanCode);
-  const [code, setCode] = useState("");
-  const [msg, setMsg] = useState<string | null>(null);
-  const [err, setErr] = useState<string | null>(null);
-
-  async function redeem() {
-    if (!code.trim()) return;
-    setMsg(null); setErr(null);
-    try {
-      const r: any = await redeemFn({ data: { code } });
-      setMsg(`Redeemed! Your plan is now ${String(r.plan || "updated").toUpperCase()}.`);
-      setCode("");
-    } catch (e: any) { setErr(e.message); }
-  }
+  const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <PublicHeader />
 
-      <section className="mx-auto max-w-6xl px-6 py-20 text-center">
+      <motion.section
+        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+        className="mx-auto max-w-6xl px-6 pt-20 pb-10 text-center"
+      >
         <span className="text-xs font-semibold uppercase tracking-widest text-primary">Pricing</span>
         <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight md:text-5xl">
           Simple plans. Real AI credits.
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-          1 credit = 1 AI action. Paid plans are unlocked with admin-issued codes.
+          1 credit = 1 AI action. Paid plans activate with a redemption code from an admin.
         </p>
-      </section>
 
-      <section className="mx-auto max-w-xl px-6 pb-12">
-        <div className="rounded-3xl glass p-5 text-center">
-          <Ticket className="mx-auto h-6 w-6 text-primary" />
-          <h2 className="mt-2 font-display text-xl font-semibold">Redeem a plan code</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Got a code from an admin? Enter it here to unlock Pro or Max.</p>
-          {user ? (
-            <div className="mt-4 flex gap-2">
-              <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="FOCUSLY-PRO" className="flex-1 rounded-full border border-input bg-background px-4 py-2 text-sm uppercase" />
-              <button onClick={redeem} className="rounded-full bg-primary px-4 py-2 text-sm text-primary-foreground">Redeem</button>
-            </div>
-          ) : (
-            <Link to="/login" className="mt-4 inline-flex rounded-full bg-primary px-5 py-2 text-sm text-primary-foreground">Sign in to redeem</Link>
-          )}
-          {msg && <p className="mt-2 text-xs text-primary">{msg}</p>}
-          {err && <p className="mt-2 text-xs text-destructive">{err}</p>}
+        <div className="mt-6 inline-flex rounded-full border border-border bg-card p-1 text-xs">
+          {(["monthly", "yearly"] as const).map((b) => (
+            <button
+              key={b}
+              onClick={() => setBilling(b)}
+              className={`rounded-full px-4 py-1.5 capitalize transition ${billing === b ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              {b} {b === "yearly" && <span className="ml-1 rounded-full bg-[color:var(--gold)]/20 px-1.5 text-[10px] font-semibold text-[color:var(--gold)]">2 mo free</span>}
+            </button>
+          ))}
         </div>
-      </section>
+      </motion.section>
 
       <section className="mx-auto grid max-w-6xl gap-6 px-6 pb-24 md:grid-cols-3">
-        {PLANS.map((p) => (
-          <div
-            key={p.name}
-            className={`relative rounded-3xl border p-7 ${
-              p.highlight
-                ? "border-primary bg-gradient-to-br from-primary/5 via-card to-card shadow-lg"
-                : "border-border bg-card"
-            }`}
-          >
-            {p.soon && (
-              <span className="absolute right-5 top-5 rounded-full bg-[color:var(--gold)]/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[color:var(--gold)]">
-                Coming soon
-              </span>
-            )}
-            {p.highlight && (
-              <Sparkles className="absolute left-5 top-5 h-4 w-4 text-primary" />
-            )}
-            <h3 className="mt-6 font-display text-2xl font-semibold">{p.name}</h3>
-            <div className="mt-2 flex items-baseline gap-1">
-              <span className="text-4xl font-semibold tracking-tight">{p.price}</span>
-              <span className="text-sm text-muted-foreground">{p.cadence}</span>
-            </div>
-            <p className="mt-2 text-sm text-muted-foreground">{p.blurb}</p>
-            <ul className="mt-6 space-y-2.5 text-sm">
-              {p.features.map((f) => (
-                <li key={f} className="flex items-start gap-2">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                  <span>{f}</span>
-                </li>
-              ))}
-            </ul>
-            <button
-              disabled={p.ctaDisabled}
-              className={`mt-8 w-full rounded-full px-5 py-2.5 text-sm font-medium transition ${
-                p.ctaDisabled
-                  ? "cursor-not-allowed border border-border bg-muted text-muted-foreground"
-                  : "bg-primary text-primary-foreground hover:opacity-90"
+        {PLANS.map((p, i) => {
+          const Icon = p.icon;
+          const yearly = billing === "yearly" && p.key !== "free";
+          const price = yearly ? `$${Math.round(parseInt(p.price.replace("$", "")) * 10)}` : p.price;
+          const cadence = yearly ? "/ year" : p.cadence;
+          const href = !user && p.key !== "free" ? `/login?redirect=${encodeURIComponent(p.href)}` : p.href;
+          return (
+            <motion.div
+              key={p.key}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + i * 0.08, type: "spring", damping: 24 }}
+              whileHover={{ y: -4 }}
+              className={`relative rounded-3xl border p-7 ${
+                p.highlight
+                  ? "border-primary bg-gradient-to-br from-primary/5 via-card to-card shadow-lg"
+                  : "border-border bg-card"
               }`}
             >
-              {p.cta}
-            </button>
-          </div>
-        ))}
+              {p.highlight && (
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary-foreground">
+                  Most popular
+                </span>
+              )}
+              <Icon className={`h-6 w-6 ${p.highlight ? "text-primary" : "text-muted-foreground"}`} />
+              <h3 className="mt-3 font-display text-2xl font-semibold">{p.name}</h3>
+              <div className="mt-2 flex items-baseline gap-1">
+                <motion.span
+                  key={price}
+                  initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+                  className="text-4xl font-semibold tracking-tight"
+                >
+                  {price}
+                </motion.span>
+                <span className="text-sm text-muted-foreground">{cadence}</span>
+              </div>
+              <p className="mt-2 text-sm text-muted-foreground">{p.blurb}</p>
+              <ul className="mt-6 space-y-2.5 text-sm">
+                {p.perks.map((f) => (
+                  <li key={f} className="flex items-start gap-2">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                to={href}
+                className={`mt-8 inline-flex w-full items-center justify-center rounded-full px-5 py-2.5 text-sm font-medium transition ${
+                  p.highlight
+                    ? "bg-primary text-primary-foreground hover:opacity-90"
+                    : p.key === "free"
+                      ? "border border-border bg-card hover:bg-accent"
+                      : "bg-foreground text-background hover:opacity-90"
+                }`}
+              >
+                {p.cta}
+              </Link>
+            </motion.div>
+          );
+        })}
       </section>
 
       <footer className="border-t border-border/50 px-6 py-10">
         <div className="mx-auto max-w-6xl text-center text-sm text-muted-foreground">
-          Questions? <a href="https://luraapps.base44.app/legal" target="_blank" rel="noreferrer" className="underline hover:text-foreground">Read our legal docs</a>.
+          Questions? <a href="https://luraapps.base44.app/feedback" target="_blank" rel="noreferrer" className="underline hover:text-foreground">Contact us</a> · <a href="https://luraapps.base44.app/legal" target="_blank" rel="noreferrer" className="underline hover:text-foreground">Legal</a>
         </div>
       </footer>
     </div>

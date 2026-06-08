@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import { useServerFn } from "@tanstack/react-start";
-import { LifeBuoy, Send, MessageCircle, BookOpen, Clock, Trophy, Settings, Brain, X } from "lucide-react";
+import { LifeBuoy, Send, MessageCircle, BookOpen, Clock, Trophy, Settings, Brain, X, Bug, ExternalLink } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { aiCredits, aiSupport } from "@/lib/ai.functions";
 import { PublicHeader } from "@/components/PublicHeader";
@@ -75,6 +75,17 @@ function SupportPage() {
         <span className="text-xs font-semibold uppercase tracking-widest text-primary">Support</span>
         <h1 className="mt-2 font-display text-4xl md:text-5xl font-semibold tracking-tight">Focusly docs</h1>
         <p className="mt-3 text-muted-foreground">Browse the guides below, or chat with the free Support assistant — bottom-right.</p>
+
+        <motion.a
+          href="https://luraapps.base44.app/feedback"
+          target="_blank" rel="noreferrer"
+          whileHover={{ y: -2 }}
+          className="mt-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-5 py-2.5 text-sm font-medium text-primary hover:bg-primary/15"
+        >
+          <Bug className="h-4 w-4" /> Report a glitch or request a feature
+          <ExternalLink className="h-3 w-3 opacity-60" />
+        </motion.a>
+
 
         <div className="mt-10 grid gap-4 md:grid-cols-2">
           {SECTIONS.map((s, i) => {

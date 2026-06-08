@@ -1,6 +1,14 @@
 // 500-card procedural catalog for the Focusly TCG.
 // Cards are referenced by integer id (0-499). Id 0 is the unique Eclipse card.
 
+import eclipseArt from "@/assets/eclipse-card.jpg";
+import phoenixArt from "@/assets/legendary-phoenix.jpg";
+import archonArt from "@/assets/legendary-archon.jpg";
+import guardianArt from "@/assets/legendary-guardian.jpg";
+import deadlineArt from "@/assets/legendary-deadline.jpg";
+import sovereignArt from "@/assets/legendary-sovereign.jpg";
+import kingArt from "@/assets/legendary-king.jpg";
+
 export type Rarity = "common" | "rare" | "epic" | "legendary" | "eclipse";
 
 export interface CardDef {
@@ -40,6 +48,17 @@ export function rarityGradient(r: Rarity) { return RARITY_GRADIENTS[r]; }
 export function rarityRing(r: Rarity) { return RARITY_RING[r]; }
 export function rarityLabel(r: Rarity) { return RARITY_LABEL[r]; }
 
+// Map specific card ids → real artwork (id 0 = Eclipse, 1-6 = legendary art).
+export const CARD_ART: Record<number, string> = {
+  0: eclipseArt,
+  1: phoenixArt,
+  2: archonArt,
+  3: guardianArt,
+  4: deadlineArt,
+  5: sovereignArt,
+  6: kingArt,
+};
+
 // Pack pull weights (out of 100,000). Eclipse is 1-in-1,000,000 handled separately.
 const PACK_WEIGHTS = { common: 60000, rare: 28000, epic: 9000, legendary: 3000 } as const;
 
@@ -65,7 +84,7 @@ const COMMON_NAMES = [
 
 const LEGENDARY_NAMES = [
   "Pomodoro Phoenix", "Algebra Archon", "Grammar Guardian", "The Last Deadline",
-  "Sovereign of Syllabi", "Empress of Essays", "King of Quizzes", "Lord of Lectures",
+  "Sovereign of Syllabi", "King of Quizzes", "Empress of Essays", "Lord of Lectures",
 ];
 
 function rng(seed: number) {

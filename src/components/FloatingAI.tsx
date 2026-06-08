@@ -2,13 +2,12 @@ import { useEffect, useState } from "react";
 import { Sparkles } from "lucide-react";
 import { useLocation } from "@tanstack/react-router";
 import { AIChat } from "./AIChat";
-
-const HIDDEN_ROUTES = ["/landing", "/plans", "/updates", "/login", "/signup", "/support"];
+import { isPublicPath } from "@/lib/publicRoutes";
 
 export function FloatingAI() {
   const [open, setOpen] = useState(false);
   const loc = useLocation();
-  const hidden = HIDDEN_ROUTES.some((r) => loc.pathname.startsWith(r));
+  const hidden = isPublicPath(loc.pathname);
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
@@ -36,3 +35,4 @@ export function FloatingAI() {
     </>
   );
 }
+
