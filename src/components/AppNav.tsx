@@ -36,6 +36,9 @@ export function AppNav() {
           <Link to="/cards" className={linkClass(path === "/cards")} title="Cards">
             <Layers className="inline h-3.5 w-3.5" /> <span className="hidden sm:inline">Cards</span>
           </Link>
+          <Link to="/docs" className={linkClass(path.startsWith("/docs") && !path.startsWith("/docs/share"))} title="Focusly Docs">
+            <FileText className="inline h-3.5 w-3.5" /> <span className="hidden sm:inline">Docs</span>
+          </Link>
           <span className="mx-1 h-5 w-px bg-border" />
           <button onClick={() => setOpenSettings(true)} className={linkClass(false)}>{t("settings")}</button>
           <Link to="/rewards" className={linkClass(path === "/rewards")}>
