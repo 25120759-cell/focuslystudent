@@ -2,11 +2,11 @@ import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-r
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useServerFn } from "@tanstack/react-start";
-import { Calendar, LogIn, LogOut, Plus, Wand2, Loader2 } from "lucide-react";
+import { Calendar, LogIn, LogOut, Plus, Wand2, Loader2, ImageIcon, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { slugify } from "@/lib/slug";
-import { adminGeneratePost, generatePostSummary } from "@/lib/ai.functions";
+import { adminGeneratePost, generatePostSummary, adminGeneratePostImage, adminDeletePost } from "@/lib/ai.functions";
 import { PublicHeader } from "@/components/PublicHeader";
 
 export const Route = createFileRoute("/updates")({
@@ -22,7 +22,7 @@ export const Route = createFileRoute("/updates")({
   }),
 });
 
-interface Post { id: string; title: string; body: string; created_at: string; slug: string; summary: string | null }
+interface Post { id: string; title: string; body: string; created_at: string; slug: string; summary: string | null; cover_url: string | null }
 
 function UpdatesPage() {
   const path = useRouterState({ select: (r) => r.location.pathname });
@@ -33,18 +33,24 @@ function UpdatesPage() {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [summary, setSummary] = useState("");
+  const [coverUrl, setCoverUrl] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [aiPrompt, setAiPrompt] = useState("");
+  const [imagePrompt, setImagePrompt] = useState("");
   const [generating, setGenerating] = useState(false);
+  const [genImg, setGenImg] = useState(false);
   const genFn = useServerFn(adminGeneratePost);
   const sumFn = useServerFn(generatePostSummary);
+  const imgFn = useServerFn(adminGeneratePostImage);
+  const delFn = useServerFn(adminDeletePost);
 
   async function load() {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("posts")
-      .select("id,title,body,created_at,slug,summary")
+      .select("id,title,body,created_at,slug,summary,cover_url")
       .eq("published", true)
       .order("created_at", { ascending: false });
+    if (error) console.error("load posts", error);
     setPosts((data as Post[]) ?? []);
     setLoaded(true);
   }
@@ -59,8 +65,20 @@ function UpdatesPage() {
     try {
       const r: any = await genFn({ data: { prompt: aiPrompt } });
       setTitle(r.title || ""); setBody(r.body || ""); setSummary(r.summary || "");
+      if (!imagePrompt) setImagePrompt(r.title || aiPrompt);
     } catch (e: any) { setErr(e.message); }
     finally { setGenerating(false); }
+  }
+
+  async function genImage() {
+    const prompt = imagePrompt.trim() || title.trim() || aiPrompt.trim();
+    if (!prompt) return setErr("Add a title or image prompt first.");
+    setGenImg(true); setErr(null);
+    try {
+      const r: any = await imgFn({ data: { prompt, title: title.trim() || prompt } });
+      setCoverUrl(r.url);
+    } catch (e: any) { setErr(e.message); }
+    finally { setGenImg(false); }
   }
 
   async function autoSummary() {
@@ -81,11 +99,21 @@ function UpdatesPage() {
     }
     const slug = slugify(title) + "-" + Math.random().toString(36).slice(2, 6);
     const { error } = await supabase.from("posts").insert({
-      author_id: user.id, title: title.trim(), body: body.trim(), published: true, slug, summary: finalSummary,
+      author_id: user.id, title: title.trim(), body: body.trim(), published: true, slug, summary: finalSummary, cover_url: coverUrl || null,
     } as any);
     if (error) return setErr(error.message);
-    setTitle(""); setBody(""); setSummary(""); setAiPrompt(""); setComposing(false);
+    setTitle(""); setBody(""); setSummary(""); setAiPrompt(""); setImagePrompt(""); setCoverUrl(""); setComposing(false);
     load();
+  }
+
+  async function removePost(id: string, title: string) {
+    if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
+    try {
+      await delFn({ data: { id } });
+      setPosts((prev) => prev.filter((p) => p.id !== id));
+    } catch (e: any) {
+      alert(e.message || "Failed to delete");
+    }
   }
 
   return (
@@ -106,9 +134,9 @@ function UpdatesPage() {
             ) : (
               <div className="rounded-3xl glass p-5 space-y-3">
                 <div className="rounded-xl border border-dashed border-primary/40 bg-primary/5 p-3 space-y-2">
-                  <label className="text-xs font-medium text-primary flex items-center gap-1"><Wand2 className="h-3 w-3" /> Generate with AI</label>
+                  <label className="text-xs font-medium text-primary flex items-center gap-1"><Wand2 className="h-3 w-3" /> Draft with AI</label>
                   <div className="flex gap-2">
-                    <input value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)} placeholder="What's the update about? e.g. 'Calendar got drag-and-drop'"
+                    <input value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)} placeholder="What's the update about?"
                       className="flex-1 rounded-xl border border-input bg-background px-3 py-2 text-sm" />
                     <button onClick={aiDraft} disabled={generating || !aiPrompt.trim()}
                       className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-2 text-xs text-primary-foreground disabled:opacity-50">
@@ -116,14 +144,31 @@ function UpdatesPage() {
                     </button>
                   </div>
                 </div>
+
                 <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title"
                   className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm" />
                 <input value={summary} onChange={(e) => setSummary(e.target.value)} placeholder="Summary (auto-generated if blank)"
                   className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm" />
+
+                <div className="rounded-xl border border-dashed border-primary/40 bg-primary/5 p-3 space-y-2">
+                  <label className="text-xs font-medium text-primary flex items-center gap-1"><ImageIcon className="h-3 w-3" /> Cover image (AI)</label>
+                  <div className="flex gap-2">
+                    <input value={imagePrompt} onChange={(e) => setImagePrompt(e.target.value)} placeholder="e.g. abstract calendar grid, gradient palette"
+                      className="flex-1 rounded-xl border border-input bg-background px-3 py-2 text-sm" />
+                    <button onClick={genImage} disabled={genImg}
+                      className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-2 text-xs text-primary-foreground disabled:opacity-50">
+                      {genImg ? <Loader2 className="h-3 w-3 animate-spin" /> : <ImageIcon className="h-3 w-3" />} Generate
+                    </button>
+                  </div>
+                  {coverUrl && (
+                    <img src={coverUrl} alt="" loading="lazy" width={1024} height={576} className="aspect-video w-full rounded-lg object-cover" />
+                  )}
+                </div>
+
                 <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Write your update (markdown supported)..." rows={8}
                   className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm" />
                 {err && <p className="text-xs text-destructive">{err}</p>}
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <button onClick={submit} className="rounded-full bg-primary px-4 py-2 text-sm text-primary-foreground">Publish</button>
                   <button onClick={autoSummary} disabled={generating} className="rounded-full border border-border bg-card px-4 py-2 text-sm">Auto-summary</button>
                   <button onClick={() => { setComposing(false); setErr(null); }} className="rounded-full border border-border bg-card px-4 py-2 text-sm">Cancel</button>
@@ -145,19 +190,36 @@ function UpdatesPage() {
                   key={p.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.96 }}
                   transition={{ delay: i * 0.05 }}
                   whileHover={{ y: -2 }}
-                  className="rounded-3xl glass p-7"
+                  className="rounded-3xl glass overflow-hidden group relative"
                 >
-                  <Link to="/updates/$slug" params={{ slug: p.slug }} className="block group">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Calendar className="h-3.5 w-3.5" />
-                      <time dateTime={p.created_at}>{new Date(p.created_at).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}</time>
-                    </div>
-                    <h2 className="mt-3 font-display text-2xl font-semibold group-hover:text-primary transition-colors">{p.title}</h2>
-                    {p.summary && <p className="mt-2 text-sm text-muted-foreground">{p.summary}</p>}
-                    <span className="mt-3 inline-block text-xs text-primary">Read more →</span>
-                  </Link>
+                  {p.cover_url && (
+                    <Link to="/updates/$slug" params={{ slug: p.slug }} className="block aspect-[2/1] overflow-hidden">
+                      <img src={p.cover_url} alt={p.title} loading="lazy" width={1024} height={512} className="h-full w-full object-cover transition-transform group-hover:scale-105" />
+                    </Link>
+                  )}
+                  <div className="p-7">
+                    <Link to="/updates/$slug" params={{ slug: p.slug }} className="block">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Calendar className="h-3.5 w-3.5" />
+                        <time dateTime={p.created_at}>{new Date(p.created_at).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}</time>
+                      </div>
+                      <h2 className="mt-3 font-display text-2xl font-semibold group-hover:text-primary transition-colors">{p.title}</h2>
+                      {p.summary && <p className="mt-2 text-sm text-muted-foreground">{p.summary}</p>}
+                      <span className="mt-3 inline-block text-xs text-primary">Read more →</span>
+                    </Link>
+                  </div>
+                  {isAdmin && (
+                    <button
+                      onClick={(e) => { e.preventDefault(); removePost(p.id, p.title); }}
+                      title="Delete post"
+                      className="absolute top-3 right-3 rounded-full bg-background/90 p-2 text-muted-foreground opacity-0 backdrop-blur transition group-hover:opacity-100 hover:bg-destructive hover:text-destructive-foreground"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  )}
                 </motion.article>
               ))}
             </AnimatePresence>
