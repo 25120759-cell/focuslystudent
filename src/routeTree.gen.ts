@@ -22,11 +22,14 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as UpdatesSlugRouteImport } from './routes/updates.$slug'
 import { Route as AuthenticatedSocialRouteImport } from './routes/_authenticated/social'
 import { Route as AuthenticatedRewardsRouteImport } from './routes/_authenticated/rewards'
+import { Route as AuthenticatedDocsRouteImport } from './routes/_authenticated/docs'
 import { Route as AuthenticatedCardsRouteImport } from './routes/_authenticated/cards'
 import { Route as AuthenticatedCalenderRouteImport } from './routes/_authenticated/calender'
 import { Route as AuthenticatedAssignmentsRouteImport } from './routes/_authenticated/assignments'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as DocsShareTokenRouteImport } from './routes/docs.share.$token'
+import { Route as AuthenticatedDocsIdRouteImport } from './routes/_authenticated/docs.$id'
 import { Route as AuthenticatedAssignmentsIdRouteImport } from './routes/_authenticated/assignments.$id'
 
 const UpdatesRoute = UpdatesRouteImport.update({
@@ -93,6 +96,11 @@ const AuthenticatedRewardsRoute = AuthenticatedRewardsRouteImport.update({
   path: '/rewards',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDocsRoute = AuthenticatedDocsRouteImport.update({
+  id: '/docs',
+  path: '/docs',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedCardsRoute = AuthenticatedCardsRouteImport.update({
   id: '/cards',
   path: '/cards',
@@ -119,6 +127,16 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const DocsShareTokenRoute = DocsShareTokenRouteImport.update({
+  id: '/docs/share/$token',
+  path: '/docs/share/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedDocsIdRoute = AuthenticatedDocsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedDocsRoute,
+} as any)
 const AuthenticatedAssignmentsIdRoute =
   AuthenticatedAssignmentsIdRouteImport.update({
     id: '/$id',
@@ -141,10 +159,13 @@ export interface FileRoutesByFullPath {
   '/assignments': typeof AuthenticatedAssignmentsRouteWithChildren
   '/calender': typeof AuthenticatedCalenderRoute
   '/cards': typeof AuthenticatedCardsRoute
+  '/docs': typeof AuthenticatedDocsRouteWithChildren
   '/rewards': typeof AuthenticatedRewardsRoute
   '/social': typeof AuthenticatedSocialRoute
   '/updates/$slug': typeof UpdatesSlugRoute
   '/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
+  '/docs/$id': typeof AuthenticatedDocsIdRoute
+  '/docs/share/$token': typeof DocsShareTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -161,10 +182,13 @@ export interface FileRoutesByTo {
   '/assignments': typeof AuthenticatedAssignmentsRouteWithChildren
   '/calender': typeof AuthenticatedCalenderRoute
   '/cards': typeof AuthenticatedCardsRoute
+  '/docs': typeof AuthenticatedDocsRouteWithChildren
   '/rewards': typeof AuthenticatedRewardsRoute
   '/social': typeof AuthenticatedSocialRoute
   '/updates/$slug': typeof UpdatesSlugRoute
   '/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
+  '/docs/$id': typeof AuthenticatedDocsIdRoute
+  '/docs/share/$token': typeof DocsShareTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -183,10 +207,13 @@ export interface FileRoutesById {
   '/_authenticated/assignments': typeof AuthenticatedAssignmentsRouteWithChildren
   '/_authenticated/calender': typeof AuthenticatedCalenderRoute
   '/_authenticated/cards': typeof AuthenticatedCardsRoute
+  '/_authenticated/docs': typeof AuthenticatedDocsRouteWithChildren
   '/_authenticated/rewards': typeof AuthenticatedRewardsRoute
   '/_authenticated/social': typeof AuthenticatedSocialRoute
   '/updates/$slug': typeof UpdatesSlugRoute
   '/_authenticated/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
+  '/_authenticated/docs/$id': typeof AuthenticatedDocsIdRoute
+  '/docs/share/$token': typeof DocsShareTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -205,10 +232,13 @@ export interface FileRouteTypes {
     | '/assignments'
     | '/calender'
     | '/cards'
+    | '/docs'
     | '/rewards'
     | '/social'
     | '/updates/$slug'
     | '/assignments/$id'
+    | '/docs/$id'
+    | '/docs/share/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -225,10 +255,13 @@ export interface FileRouteTypes {
     | '/assignments'
     | '/calender'
     | '/cards'
+    | '/docs'
     | '/rewards'
     | '/social'
     | '/updates/$slug'
     | '/assignments/$id'
+    | '/docs/$id'
+    | '/docs/share/$token'
   id:
     | '__root__'
     | '/'
@@ -246,10 +279,13 @@ export interface FileRouteTypes {
     | '/_authenticated/assignments'
     | '/_authenticated/calender'
     | '/_authenticated/cards'
+    | '/_authenticated/docs'
     | '/_authenticated/rewards'
     | '/_authenticated/social'
     | '/updates/$slug'
     | '/_authenticated/assignments/$id'
+    | '/_authenticated/docs/$id'
+    | '/docs/share/$token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -263,6 +299,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   SupportRoute: typeof SupportRoute
   UpdatesRoute: typeof UpdatesRouteWithChildren
+  DocsShareTokenRoute: typeof DocsShareTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -358,6 +395,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRewardsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/docs': {
+      id: '/_authenticated/docs'
+      path: '/docs'
+      fullPath: '/docs'
+      preLoaderRoute: typeof AuthenticatedDocsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/cards': {
       id: '/_authenticated/cards'
       path: '/cards'
@@ -393,6 +437,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/docs/share/$token': {
+      id: '/docs/share/$token'
+      path: '/docs/share/$token'
+      fullPath: '/docs/share/$token'
+      preLoaderRoute: typeof DocsShareTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/docs/$id': {
+      id: '/_authenticated/docs/$id'
+      path: '/$id'
+      fullPath: '/docs/$id'
+      preLoaderRoute: typeof AuthenticatedDocsIdRouteImport
+      parentRoute: typeof AuthenticatedDocsRoute
+    }
     '/_authenticated/assignments/$id': {
       id: '/_authenticated/assignments/$id'
       path: '/$id'
@@ -417,12 +475,24 @@ const AuthenticatedAssignmentsRouteWithChildren =
     AuthenticatedAssignmentsRouteChildren,
   )
 
+interface AuthenticatedDocsRouteChildren {
+  AuthenticatedDocsIdRoute: typeof AuthenticatedDocsIdRoute
+}
+
+const AuthenticatedDocsRouteChildren: AuthenticatedDocsRouteChildren = {
+  AuthenticatedDocsIdRoute: AuthenticatedDocsIdRoute,
+}
+
+const AuthenticatedDocsRouteWithChildren =
+  AuthenticatedDocsRoute._addFileChildren(AuthenticatedDocsRouteChildren)
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedAppRoute: typeof AuthenticatedAppRoute
   AuthenticatedAssignmentsRoute: typeof AuthenticatedAssignmentsRouteWithChildren
   AuthenticatedCalenderRoute: typeof AuthenticatedCalenderRoute
   AuthenticatedCardsRoute: typeof AuthenticatedCardsRoute
+  AuthenticatedDocsRoute: typeof AuthenticatedDocsRouteWithChildren
   AuthenticatedRewardsRoute: typeof AuthenticatedRewardsRoute
   AuthenticatedSocialRoute: typeof AuthenticatedSocialRoute
 }
@@ -433,6 +503,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAssignmentsRoute: AuthenticatedAssignmentsRouteWithChildren,
   AuthenticatedCalenderRoute: AuthenticatedCalenderRoute,
   AuthenticatedCardsRoute: AuthenticatedCardsRoute,
+  AuthenticatedDocsRoute: AuthenticatedDocsRouteWithChildren,
   AuthenticatedRewardsRoute: AuthenticatedRewardsRoute,
   AuthenticatedSocialRoute: AuthenticatedSocialRoute,
 }
@@ -462,7 +533,18 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   SupportRoute: SupportRoute,
   UpdatesRoute: UpdatesRouteWithChildren,
+  DocsShareTokenRoute: DocsShareTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
