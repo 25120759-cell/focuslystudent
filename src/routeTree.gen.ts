@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as UpdatesRouteImport } from './routes/updates'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as RedeemRouteImport } from './routes/redeem'
 import { Route as PlansRouteImport } from './routes/plans'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LandingRouteImport } from './routes/landing'
@@ -41,6 +42,11 @@ const SupportRoute = SupportRouteImport.update({
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RedeemRoute = RedeemRouteImport.update({
+  id: '/redeem',
+  path: '/redeem',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlansRoute = PlansRouteImport.update({
@@ -126,6 +132,7 @@ export interface FileRoutesByFullPath {
   '/landing': typeof LandingRoute
   '/login': typeof LoginRoute
   '/plans': typeof PlansRoute
+  '/redeem': typeof RedeemRoute
   '/signup': typeof SignupRoute
   '/support': typeof SupportRoute
   '/updates': typeof UpdatesRouteWithChildren
@@ -145,6 +152,7 @@ export interface FileRoutesByTo {
   '/landing': typeof LandingRoute
   '/login': typeof LoginRoute
   '/plans': typeof PlansRoute
+  '/redeem': typeof RedeemRoute
   '/signup': typeof SignupRoute
   '/support': typeof SupportRoute
   '/updates': typeof UpdatesRouteWithChildren
@@ -166,6 +174,7 @@ export interface FileRoutesById {
   '/landing': typeof LandingRoute
   '/login': typeof LoginRoute
   '/plans': typeof PlansRoute
+  '/redeem': typeof RedeemRoute
   '/signup': typeof SignupRoute
   '/support': typeof SupportRoute
   '/updates': typeof UpdatesRouteWithChildren
@@ -187,6 +196,7 @@ export interface FileRouteTypes {
     | '/landing'
     | '/login'
     | '/plans'
+    | '/redeem'
     | '/signup'
     | '/support'
     | '/updates'
@@ -206,6 +216,7 @@ export interface FileRouteTypes {
     | '/landing'
     | '/login'
     | '/plans'
+    | '/redeem'
     | '/signup'
     | '/support'
     | '/updates'
@@ -226,6 +237,7 @@ export interface FileRouteTypes {
     | '/landing'
     | '/login'
     | '/plans'
+    | '/redeem'
     | '/signup'
     | '/support'
     | '/updates'
@@ -247,6 +259,7 @@ export interface RootRouteChildren {
   LandingRoute: typeof LandingRoute
   LoginRoute: typeof LoginRoute
   PlansRoute: typeof PlansRoute
+  RedeemRoute: typeof RedeemRoute
   SignupRoute: typeof SignupRoute
   SupportRoute: typeof SupportRoute
   UpdatesRoute: typeof UpdatesRouteWithChildren
@@ -273,6 +286,13 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/redeem': {
+      id: '/redeem'
+      path: '/redeem'
+      fullPath: '/redeem'
+      preLoaderRoute: typeof RedeemRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/plans': {
@@ -438,6 +458,7 @@ const rootRouteChildren: RootRouteChildren = {
   LandingRoute: LandingRoute,
   LoginRoute: LoginRoute,
   PlansRoute: PlansRoute,
+  RedeemRoute: RedeemRoute,
   SignupRoute: SignupRoute,
   SupportRoute: SupportRoute,
   UpdatesRoute: UpdatesRouteWithChildren,
@@ -445,3 +466,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
