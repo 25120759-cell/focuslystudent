@@ -58,8 +58,9 @@ async function callGateway(body: any) {
   if (res.status === 429) throw new Error("Rate limited — try again in a moment.");
   if (res.status === 402) throw new Error("AI credits exhausted on the platform.");
   if (!res.ok) {
-    const t = await res.text();
-    throw new Error(`AI error ${res.status}: ${t.slice(0, 200)}`);
+    const t = await res.text().catch(() => "");
+    console.error("[AI gateway]", res.status, t);
+    throw new Error("AI request failed. Please try again.");
   }
   return res.json();
 }
