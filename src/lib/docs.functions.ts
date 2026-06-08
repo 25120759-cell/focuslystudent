@@ -102,14 +102,15 @@ export const getSharedDoc = createServerFn({ method: "GET" })
   .inputValidator((input) => z.object({ token: z.string().min(4).max(120) }).parse(input))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: doc, error } = await supabaseAdmin
+    const admin = supabaseAdmin as any;
+    const { data: doc, error } = await admin
       .from("docs").select("id, title, content_html, word_count, paste_count, edit_seconds, created_at, updated_at, user_id")
       .eq("share_token", data.token).maybeSingle();
     if (error) throw new Error(error.message);
     if (!doc) return { doc: null, events: [], author: null };
-    const { data: events } = await supabaseAdmin
+    const { data: events } = await admin
       .from("doc_events").select("kind, chars, created_at").eq("doc_id", doc.id).order("created_at", { ascending: true });
-    const { data: prof } = await supabaseAdmin
+    const { data: prof } = await admin
       .from("profiles").select("display_name").eq("id", doc.user_id).maybeSingle();
     return { doc, events: events ?? [], author: prof?.display_name ?? "Unknown" };
   });
