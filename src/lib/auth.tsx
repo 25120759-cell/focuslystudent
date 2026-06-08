@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
+const ADMIN_EMAILS = new Set(["afhaigh76@gmail.com", "25120759@sunwayeducation.info"]);
+
 interface AuthCtx {
   user: User | null;
   session: Session | null;
@@ -21,21 +23,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
+    const resolveAdmin = (u: User | null) => {
+      if (!u) { setIsAdmin(false); return; }
+      // hardcoded owner emails always treated as admin (so the nav shows the admin pill
+      // even before/while user_roles propagation completes)
+      if (u.email && ADMIN_EMAILS.has(u.email.toLowerCase())) { setIsAdmin(true); return; }
+      setTimeout(async () => {
+        const { data } = await supabase
+          .from("user_roles").select("role").eq("user_id", u.id).eq("role", "admin").maybeSingle();
+        setIsAdmin(!!data);
+      }, 0);
+    };
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, s) => {
-      setSession(s);
-      setUser(s?.user ?? null);
-      if (s?.user) {
-        setTimeout(async () => {
-          const { data } = await supabase
-            .from("user_roles").select("role").eq("user_id", s.user.id).eq("role", "admin").maybeSingle();
-          setIsAdmin(!!data);
-        }, 0);
-      } else {
-        setIsAdmin(false);
-      }
+      setSession(s); setUser(s?.user ?? null); resolveAdmin(s?.user ?? null);
     });
     supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session); setUser(data.session?.user ?? null); setLoading(false);
+      setSession(data.session); setUser(data.session?.user ?? null);
+      resolveAdmin(data.session?.user ?? null);
+      setLoading(false);
     });
     return () => subscription.unsubscribe();
   }, []);
