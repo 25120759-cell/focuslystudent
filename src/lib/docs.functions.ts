@@ -9,7 +9,8 @@ function makeToken() {
 export const listDocs = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { supabase, userId } = context as any;
+    const { userId } = context as any;
+    const supabase: any = (context as any).supabase;
     const { data, error } = await supabase
       .from("docs").select("id, title, word_count, paste_count, edit_seconds, share_token, updated_at, created_at")
       .eq("user_id", userId).order("updated_at", { ascending: false });
@@ -21,7 +22,8 @@ export const getDoc = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context as any;
+    const { userId } = context as any;
+    const supabase: any = (context as any).supabase;
     const { data: doc, error } = await supabase
       .from("docs").select("*").eq("id", data.id).eq("user_id", userId).maybeSingle();
     if (error) throw new Error(error.message);
@@ -32,7 +34,8 @@ export const createDoc = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => z.object({ title: z.string().min(1).max(200).optional() }).parse(input))
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context as any;
+    const { userId } = context as any;
+    const supabase: any = (context as any).supabase;
     const { data: doc, error } = await supabase
       .from("docs").insert({ user_id: userId, title: data.title || "Untitled" }).select("*").single();
     if (error) throw new Error(error.message);
@@ -50,7 +53,8 @@ export const saveDoc = createServerFn({ method: "POST" })
     edit_seconds: z.number().int().min(0).max(10_000_000).optional(),
   }).parse(input))
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context as any;
+    const { userId } = context as any;
+    const supabase: any = (context as any).supabase;
     const { id, ...patch } = data;
     const { data: doc, error } = await supabase
       .from("docs").update(patch).eq("id", id).eq("user_id", userId).select("*").single();
@@ -62,7 +66,8 @@ export const deleteDoc = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context as any;
+    const { userId } = context as any;
+    const supabase: any = (context as any).supabase;
     const { error } = await supabase.from("docs").delete().eq("id", data.id).eq("user_id", userId);
     if (error) throw new Error(error.message);
     return { ok: true };
@@ -72,7 +77,8 @@ export const setShare = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => z.object({ id: z.string().uuid(), enabled: z.boolean() }).parse(input))
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context as any;
+    const { userId } = context as any;
+    const supabase: any = (context as any).supabase;
     const token = data.enabled ? makeToken() : null;
     const { data: doc, error } = await supabase
       .from("docs").update({ share_token: token }).eq("id", data.id).eq("user_id", userId).select("*").single();
@@ -88,7 +94,8 @@ export const logEvent = createServerFn({ method: "POST" })
     chars: z.number().int().min(0).max(1_000_000).optional().default(0),
   }).parse(input))
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context as any;
+    const { userId } = context as any;
+    const supabase: any = (context as any).supabase;
     const { error } = await supabase.from("doc_events").insert({
       doc_id: data.doc_id, user_id: userId, kind: data.kind, chars: data.chars,
     });

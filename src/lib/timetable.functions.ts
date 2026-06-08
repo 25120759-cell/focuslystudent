@@ -17,7 +17,8 @@ const ClassPatch = z.object({
 export const listClasses = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { supabase, userId } = context as any;
+    const { userId } = context as any;
+    const supabase: any = (context as any).supabase;
     const { data, error } = await supabase
       .from("timetable_classes")
       .select("id, day_of_week, start_minute, end_minute, title, room, teacher, color")
@@ -32,7 +33,8 @@ export const createClass = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => ClassPatch.parse(input))
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context as any;
+    const { userId } = context as any;
+    const supabase: any = (context as any).supabase;
     if (data.end_minute <= data.start_minute) throw new Error("End time must be after start.");
     const { data: row, error } = await supabase
       .from("timetable_classes").insert({ user_id: userId, ...data }).select("*").single();
@@ -44,7 +46,8 @@ export const updateClass = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => z.object({ id: z.string().uuid(), patch: ClassPatch }).parse(input))
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context as any;
+    const { userId } = context as any;
+    const supabase: any = (context as any).supabase;
     if (data.patch.end_minute <= data.patch.start_minute) throw new Error("End time must be after start.");
     const { data: row, error } = await supabase
       .from("timetable_classes").update(data.patch).eq("id", data.id).eq("user_id", userId).select("*").single();
@@ -56,7 +59,8 @@ export const deleteClass = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => z.object({ id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context as any;
+    const { userId } = context as any;
+    const supabase: any = (context as any).supabase;
     const { error } = await supabase
       .from("timetable_classes").delete().eq("id", data.id).eq("user_id", userId);
     if (error) throw new Error(error.message);
