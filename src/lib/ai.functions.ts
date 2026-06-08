@@ -257,3 +257,77 @@ export const adminSetPlan = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+// ---- AI image generation for blog post covers (admin) ----
+
+export const adminGeneratePostImage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => z.object({
+    prompt: z.string().min(3).max(500),
+    title: z.string().min(1).max(200),
+  }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context as any;
+    await requireAdmin(supabase, userId);
+    await checkCredits(supabase, userId);
+    const apiKey = process.env.LOVABLE_API_KEY;
+    if (!apiKey) throw new Error("AI gateway not configured.");
+
+    const res = await fetch(GATEWAY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash-image",
+        messages: [
+          { role: "user", content: `Editorial cover image for a Focusly product update titled "${data.title}". Concept: ${data.prompt}. Modern minimal illustration, soft gradient palette, no embedded text.` },
+        ],
+        modalities: ["image", "text"],
+      }),
+    });
+    if (!res.ok) {
+      const t = await res.text().catch(() => "");
+      console.error("[AI image]", res.status, t);
+      throw new Error("AI image request failed. Please try again.");
+    }
+    const json: any = await res.json();
+    const imageUrl: string | undefined = json.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+    if (!imageUrl) throw new Error("No image returned.");
+
+    // Upload to storage so we get a permanent public URL
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    let publicUrl = imageUrl;
+    try {
+      const matched = imageUrl.match(/^data:(image\/[^;]+);base64,(.+)$/);
+      if (matched) {
+        const mime = matched[1];
+        const ext = mime.split("/")[1] || "png";
+        const bytes = Buffer.from(matched[2], "base64");
+        const filename = `${userId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+        const { error: upErr } = await supabaseAdmin.storage.from("post-covers").upload(filename, bytes, {
+          contentType: mime, upsert: false,
+        });
+        if (!upErr) {
+          const { data: pub } = supabaseAdmin.storage.from("post-covers").getPublicUrl(filename);
+          publicUrl = pub.publicUrl;
+        }
+      }
+    } catch (e) {
+      console.error("[AI image upload]", e);
+    }
+
+    await recordUsage(supabase, userId, 0, 0);
+    return { url: publicUrl };
+  });
+
+export const adminDeletePost = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => z.object({ id: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context as any;
+    await requireAdmin(supabase, userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.from("posts").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
