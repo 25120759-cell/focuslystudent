@@ -27,7 +27,7 @@ export function NewPostToast() {
     let timer: ReturnType<typeof setTimeout> | undefined;
     (async () => {
       const { data } = await (supabase as any)
-        .from("posts").select("id, title, slug, summary, created_at")
+        .from("posts").select("id, title, slug, summary, created_at, cover_url")
         .eq("published", true).order("created_at", { ascending: false }).limit(1).maybeSingle();
       if (cancelled || !data) return;
       const seen: string[] = (() => {
