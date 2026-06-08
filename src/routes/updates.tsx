@@ -45,7 +45,7 @@ function UpdatesPage() {
   const delFn = useServerFn(adminDeletePost);
 
   async function load() {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("posts")
       .select("id,title,body,created_at,slug,summary,cover_url")
       .eq("published", true)

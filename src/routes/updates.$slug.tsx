@@ -21,13 +21,13 @@ function PostPage() {
 
   useEffect(() => {
     setLoaded(false); setErr(null);
-    supabase
+    (supabase as any)
       .from("posts")
       .select("id,title,body,created_at,summary,cover_url")
       .eq("slug", slug)
       .eq("published", true)
       .maybeSingle()
-      .then(({ data, error }) => {
+      .then(({ data, error }: any) => {
         if (error) setErr(error.message);
         setPost((data as Post) ?? null);
         setLoaded(true);

@@ -9,7 +9,7 @@ import toastImg from "@/assets/update-toast.jpg";
 const STORAGE_KEY = "focusly-seen-posts-v1";
 const HIDDEN_PATHS = ["/updates", "/landing", "/plans", "/login", "/signup", "/support", "/engagement"];
 
-interface LatestPost { id: string; title: string; slug: string; summary: string | null; created_at: string }
+interface LatestPost { id: string; title: string; slug: string; summary: string | null; created_at: string; cover_url: string | null }
 
 export function NewPostToast() {
   const { user } = useAuth();
