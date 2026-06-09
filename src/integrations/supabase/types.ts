@@ -317,6 +317,7 @@ export type Database = {
         Row: {
           author_id: string
           body: string
+          cover_url: string | null
           created_at: string
           id: string
           published: boolean
@@ -328,6 +329,7 @@ export type Database = {
         Insert: {
           author_id: string
           body: string
+          cover_url?: string | null
           created_at?: string
           id?: string
           published?: boolean
@@ -339,6 +341,7 @@ export type Database = {
         Update: {
           author_id?: string
           body?: string
+          cover_url?: string | null
           created_at?: string
           id?: string
           published?: boolean
