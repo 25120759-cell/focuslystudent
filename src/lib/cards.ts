@@ -8,6 +8,8 @@ import guardianArt from "@/assets/legendary-guardian.jpg";
 import deadlineArt from "@/assets/legendary-deadline.jpg";
 import sovereignArt from "@/assets/legendary-sovereign.jpg";
 import kingArt from "@/assets/legendary-king.jpg";
+import empressArt from "@/assets/legendary-empress.jpg";
+import lordArt from "@/assets/legendary-lord.jpg";
 
 export type Rarity = "common" | "rare" | "epic" | "legendary" | "eclipse";
 
@@ -48,16 +50,25 @@ export function rarityGradient(r: Rarity) { return RARITY_GRADIENTS[r]; }
 export function rarityRing(r: Rarity) { return RARITY_RING[r]; }
 export function rarityLabel(r: Rarity) { return RARITY_LABEL[r]; }
 
-// Map specific card ids → real artwork (id 0 = Eclipse, 1-6 = legendary art).
-export const CARD_ART: Record<number, string> = {
-  0: eclipseArt,
-  1: phoenixArt,
-  2: archonArt,
-  3: guardianArt,
-  4: deadlineArt,
-  5: sovereignArt,
-  6: kingArt,
+// Eclipse art (id 0) + 8 unique legendary arts cycled across all 24 legendary ids (1-24).
+const LEGENDARY_ART = [phoenixArt, archonArt, guardianArt, deadlineArt, sovereignArt, kingArt, empressArt, lordArt];
+export const CARD_ART: Record<number, string> = (() => {
+  const map: Record<number, string> = { 0: eclipseArt };
+  for (let i = 0; i < 24; i++) map[1 + i] = LEGENDARY_ART[i % LEGENDARY_ART.length];
+  return map;
+})();
+
+// Emoji symbols per noun — rare cards render the static glyph, epic cards animate it.
+export const NOUN_EMOJI: Record<string, string> = {
+  Sage: "🧙", Owl: "🦉", Lantern: "🏮", Compass: "🧭", Pendulum: "⏱️",
+  Cipher: "🔐", Tome: "📚", Quill: "🪶", Glyph: "🔣", Sigil: "✴️",
+  Mantra: "🕉️", Algorithm: "💠", Theorem: "📐", Equation: "➗", Hourglass: "⏳",
+  Inkwell: "🖋️", Lexicon: "📖", Prism: "🔺", Beacon: "🚨", Codex: "📜",
 };
+export function cardEmoji(name: string): string {
+  for (const key of Object.keys(NOUN_EMOJI)) if (name.includes(key)) return NOUN_EMOJI[key];
+  return "✨";
+}
 
 // Pack pull weights (out of 100,000). Eclipse is 1-in-1,000,000 handled separately.
 const PACK_WEIGHTS = { common: 60000, rare: 28000, epic: 9000, legendary: 3000 } as const;
