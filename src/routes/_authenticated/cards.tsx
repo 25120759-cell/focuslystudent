@@ -4,7 +4,7 @@ import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from
 import { useServerFn } from "@tanstack/react-start";
 import { Sparkles, Package, Coins, ArrowLeftRight, Check, X } from "lucide-react";
 import { getWallet, openPack, listMyCards, sellCard, listMyTrades, respondTrade } from "@/lib/cards.functions";
-import { rarityGradient, rarityRing, rarityLabel, getCatalog, CARD_SELL_VALUE, CARD_ART, type CardDef } from "@/lib/cards";
+import { rarityGradient, rarityRing, rarityLabel, getCatalog, CARD_SELL_VALUE, CARD_ART, cardEmoji, type CardDef } from "@/lib/cards";
 
 export const Route = createFileRoute("/_authenticated/cards")({
   component: CardsPage,
@@ -20,14 +20,33 @@ function CardArt({ card }: { card: CardDef }) {
   if (art) {
     return <img src={art} alt="" loading="lazy" width={300} height={400} className="absolute inset-0 h-full w-full object-cover" />;
   }
+  const emoji = cardEmoji(card.name);
+  const isEpic = card.rarity === "epic";
+  const isRare = card.rarity === "rare";
   return (
     <div className={`absolute inset-0 bg-gradient-to-br ${rarityGradient(card.rarity)}`}>
       <motion.div
+        aria-hidden
         className="absolute inset-0"
         style={{ background: "radial-gradient(circle at 30% 30%, rgba(255,255,255,0.35), transparent 60%)" }}
         animate={{ opacity: [0.5, 0.85, 0.5] }}
         transition={{ repeat: Infinity, duration: 3 }}
       />
+      {(isRare || isEpic) && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          {isEpic ? (
+            <motion.div
+              className="text-6xl drop-shadow-[0_4px_18px_rgba(0,0,0,0.55)]"
+              animate={{ scale: [1, 1.15, 1], rotate: [-6, 6, -6], y: [0, -4, 0] }}
+              transition={{ repeat: Infinity, duration: 3.2, ease: "easeInOut" }}
+            >
+              {emoji}
+            </motion.div>
+          ) : (
+            <div className="text-5xl drop-shadow-[0_4px_14px_rgba(0,0,0,0.5)]">{emoji}</div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
