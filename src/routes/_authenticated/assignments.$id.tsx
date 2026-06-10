@@ -112,6 +112,30 @@ function AssignmentDetail() {
     await saveSubtasks(subtasks.filter((s) => s.id !== sid));
   }
 
+  async function runBreakdown() {
+    setAiErr(null);
+    setAiLoading(true);
+    try {
+      const r: any = await breakdownFn({ data: { title: assignment.title, description: assignment.description || "", due: assignment.due } });
+      setBreakdown(r);
+    } catch (e: any) {
+      setAiErr(e.message || "AI breakdown failed");
+    } finally {
+      setAiLoading(false);
+    }
+  }
+
+  async function applyBreakdownSubtasks() {
+    if (!breakdown) return;
+    const additions = breakdown.subtasks.map((s, i) => ({
+      id: `ai-${Date.now()}-${i}`,
+      title: s.estimated_minutes ? `${s.title} (~${s.estimated_minutes}m)` : s.title,
+      done: false,
+    }));
+    await saveSubtasks([...subtasks, ...additions]);
+  }
+
+
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 max-w-3xl mx-auto">
       <div className="flex items-center justify-between">
