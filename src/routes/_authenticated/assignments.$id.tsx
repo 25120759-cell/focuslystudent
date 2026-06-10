@@ -1,9 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { ArrowLeft, Edit2, Trash2, Save, X, Check, Plus, Calendar } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowLeft, Edit2, Trash2, Save, X, Check, Plus, Calendar, Sparkles, Loader2 } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { deleteAssignment, getAssignment, updateAssignment } from "@/lib/assignments.functions";
+import { aiBreakdownAssignment } from "@/lib/ai.functions";
+
 
 interface AssignmentDetailRow {
   id: string;
