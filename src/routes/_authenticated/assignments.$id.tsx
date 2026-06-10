@@ -1,9 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { ArrowLeft, Edit2, Trash2, Save, X, Check, Plus, Calendar } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowLeft, Edit2, Trash2, Save, X, Check, Plus, Calendar, Sparkles, Loader2 } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { deleteAssignment, getAssignment, updateAssignment } from "@/lib/assignments.functions";
+import { aiBreakdownAssignment } from "@/lib/ai.functions";
+
 
 interface AssignmentDetailRow {
   id: string;
@@ -33,6 +35,7 @@ function AssignmentDetail() {
   const getFn = useServerFn(getAssignment);
   const updateFn = useServerFn(updateAssignment);
   const deleteFn = useServerFn(deleteAssignment);
+  const breakdownFn = useServerFn(aiBreakdownAssignment);
   const navigate = useNavigate();
   const [a, setA] = useState<AssignmentDetailRow | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -40,6 +43,15 @@ function AssignmentDetail() {
   const [edit, setEdit] = useState(false);
   const [draft, setDraft] = useState<AssignmentDetailRow | null>(null);
   const [newSub, setNewSub] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiErr, setAiErr] = useState<string | null>(null);
+  const [breakdown, setBreakdown] = useState<null | {
+    subtasks: { title: string; estimated_minutes: number }[];
+    total_minutes: number;
+    study_plan: { day_offset: number; start_hour: number; duration_minutes: number; focus: string }[];
+    tips: string[];
+  }>(null);
+
 
   async function load() {
     setLoaded(false);
@@ -99,6 +111,30 @@ function AssignmentDetail() {
   async function delSub(sid: string) {
     await saveSubtasks(subtasks.filter((s) => s.id !== sid));
   }
+
+  async function runBreakdown() {
+    setAiErr(null);
+    setAiLoading(true);
+    try {
+      const r: any = await breakdownFn({ data: { title: assignment.title, description: assignment.description || "", due: assignment.due } });
+      setBreakdown(r);
+    } catch (e: any) {
+      setAiErr(e.message || "AI breakdown failed");
+    } finally {
+      setAiLoading(false);
+    }
+  }
+
+  async function applyBreakdownSubtasks() {
+    if (!breakdown) return;
+    const additions = breakdown.subtasks.map((s, i) => ({
+      id: `ai-${Date.now()}-${i}`,
+      title: s.estimated_minutes ? `${s.title} (~${s.estimated_minutes}m)` : s.title,
+      done: false,
+    }));
+    await saveSubtasks([...subtasks, ...additions]);
+  }
+
 
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 max-w-3xl mx-auto">
@@ -207,6 +243,72 @@ function AssignmentDetail() {
           />
           <button onClick={addSub} className="rounded-full bg-primary p-1.5 text-primary-foreground"><Plus className="h-4 w-4" /></button>
         </div>
+      </div>
+
+      <div className="rounded-3xl glass p-6">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-display text-lg font-semibold flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-primary" /> AI Breakdown
+          </h2>
+          <button
+            onClick={runBreakdown}
+            disabled={aiLoading}
+            className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground disabled:opacity-50"
+          >
+            {aiLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+            {breakdown ? "Regenerate" : "Generate plan"}
+          </button>
+        </div>
+        {aiErr && <p className="text-xs text-destructive mb-2">{aiErr}</p>}
+        {!breakdown && !aiLoading && (
+          <p className="text-xs text-muted-foreground">Let AI split this assignment into subtasks with time estimates and a study schedule.</p>
+        )}
+        <AnimatePresence>
+          {breakdown && (
+            <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-semibold">Suggested subtasks {breakdown.total_minutes ? <span className="text-muted-foreground font-normal">· ~{breakdown.total_minutes} min total</span> : null}</h3>
+                  <button onClick={applyBreakdownSubtasks} className="text-xs text-primary hover:underline">Add all to subtasks</button>
+                </div>
+                <ul className="space-y-1">
+                  {breakdown.subtasks.map((s, i) => (
+                    <li key={i} className="text-sm rounded-lg bg-card border border-border px-3 py-2 flex justify-between gap-2">
+                      <span>{s.title}</span>
+                      {s.estimated_minutes ? <span className="text-xs text-muted-foreground">{s.estimated_minutes}m</span> : null}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              {breakdown.study_plan.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-semibold mb-2">Study schedule</h3>
+                  <ul className="space-y-1 text-xs">
+                    {breakdown.study_plan.map((p, i) => {
+                      const date = new Date();
+                      date.setDate(date.getDate() + (p.day_offset || 0));
+                      const label = date.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+                      const h = String(p.start_hour).padStart(2, "0");
+                      return (
+                        <li key={i} className="rounded-lg bg-card border border-border px-3 py-2">
+                          <span className="font-medium">{label} · {h}:00</span> · {p.duration_minutes}m — {p.focus}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
+              {breakdown.tips.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-semibold mb-2">Tips</h3>
+                  <ul className="space-y-1 text-xs list-disc list-inside text-foreground/80">
+                    {breakdown.tips.map((tip, i) => <li key={i}>{tip}</li>)}
+                  </ul>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {current.resources.length > 0 && (

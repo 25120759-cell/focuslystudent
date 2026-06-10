@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
-import { LogIn, LogOut, Shield, Users, Layers, LifeBuoy, FileText } from "lucide-react";
+import { LogIn, LogOut, Shield, Users, Layers, LifeBuoy, FileText, Brain } from "lucide-react";
 import { useT, useStore } from "@/lib/store";
 import { useAuth } from "@/lib/auth";
 import { isPublicPath } from "@/lib/publicRoutes";
@@ -36,9 +36,13 @@ export function AppNav() {
           <Link to="/cards" className={linkClass(path === "/cards")} title="Cards">
             <Layers className="inline h-3.5 w-3.5" /> <span className="hidden sm:inline">Cards</span>
           </Link>
+          <Link to="/notes" className={linkClass(path === "/notes")} title="AI Notes">
+            <Brain className="inline h-3.5 w-3.5" /> <span className="hidden sm:inline">AI Notes</span>
+          </Link>
           <Link to="/docs" className={linkClass(path.startsWith("/docs") && !path.startsWith("/docs/share"))} title="Focusly Docs">
             <FileText className="inline h-3.5 w-3.5" /> <span className="hidden sm:inline">Docs</span>
           </Link>
+
           <span className="mx-1 h-5 w-px bg-border" />
           <button onClick={() => setOpenSettings(true)} className={linkClass(false)}>{t("settings")}</button>
           <Link to="/rewards" className={linkClass(path === "/rewards")}>

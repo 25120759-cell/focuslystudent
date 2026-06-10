@@ -331,3 +331,94 @@ export const adminDeletePost = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+// ---- AI: smart assignment breakdown ----
+
+export const aiBreakdownAssignment = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z.object({
+      title: z.string().min(1).max(300),
+      description: z.string().max(4000).optional().default(""),
+      due: z.string().nullable().optional(),
+    }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context as any;
+    await checkCredits(supabase, userId);
+    const today = new Date().toISOString();
+    const sys = `You are a study planner. Break a student assignment into 3-8 actionable subtasks and a short study plan.
+Today is ${today}. Return ONLY JSON:
+{
+  "subtasks": [{"title": string, "estimated_minutes": number}],
+  "total_minutes": number,
+  "study_plan": [{"day_offset": number (0=today, 1=tomorrow...), "start_hour": number (0-23), "duration_minutes": number, "focus": string}],
+  "tips": [string]
+}
+Schedule sessions before the due date, prefer 25-50 min blocks in the afternoon/evening, leave a buffer day before the deadline.`;
+    const json = await callGateway({
+      messages: [
+        { role: "system", content: sys },
+        { role: "user", content: `Title: ${data.title}\nDue: ${data.due ?? "no due date"}\nDescription: ${data.description || "(none)"}` },
+      ],
+      response_format: { type: "json_object" },
+    });
+    const raw = json.choices?.[0]?.message?.content ?? "{}";
+    const usage = json.usage ?? {};
+    await recordUsage(supabase, userId, usage.prompt_tokens ?? 0, usage.completion_tokens ?? 0);
+    try {
+      const parsed = JSON.parse(raw);
+      return {
+        subtasks: Array.isArray(parsed.subtasks) ? parsed.subtasks.slice(0, 12) : [],
+        total_minutes: Number(parsed.total_minutes) || 0,
+        study_plan: Array.isArray(parsed.study_plan) ? parsed.study_plan.slice(0, 10) : [],
+        tips: Array.isArray(parsed.tips) ? parsed.tips.slice(0, 5) : [],
+      };
+    } catch {
+      return { subtasks: [], total_minutes: 0, study_plan: [], tips: [] };
+    }
+  });
+
+// ---- AI: notes summary, flashcards, quiz ----
+
+export const aiStudyNotes = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z.object({
+      text: z.string().min(20).max(20000),
+      mode: z.enum(["all", "summary", "flashcards", "quiz"]).default("all"),
+    }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context as any;
+    await checkCredits(supabase, userId);
+    const sys = `You are a study aid generator. Given study notes, return ONLY JSON:
+{
+  "summary": string (3-6 sentences, plain),
+  "key_points": [string],
+  "flashcards": [{"front": string, "back": string}],
+  "quiz": [{"question": string, "options": [string, string, string, string], "answer_index": number (0-3), "explanation": string}]
+}
+Generate 6-12 flashcards and 5-8 quiz questions. Cover the most important concepts. Keep options plausible and distinct.`;
+    const json = await callGateway({
+      messages: [
+        { role: "system", content: sys },
+        { role: "user", content: data.text },
+      ],
+      response_format: { type: "json_object" },
+    });
+    const raw = json.choices?.[0]?.message?.content ?? "{}";
+    const usage = json.usage ?? {};
+    await recordUsage(supabase, userId, usage.prompt_tokens ?? 0, usage.completion_tokens ?? 0);
+    try {
+      const p = JSON.parse(raw);
+      return {
+        summary: String(p.summary ?? ""),
+        key_points: Array.isArray(p.key_points) ? p.key_points.slice(0, 12) : [],
+        flashcards: Array.isArray(p.flashcards) ? p.flashcards.slice(0, 20) : [],
+        quiz: Array.isArray(p.quiz) ? p.quiz.slice(0, 12) : [],
+      };
+    } catch {
+      return { summary: "", key_points: [], flashcards: [], quiz: [] };
+    }
+  });
+
