@@ -22,6 +22,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as UpdatesSlugRouteImport } from './routes/updates.$slug'
 import { Route as AuthenticatedSocialRouteImport } from './routes/_authenticated/social'
 import { Route as AuthenticatedRewardsRouteImport } from './routes/_authenticated/rewards'
+import { Route as AuthenticatedNotesRouteImport } from './routes/_authenticated/notes'
 import { Route as AuthenticatedDocsRouteImport } from './routes/_authenticated/docs'
 import { Route as AuthenticatedCardsRouteImport } from './routes/_authenticated/cards'
 import { Route as AuthenticatedCalenderRouteImport } from './routes/_authenticated/calender'
@@ -97,6 +98,11 @@ const AuthenticatedRewardsRoute = AuthenticatedRewardsRouteImport.update({
   path: '/rewards',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedNotesRoute = AuthenticatedNotesRouteImport.update({
+  id: '/notes',
+  path: '/notes',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDocsRoute = AuthenticatedDocsRouteImport.update({
   id: '/docs',
   path: '/docs',
@@ -167,6 +173,7 @@ export interface FileRoutesByFullPath {
   '/calender': typeof AuthenticatedCalenderRoute
   '/cards': typeof AuthenticatedCardsRoute
   '/docs': typeof AuthenticatedDocsRouteWithChildren
+  '/notes': typeof AuthenticatedNotesRoute
   '/rewards': typeof AuthenticatedRewardsRoute
   '/social': typeof AuthenticatedSocialRoute
   '/updates/$slug': typeof UpdatesSlugRoute
@@ -191,6 +198,7 @@ export interface FileRoutesByTo {
   '/calender': typeof AuthenticatedCalenderRoute
   '/cards': typeof AuthenticatedCardsRoute
   '/docs': typeof AuthenticatedDocsRouteWithChildren
+  '/notes': typeof AuthenticatedNotesRoute
   '/rewards': typeof AuthenticatedRewardsRoute
   '/social': typeof AuthenticatedSocialRoute
   '/updates/$slug': typeof UpdatesSlugRoute
@@ -217,6 +225,7 @@ export interface FileRoutesById {
   '/_authenticated/calender': typeof AuthenticatedCalenderRoute
   '/_authenticated/cards': typeof AuthenticatedCardsRoute
   '/_authenticated/docs': typeof AuthenticatedDocsRouteWithChildren
+  '/_authenticated/notes': typeof AuthenticatedNotesRoute
   '/_authenticated/rewards': typeof AuthenticatedRewardsRoute
   '/_authenticated/social': typeof AuthenticatedSocialRoute
   '/updates/$slug': typeof UpdatesSlugRoute
@@ -243,6 +252,7 @@ export interface FileRouteTypes {
     | '/calender'
     | '/cards'
     | '/docs'
+    | '/notes'
     | '/rewards'
     | '/social'
     | '/updates/$slug'
@@ -267,6 +277,7 @@ export interface FileRouteTypes {
     | '/calender'
     | '/cards'
     | '/docs'
+    | '/notes'
     | '/rewards'
     | '/social'
     | '/updates/$slug'
@@ -292,6 +303,7 @@ export interface FileRouteTypes {
     | '/_authenticated/calender'
     | '/_authenticated/cards'
     | '/_authenticated/docs'
+    | '/_authenticated/notes'
     | '/_authenticated/rewards'
     | '/_authenticated/social'
     | '/updates/$slug'
@@ -409,6 +421,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRewardsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/notes': {
+      id: '/_authenticated/notes'
+      path: '/notes'
+      fullPath: '/notes'
+      preLoaderRoute: typeof AuthenticatedNotesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/docs': {
       id: '/_authenticated/docs'
       path: '/docs'
@@ -514,6 +533,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCalenderRoute: typeof AuthenticatedCalenderRoute
   AuthenticatedCardsRoute: typeof AuthenticatedCardsRoute
   AuthenticatedDocsRoute: typeof AuthenticatedDocsRouteWithChildren
+  AuthenticatedNotesRoute: typeof AuthenticatedNotesRoute
   AuthenticatedRewardsRoute: typeof AuthenticatedRewardsRoute
   AuthenticatedSocialRoute: typeof AuthenticatedSocialRoute
 }
@@ -525,6 +545,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCalenderRoute: AuthenticatedCalenderRoute,
   AuthenticatedCardsRoute: AuthenticatedCardsRoute,
   AuthenticatedDocsRoute: AuthenticatedDocsRouteWithChildren,
+  AuthenticatedNotesRoute: AuthenticatedNotesRoute,
   AuthenticatedRewardsRoute: AuthenticatedRewardsRoute,
   AuthenticatedSocialRoute: AuthenticatedSocialRoute,
 }

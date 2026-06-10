@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
-import { LogIn, LogOut, Shield, Users, Layers, LifeBuoy, FileText } from "lucide-react";
+import { LogIn, LogOut, Shield, Users, Layers, LifeBuoy, FileText, Brain } from "lucide-react";
 import { useT, useStore } from "@/lib/store";
 import { useAuth } from "@/lib/auth";
 import { isPublicPath } from "@/lib/publicRoutes";
