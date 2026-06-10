@@ -35,6 +35,7 @@ function AssignmentDetail() {
   const getFn = useServerFn(getAssignment);
   const updateFn = useServerFn(updateAssignment);
   const deleteFn = useServerFn(deleteAssignment);
+  const breakdownFn = useServerFn(aiBreakdownAssignment);
   const navigate = useNavigate();
   const [a, setA] = useState<AssignmentDetailRow | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -42,6 +43,15 @@ function AssignmentDetail() {
   const [edit, setEdit] = useState(false);
   const [draft, setDraft] = useState<AssignmentDetailRow | null>(null);
   const [newSub, setNewSub] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiErr, setAiErr] = useState<string | null>(null);
+  const [breakdown, setBreakdown] = useState<null | {
+    subtasks: { title: string; estimated_minutes: number }[];
+    total_minutes: number;
+    study_plan: { day_offset: number; start_hour: number; duration_minutes: number; focus: string }[];
+    tips: string[];
+  }>(null);
+
 
   async function load() {
     setLoaded(false);
