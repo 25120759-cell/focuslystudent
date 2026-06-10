@@ -29,6 +29,7 @@ import { Route as AuthenticatedAssignmentsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as DocsShareTokenRouteImport } from './routes/docs.share.$token'
+import { Route as ApiPublicExtensionVersionRouteImport } from './routes/api/public/extension-version'
 import { Route as AuthenticatedDocsIdRouteImport } from './routes/_authenticated/docs.$id'
 import { Route as AuthenticatedAssignmentsIdRouteImport } from './routes/_authenticated/assignments.$id'
 
@@ -132,6 +133,12 @@ const DocsShareTokenRoute = DocsShareTokenRouteImport.update({
   path: '/docs/share/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicExtensionVersionRoute =
+  ApiPublicExtensionVersionRouteImport.update({
+    id: '/api/public/extension-version',
+    path: '/api/public/extension-version',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedDocsIdRoute = AuthenticatedDocsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -165,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/updates/$slug': typeof UpdatesSlugRoute
   '/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
   '/docs/$id': typeof AuthenticatedDocsIdRoute
+  '/api/public/extension-version': typeof ApiPublicExtensionVersionRoute
   '/docs/share/$token': typeof DocsShareTokenRoute
 }
 export interface FileRoutesByTo {
@@ -188,6 +196,7 @@ export interface FileRoutesByTo {
   '/updates/$slug': typeof UpdatesSlugRoute
   '/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
   '/docs/$id': typeof AuthenticatedDocsIdRoute
+  '/api/public/extension-version': typeof ApiPublicExtensionVersionRoute
   '/docs/share/$token': typeof DocsShareTokenRoute
 }
 export interface FileRoutesById {
@@ -213,6 +222,7 @@ export interface FileRoutesById {
   '/updates/$slug': typeof UpdatesSlugRoute
   '/_authenticated/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
   '/_authenticated/docs/$id': typeof AuthenticatedDocsIdRoute
+  '/api/public/extension-version': typeof ApiPublicExtensionVersionRoute
   '/docs/share/$token': typeof DocsShareTokenRoute
 }
 export interface FileRouteTypes {
@@ -238,6 +248,7 @@ export interface FileRouteTypes {
     | '/updates/$slug'
     | '/assignments/$id'
     | '/docs/$id'
+    | '/api/public/extension-version'
     | '/docs/share/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -261,6 +272,7 @@ export interface FileRouteTypes {
     | '/updates/$slug'
     | '/assignments/$id'
     | '/docs/$id'
+    | '/api/public/extension-version'
     | '/docs/share/$token'
   id:
     | '__root__'
@@ -285,6 +297,7 @@ export interface FileRouteTypes {
     | '/updates/$slug'
     | '/_authenticated/assignments/$id'
     | '/_authenticated/docs/$id'
+    | '/api/public/extension-version'
     | '/docs/share/$token'
   fileRoutesById: FileRoutesById
 }
@@ -299,6 +312,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   SupportRoute: typeof SupportRoute
   UpdatesRoute: typeof UpdatesRouteWithChildren
+  ApiPublicExtensionVersionRoute: typeof ApiPublicExtensionVersionRoute
   DocsShareTokenRoute: typeof DocsShareTokenRoute
 }
 
@@ -444,6 +458,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocsShareTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/extension-version': {
+      id: '/api/public/extension-version'
+      path: '/api/public/extension-version'
+      fullPath: '/api/public/extension-version'
+      preLoaderRoute: typeof ApiPublicExtensionVersionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/docs/$id': {
       id: '/_authenticated/docs/$id'
       path: '/$id'
@@ -533,6 +554,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   SupportRoute: SupportRoute,
   UpdatesRoute: UpdatesRouteWithChildren,
+  ApiPublicExtensionVersionRoute: ApiPublicExtensionVersionRoute,
   DocsShareTokenRoute: DocsShareTokenRoute,
 }
 export const routeTree = rootRouteImport
