@@ -69,13 +69,6 @@ function AssignmentDetail() {
     try {
       const r: any = await getFn({ data: { id } });
       setA(r.assignment ? { ...r.assignment, subtasks: r.assignment.subtasks ?? [], resources: r.assignment.resources ?? [] } : null);
-  async function load() {
-    setLoaded(false);
-    setErr(null);
-    try {
-      const r: any = await getFn({ data: { id } });
-      setA(r.assignment ? { ...r.assignment, subtasks: r.assignment.subtasks ?? [], resources: r.assignment.resources ?? [] } : null);
-      // Hydrate breakdown from offline cache
       const cached = await getLocal(`breakdown:${id}`);
       if (cached?.payload?.breakdown) setBreakdown(cached.payload.breakdown);
     } catch (e: any) {
@@ -86,6 +79,7 @@ function AssignmentDetail() {
   }
 
   useEffect(() => { load(); creditsFn().then(setCreds).catch(() => {}); }, [id]);
+
 
 
   if (!loaded) {
