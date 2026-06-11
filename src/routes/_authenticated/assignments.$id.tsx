@@ -32,12 +32,21 @@ export const Route = createFileRoute("/_authenticated/assignments/$id")({
   ),
 });
 
+type Breakdown = {
+  subtasks: { title: string; estimated_minutes: number }[];
+  total_minutes: number;
+  study_plan: { day_offset: number; start_hour: number; duration_minutes: number; focus: string }[];
+  tips: string[];
+};
+
 function AssignmentDetail() {
   const { id } = Route.useParams();
   const getFn = useServerFn(getAssignment);
   const updateFn = useServerFn(updateAssignment);
   const deleteFn = useServerFn(deleteAssignment);
   const breakdownFn = useServerFn(aiBreakdownAssignment);
+  const creditsFn = useServerFn(aiCredits);
+  const saveArtFn = useServerFn(saveArtifact);
   const navigate = useNavigate();
   const [a, setA] = useState<AssignmentDetailRow | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -45,14 +54,13 @@ function AssignmentDetail() {
   const [edit, setEdit] = useState(false);
   const [draft, setDraft] = useState<AssignmentDetailRow | null>(null);
   const [newSub, setNewSub] = useState("");
-  const [aiLoading, setAiLoading] = useState(false);
+  const [aiLoading, setAiLoading] = useState<null | "all" | "subtasks" | "schedule" | "tips">(null);
   const [aiErr, setAiErr] = useState<string | null>(null);
-  const [breakdown, setBreakdown] = useState<null | {
-    subtasks: { title: string; estimated_minutes: number }[];
-    total_minutes: number;
-    study_plan: { day_offset: number; start_hour: number; duration_minutes: number; focus: string }[];
-    tips: string[];
-  }>(null);
+  const [breakdown, setBreakdown] = useState<Breakdown | null>(null);
+  const [instruction, setInstruction] = useState("");
+  const [creds, setCreds] = useState<any>(null);
+  const [editingSection, setEditingSection] = useState<null | "subtasks" | "tips">(null);
+
 
 
   async function load() {
