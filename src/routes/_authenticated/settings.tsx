@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Palette, Bell, Type, CalendarDays, Languages, Bot, ShieldCheck, User2, Clock } from "lucide-react";
 import { useStore, useT, type FontSize, type Language, type Theme, type CalendarView } from "@/lib/store";
