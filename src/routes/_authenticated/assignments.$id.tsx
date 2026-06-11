@@ -1,10 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Edit2, Trash2, Save, X, Check, Plus, Calendar, Sparkles, Loader2 } from "lucide-react";
+import { ArrowLeft, Edit2, Trash2, Save, X, Check, Plus, Calendar, Sparkles, Loader2, RefreshCw, Pencil, Crown } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { deleteAssignment, getAssignment, updateAssignment } from "@/lib/assignments.functions";
-import { aiBreakdownAssignment } from "@/lib/ai.functions";
+import { aiBreakdownAssignment, aiCredits, saveArtifact } from "@/lib/ai.functions";
+import { saveLocal, getLocal, markClean } from "@/lib/ai-cache";
+
 
 
 interface AssignmentDetailRow {
@@ -30,12 +32,21 @@ export const Route = createFileRoute("/_authenticated/assignments/$id")({
   ),
 });
 
+type Breakdown = {
+  subtasks: { title: string; estimated_minutes: number }[];
+  total_minutes: number;
+  study_plan: { day_offset: number; start_hour: number; duration_minutes: number; focus: string }[];
+  tips: string[];
+};
+
 function AssignmentDetail() {
   const { id } = Route.useParams();
   const getFn = useServerFn(getAssignment);
   const updateFn = useServerFn(updateAssignment);
   const deleteFn = useServerFn(deleteAssignment);
   const breakdownFn = useServerFn(aiBreakdownAssignment);
+  const creditsFn = useServerFn(aiCredits);
+  const saveArtFn = useServerFn(saveArtifact);
   const navigate = useNavigate();
   const [a, setA] = useState<AssignmentDetailRow | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -43,14 +54,13 @@ function AssignmentDetail() {
   const [edit, setEdit] = useState(false);
   const [draft, setDraft] = useState<AssignmentDetailRow | null>(null);
   const [newSub, setNewSub] = useState("");
-  const [aiLoading, setAiLoading] = useState(false);
+  const [aiLoading, setAiLoading] = useState<null | "all" | "subtasks" | "schedule" | "tips">(null);
   const [aiErr, setAiErr] = useState<string | null>(null);
-  const [breakdown, setBreakdown] = useState<null | {
-    subtasks: { title: string; estimated_minutes: number }[];
-    total_minutes: number;
-    study_plan: { day_offset: number; start_hour: number; duration_minutes: number; focus: string }[];
-    tips: string[];
-  }>(null);
+  const [breakdown, setBreakdown] = useState<Breakdown | null>(null);
+  const [instruction, setInstruction] = useState("");
+  const [creds, setCreds] = useState<any>(null);
+  const [editingSection, setEditingSection] = useState<null | "subtasks" | "tips">(null);
+
 
 
   async function load() {
@@ -59,6 +69,8 @@ function AssignmentDetail() {
     try {
       const r: any = await getFn({ data: { id } });
       setA(r.assignment ? { ...r.assignment, subtasks: r.assignment.subtasks ?? [], resources: r.assignment.resources ?? [] } : null);
+      const cached = await getLocal(`breakdown:${id}`);
+      if (cached?.payload?.breakdown) setBreakdown(cached.payload.breakdown);
     } catch (e: any) {
       setErr(e.message || "Failed to load assignment");
     } finally {
@@ -66,7 +78,9 @@ function AssignmentDetail() {
     }
   }
 
-  useEffect(() => { load(); }, [id]);
+  useEffect(() => { load(); creditsFn().then(setCreds).catch(() => {}); }, [id]);
+
+
 
   if (!loaded) {
     return <div className="py-16 text-center text-sm text-muted-foreground">Loading…</div>;
@@ -112,16 +126,39 @@ function AssignmentDetail() {
     await saveSubtasks(subtasks.filter((s) => s.id !== sid));
   }
 
-  async function runBreakdown() {
+  async function persistBreakdown(b: Breakdown) {
+    const k = `breakdown:${id}`;
+    await saveLocal({ key: k, kind: "breakdown", ref_id: id, title: assignment.title, payload: { breakdown: b }, dirty: true });
+    if (navigator.onLine) {
+      try {
+        const r: any = await saveArtFn({ data: { kind: "breakdown", ref_id: id, title: assignment.title, payload: { breakdown: b } } });
+        await markClean(k, r.id);
+      } catch {}
+    }
+  }
+
+  function reachedLimit() { return creds ? creds.dayUsed >= creds.dayLimit || creds.monthUsed >= creds.monthLimit : false; }
+
+  async function runBreakdown(regen: "all" | "subtasks" | "schedule" | "tips") {
+    if (reachedLimit()) { setAiErr("AI limit reached."); return; }
     setAiErr(null);
-    setAiLoading(true);
+    setAiLoading(regen);
     try {
-      const r: any = await breakdownFn({ data: { title: assignment.title, description: assignment.description || "", due: assignment.due } });
-      setBreakdown(r);
+      const r: any = await breakdownFn({ data: { title: assignment.title, description: assignment.description || "", due: assignment.due, regen, user_instruction: instruction || undefined } });
+      const next: Breakdown = {
+        subtasks: r.subtasks ?? breakdown?.subtasks ?? [],
+        total_minutes: r.total_minutes ?? breakdown?.total_minutes ?? 0,
+        study_plan: r.study_plan ?? breakdown?.study_plan ?? [],
+        tips: r.tips ?? breakdown?.tips ?? [],
+      };
+      setBreakdown(next);
+      setInstruction("");
+      await persistBreakdown(next);
+      creditsFn().then(setCreds).catch(() => {});
     } catch (e: any) {
       setAiErr(e.message || "AI breakdown failed");
     } finally {
-      setAiLoading(false);
+      setAiLoading(null);
     }
   }
 
@@ -134,6 +171,14 @@ function AssignmentDetail() {
     }));
     await saveSubtasks([...subtasks, ...additions]);
   }
+
+  function patchBreakdown(p: Partial<Breakdown>) {
+    if (!breakdown) return;
+    const next = { ...breakdown, ...p };
+    setBreakdown(next);
+    persistBreakdown(next);
+  }
+
 
 
   return (
@@ -246,43 +291,71 @@ function AssignmentDetail() {
       </div>
 
       <div className="rounded-3xl glass p-6">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-3 gap-3 flex-wrap">
           <h2 className="font-display text-lg font-semibold flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" /> AI Breakdown
+            {creds?.plan === "max" && <span className="text-[10px] inline-flex items-center gap-1 text-amber-600"><Crown className="h-3 w-3" /> MAX</span>}
           </h2>
-          <button
-            onClick={runBreakdown}
-            disabled={aiLoading}
-            className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground disabled:opacity-50"
-          >
-            {aiLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
-            {breakdown ? "Regenerate" : "Generate plan"}
-          </button>
+          <div className="flex items-center gap-2 flex-wrap">
+            {breakdown && (
+              <input
+                value={instruction}
+                onChange={(e) => setInstruction(e.target.value)}
+                placeholder="Tell AI how to change it"
+                className="rounded-full border border-input bg-background px-3 py-1 text-xs w-48"
+              />
+            )}
+            <button
+              onClick={() => runBreakdown("all")}
+              disabled={aiLoading !== null || reachedLimit()}
+              className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground disabled:opacity-50"
+            >
+              {aiLoading === "all" ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+              {breakdown ? "Regenerate all" : "Generate plan"}
+            </button>
+          </div>
         </div>
         {aiErr && <p className="text-xs text-destructive mb-2">{aiErr}</p>}
-        {!breakdown && !aiLoading && (
-          <p className="text-xs text-muted-foreground">Let AI split this assignment into subtasks with time estimates and a study schedule.</p>
+        {!breakdown && aiLoading === null && (
+          <p className="text-xs text-muted-foreground">Let AI split this assignment into subtasks with time estimates and a study schedule. Saved offline.</p>
         )}
         <AnimatePresence>
           {breakdown && (
             <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-semibold">Suggested subtasks {breakdown.total_minutes ? <span className="text-muted-foreground font-normal">· ~{breakdown.total_minutes} min total</span> : null}</h3>
-                  <button onClick={applyBreakdownSubtasks} className="text-xs text-primary hover:underline">Add all to subtasks</button>
-                </div>
-                <ul className="space-y-1">
-                  {breakdown.subtasks.map((s, i) => (
-                    <li key={i} className="text-sm rounded-lg bg-card border border-border px-3 py-2 flex justify-between gap-2">
-                      <span>{s.title}</span>
-                      {s.estimated_minutes ? <span className="text-xs text-muted-foreground">{s.estimated_minutes}m</span> : null}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              {breakdown.study_plan.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-semibold mb-2">Study schedule</h3>
+              <BreakdownSection
+                title={`Suggested subtasks${breakdown.total_minutes ? ` · ~${breakdown.total_minutes} min total` : ""}`}
+                onRegen={() => runBreakdown("subtasks")}
+                loading={aiLoading === "subtasks"}
+                onEdit={() => setEditingSection(editingSection === "subtasks" ? null : "subtasks")}
+                editing={editingSection === "subtasks"}
+                extra={<button onClick={applyBreakdownSubtasks} className="text-xs text-primary hover:underline">Add all to subtasks</button>}
+              >
+                {editingSection === "subtasks" ? (
+                  <textarea
+                    rows={Math.max(3, breakdown.subtasks.length)}
+                    value={breakdown.subtasks.map((s) => `${s.estimated_minutes || 0}|${s.title}`).join("\n")}
+                    onChange={(e) => patchBreakdown({ subtasks: e.target.value.split("\n").filter(Boolean).map((ln) => { const [m, ...rest] = ln.split("|"); return { title: rest.join("|").trim() || ln, estimated_minutes: Number(m) || 0 }; }) })}
+                    className="w-full rounded-lg border border-input bg-background p-2 text-xs font-mono"
+                    placeholder="minutes|title"
+                  />
+                ) : (
+                  <ul className="space-y-1">
+                    {breakdown.subtasks.map((s, i) => (
+                      <li key={i} className="text-sm rounded-lg bg-card border border-border px-3 py-2 flex justify-between gap-2">
+                        <span>{s.title}</span>
+                        {s.estimated_minutes ? <span className="text-xs text-muted-foreground">{s.estimated_minutes}m</span> : null}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </BreakdownSection>
+
+              <BreakdownSection
+                title="Study schedule"
+                onRegen={() => runBreakdown("schedule")}
+                loading={aiLoading === "schedule"}
+              >
+                {breakdown.study_plan.length > 0 ? (
                   <ul className="space-y-1 text-xs">
                     {breakdown.study_plan.map((p, i) => {
                       const date = new Date();
@@ -290,26 +363,41 @@ function AssignmentDetail() {
                       const label = date.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
                       const h = String(p.start_hour).padStart(2, "0");
                       return (
-                        <li key={i} className="rounded-lg bg-card border border-border px-3 py-2">
-                          <span className="font-medium">{label} · {h}:00</span> · {p.duration_minutes}m — {p.focus}
+                        <li key={i} className="rounded-lg bg-card border border-border px-3 py-2 flex items-center justify-between gap-2">
+                          <span><span className="font-medium">{label} · {h}:00</span> · {p.duration_minutes}m — {p.focus}</span>
+                          <button onClick={() => patchBreakdown({ study_plan: breakdown.study_plan.filter((_, ix) => ix !== i) })} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-3 w-3" /></button>
                         </li>
                       );
                     })}
                   </ul>
-                </div>
-              )}
-              {breakdown.tips.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-semibold mb-2">Tips</h3>
+                ) : <p className="text-xs text-muted-foreground">No schedule.</p>}
+              </BreakdownSection>
+
+              <BreakdownSection
+                title="Tips"
+                onRegen={() => runBreakdown("tips")}
+                loading={aiLoading === "tips"}
+                onEdit={() => setEditingSection(editingSection === "tips" ? null : "tips")}
+                editing={editingSection === "tips"}
+              >
+                {editingSection === "tips" ? (
+                  <textarea
+                    rows={Math.max(3, breakdown.tips.length)}
+                    value={breakdown.tips.join("\n")}
+                    onChange={(e) => patchBreakdown({ tips: e.target.value.split("\n").map((l) => l.trim()).filter(Boolean) })}
+                    className="w-full rounded-lg border border-input bg-background p-2 text-xs"
+                  />
+                ) : (
                   <ul className="space-y-1 text-xs list-disc list-inside text-foreground/80">
                     {breakdown.tips.map((tip, i) => <li key={i}>{tip}</li>)}
                   </ul>
-                </div>
-              )}
+                )}
+              </BreakdownSection>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
+
 
       {current.resources.length > 0 && (
         <div className="rounded-3xl glass p-6">
@@ -322,5 +410,32 @@ function AssignmentDetail() {
         </div>
       )}
     </motion.div>
+  );
+}
+
+function BreakdownSection({ title, onRegen, loading, onEdit, editing, extra, children }: {
+  title: string; onRegen: () => void; loading: boolean;
+  onEdit?: () => void; editing?: boolean;
+  extra?: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
+        <h3 className="text-sm font-semibold">{title}</h3>
+        <div className="flex items-center gap-2">
+          {extra}
+          {onEdit && (
+            <button onClick={onEdit} className="inline-flex items-center gap-1 text-[10px] rounded-full border border-border bg-card px-2 py-0.5 hover:bg-accent">
+              {editing ? <><Save className="h-3 w-3" /> Done</> : <><Pencil className="h-3 w-3" /> Edit</>}
+            </button>
+          )}
+          <button onClick={onRegen} disabled={loading} className="inline-flex items-center gap-1 text-[10px] rounded-full bg-secondary px-2 py-0.5 disabled:opacity-50">
+            {loading ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />} Regen
+          </button>
+        </div>
+      </div>
+      {children}
+    </div>
   );
 }

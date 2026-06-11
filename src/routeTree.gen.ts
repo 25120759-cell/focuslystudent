@@ -20,7 +20,9 @@ import { Route as EngagementRouteImport } from './routes/engagement'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UpdatesSlugRouteImport } from './routes/updates.$slug'
+import { Route as AuthenticatedUsageRouteImport } from './routes/_authenticated/usage'
 import { Route as AuthenticatedSocialRouteImport } from './routes/_authenticated/social'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedRewardsRouteImport } from './routes/_authenticated/rewards'
 import { Route as AuthenticatedNotesRouteImport } from './routes/_authenticated/notes'
 import { Route as AuthenticatedDocsRouteImport } from './routes/_authenticated/docs'
@@ -88,9 +90,19 @@ const UpdatesSlugRoute = UpdatesSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => UpdatesRoute,
 } as any)
+const AuthenticatedUsageRoute = AuthenticatedUsageRouteImport.update({
+  id: '/usage',
+  path: '/usage',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSocialRoute = AuthenticatedSocialRouteImport.update({
   id: '/social',
   path: '/social',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedRewardsRoute = AuthenticatedRewardsRouteImport.update({
@@ -175,7 +187,9 @@ export interface FileRoutesByFullPath {
   '/docs': typeof AuthenticatedDocsRouteWithChildren
   '/notes': typeof AuthenticatedNotesRoute
   '/rewards': typeof AuthenticatedRewardsRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/social': typeof AuthenticatedSocialRoute
+  '/usage': typeof AuthenticatedUsageRoute
   '/updates/$slug': typeof UpdatesSlugRoute
   '/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
   '/docs/$id': typeof AuthenticatedDocsIdRoute
@@ -200,7 +214,9 @@ export interface FileRoutesByTo {
   '/docs': typeof AuthenticatedDocsRouteWithChildren
   '/notes': typeof AuthenticatedNotesRoute
   '/rewards': typeof AuthenticatedRewardsRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/social': typeof AuthenticatedSocialRoute
+  '/usage': typeof AuthenticatedUsageRoute
   '/updates/$slug': typeof UpdatesSlugRoute
   '/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
   '/docs/$id': typeof AuthenticatedDocsIdRoute
@@ -227,7 +243,9 @@ export interface FileRoutesById {
   '/_authenticated/docs': typeof AuthenticatedDocsRouteWithChildren
   '/_authenticated/notes': typeof AuthenticatedNotesRoute
   '/_authenticated/rewards': typeof AuthenticatedRewardsRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/social': typeof AuthenticatedSocialRoute
+  '/_authenticated/usage': typeof AuthenticatedUsageRoute
   '/updates/$slug': typeof UpdatesSlugRoute
   '/_authenticated/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
   '/_authenticated/docs/$id': typeof AuthenticatedDocsIdRoute
@@ -254,7 +272,9 @@ export interface FileRouteTypes {
     | '/docs'
     | '/notes'
     | '/rewards'
+    | '/settings'
     | '/social'
+    | '/usage'
     | '/updates/$slug'
     | '/assignments/$id'
     | '/docs/$id'
@@ -279,7 +299,9 @@ export interface FileRouteTypes {
     | '/docs'
     | '/notes'
     | '/rewards'
+    | '/settings'
     | '/social'
+    | '/usage'
     | '/updates/$slug'
     | '/assignments/$id'
     | '/docs/$id'
@@ -305,7 +327,9 @@ export interface FileRouteTypes {
     | '/_authenticated/docs'
     | '/_authenticated/notes'
     | '/_authenticated/rewards'
+    | '/_authenticated/settings'
     | '/_authenticated/social'
+    | '/_authenticated/usage'
     | '/updates/$slug'
     | '/_authenticated/assignments/$id'
     | '/_authenticated/docs/$id'
@@ -407,11 +431,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UpdatesSlugRouteImport
       parentRoute: typeof UpdatesRoute
     }
+    '/_authenticated/usage': {
+      id: '/_authenticated/usage'
+      path: '/usage'
+      fullPath: '/usage'
+      preLoaderRoute: typeof AuthenticatedUsageRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/social': {
       id: '/_authenticated/social'
       path: '/social'
       fullPath: '/social'
       preLoaderRoute: typeof AuthenticatedSocialRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/rewards': {
@@ -535,7 +573,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDocsRoute: typeof AuthenticatedDocsRouteWithChildren
   AuthenticatedNotesRoute: typeof AuthenticatedNotesRoute
   AuthenticatedRewardsRoute: typeof AuthenticatedRewardsRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedSocialRoute: typeof AuthenticatedSocialRoute
+  AuthenticatedUsageRoute: typeof AuthenticatedUsageRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -547,7 +587,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDocsRoute: AuthenticatedDocsRouteWithChildren,
   AuthenticatedNotesRoute: AuthenticatedNotesRoute,
   AuthenticatedRewardsRoute: AuthenticatedRewardsRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedSocialRoute: AuthenticatedSocialRoute,
+  AuthenticatedUsageRoute: AuthenticatedUsageRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

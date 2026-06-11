@@ -14,13 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_artifacts: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          payload: Json
+          ref_id: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          payload?: Json
+          ref_id?: string | null
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          payload?: Json
+          ref_id?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_usage: {
         Row: {
           created_at: string
           day: string
           id: string
+          kind: string
           model: string
           month: string
+          plan: string | null
           tokens_in: number
           tokens_out: number
           user_id: string
@@ -29,8 +64,10 @@ export type Database = {
           created_at?: string
           day?: string
           id?: string
+          kind?: string
           model: string
           month?: string
+          plan?: string | null
           tokens_in?: number
           tokens_out?: number
           user_id: string
@@ -39,8 +76,10 @@ export type Database = {
           created_at?: string
           day?: string
           id?: string
+          kind?: string
           model?: string
           month?: string
+          plan?: string | null
           tokens_in?: number
           tokens_out?: number
           user_id?: string
