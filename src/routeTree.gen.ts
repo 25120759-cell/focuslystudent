@@ -20,6 +20,7 @@ import { Route as EngagementRouteImport } from './routes/engagement'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UpdatesSlugRouteImport } from './routes/updates.$slug'
+import { Route as AuthenticatedUsageRouteImport } from './routes/_authenticated/usage'
 import { Route as AuthenticatedSocialRouteImport } from './routes/_authenticated/social'
 import { Route as AuthenticatedRewardsRouteImport } from './routes/_authenticated/rewards'
 import { Route as AuthenticatedNotesRouteImport } from './routes/_authenticated/notes'
@@ -87,6 +88,11 @@ const UpdatesSlugRoute = UpdatesSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
   getParentRoute: () => UpdatesRoute,
+} as any)
+const AuthenticatedUsageRoute = AuthenticatedUsageRouteImport.update({
+  id: '/usage',
+  path: '/usage',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedSocialRoute = AuthenticatedSocialRouteImport.update({
   id: '/social',
@@ -176,6 +182,7 @@ export interface FileRoutesByFullPath {
   '/notes': typeof AuthenticatedNotesRoute
   '/rewards': typeof AuthenticatedRewardsRoute
   '/social': typeof AuthenticatedSocialRoute
+  '/usage': typeof AuthenticatedUsageRoute
   '/updates/$slug': typeof UpdatesSlugRoute
   '/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
   '/docs/$id': typeof AuthenticatedDocsIdRoute
@@ -201,6 +208,7 @@ export interface FileRoutesByTo {
   '/notes': typeof AuthenticatedNotesRoute
   '/rewards': typeof AuthenticatedRewardsRoute
   '/social': typeof AuthenticatedSocialRoute
+  '/usage': typeof AuthenticatedUsageRoute
   '/updates/$slug': typeof UpdatesSlugRoute
   '/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
   '/docs/$id': typeof AuthenticatedDocsIdRoute
@@ -228,6 +236,7 @@ export interface FileRoutesById {
   '/_authenticated/notes': typeof AuthenticatedNotesRoute
   '/_authenticated/rewards': typeof AuthenticatedRewardsRoute
   '/_authenticated/social': typeof AuthenticatedSocialRoute
+  '/_authenticated/usage': typeof AuthenticatedUsageRoute
   '/updates/$slug': typeof UpdatesSlugRoute
   '/_authenticated/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
   '/_authenticated/docs/$id': typeof AuthenticatedDocsIdRoute
@@ -255,6 +264,7 @@ export interface FileRouteTypes {
     | '/notes'
     | '/rewards'
     | '/social'
+    | '/usage'
     | '/updates/$slug'
     | '/assignments/$id'
     | '/docs/$id'
@@ -280,6 +290,7 @@ export interface FileRouteTypes {
     | '/notes'
     | '/rewards'
     | '/social'
+    | '/usage'
     | '/updates/$slug'
     | '/assignments/$id'
     | '/docs/$id'
@@ -306,6 +317,7 @@ export interface FileRouteTypes {
     | '/_authenticated/notes'
     | '/_authenticated/rewards'
     | '/_authenticated/social'
+    | '/_authenticated/usage'
     | '/updates/$slug'
     | '/_authenticated/assignments/$id'
     | '/_authenticated/docs/$id'
@@ -406,6 +418,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/updates/$slug'
       preLoaderRoute: typeof UpdatesSlugRouteImport
       parentRoute: typeof UpdatesRoute
+    }
+    '/_authenticated/usage': {
+      id: '/_authenticated/usage'
+      path: '/usage'
+      fullPath: '/usage'
+      preLoaderRoute: typeof AuthenticatedUsageRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/social': {
       id: '/_authenticated/social'
@@ -536,6 +555,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedNotesRoute: typeof AuthenticatedNotesRoute
   AuthenticatedRewardsRoute: typeof AuthenticatedRewardsRoute
   AuthenticatedSocialRoute: typeof AuthenticatedSocialRoute
+  AuthenticatedUsageRoute: typeof AuthenticatedUsageRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -548,6 +568,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedNotesRoute: AuthenticatedNotesRoute,
   AuthenticatedRewardsRoute: AuthenticatedRewardsRoute,
   AuthenticatedSocialRoute: AuthenticatedSocialRoute,
+  AuthenticatedUsageRoute: AuthenticatedUsageRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -581,3 +602,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
