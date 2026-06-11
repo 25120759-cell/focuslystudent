@@ -126,16 +126,39 @@ function AssignmentDetail() {
     await saveSubtasks(subtasks.filter((s) => s.id !== sid));
   }
 
-  async function runBreakdown() {
+  async function persistBreakdown(b: Breakdown) {
+    const k = `breakdown:${id}`;
+    await saveLocal({ key: k, kind: "breakdown", ref_id: id, title: assignment.title, payload: { breakdown: b }, dirty: true });
+    if (navigator.onLine) {
+      try {
+        const r: any = await saveArtFn({ data: { kind: "breakdown", ref_id: id, title: assignment.title, payload: { breakdown: b } } });
+        await markClean(k, r.id);
+      } catch {}
+    }
+  }
+
+  function reachedLimit() { return creds ? creds.dayUsed >= creds.dayLimit || creds.monthUsed >= creds.monthLimit : false; }
+
+  async function runBreakdown(regen: "all" | "subtasks" | "schedule" | "tips") {
+    if (reachedLimit()) { setAiErr("AI limit reached."); return; }
     setAiErr(null);
-    setAiLoading(true);
+    setAiLoading(regen);
     try {
-      const r: any = await breakdownFn({ data: { title: assignment.title, description: assignment.description || "", due: assignment.due } });
-      setBreakdown(r);
+      const r: any = await breakdownFn({ data: { title: assignment.title, description: assignment.description || "", due: assignment.due, regen, user_instruction: instruction || undefined } });
+      const next: Breakdown = {
+        subtasks: r.subtasks ?? breakdown?.subtasks ?? [],
+        total_minutes: r.total_minutes ?? breakdown?.total_minutes ?? 0,
+        study_plan: r.study_plan ?? breakdown?.study_plan ?? [],
+        tips: r.tips ?? breakdown?.tips ?? [],
+      };
+      setBreakdown(next);
+      setInstruction("");
+      await persistBreakdown(next);
+      creditsFn().then(setCreds).catch(() => {});
     } catch (e: any) {
       setAiErr(e.message || "AI breakdown failed");
     } finally {
-      setAiLoading(false);
+      setAiLoading(null);
     }
   }
 
@@ -148,6 +171,14 @@ function AssignmentDetail() {
     }));
     await saveSubtasks([...subtasks, ...additions]);
   }
+
+  function patchBreakdown(p: Partial<Breakdown>) {
+    if (!breakdown) return;
+    const next = { ...breakdown, ...p };
+    setBreakdown(next);
+    persistBreakdown(next);
+  }
+
 
 
   return (
