@@ -412,3 +412,30 @@ function AssignmentDetail() {
     </motion.div>
   );
 }
+
+function BreakdownSection({ title, onRegen, loading, onEdit, editing, extra, children }: {
+  title: string; onRegen: () => void; loading: boolean;
+  onEdit?: () => void; editing?: boolean;
+  extra?: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
+        <h3 className="text-sm font-semibold">{title}</h3>
+        <div className="flex items-center gap-2">
+          {extra}
+          {onEdit && (
+            <button onClick={onEdit} className="inline-flex items-center gap-1 text-[10px] rounded-full border border-border bg-card px-2 py-0.5 hover:bg-accent">
+              {editing ? <><Save className="h-3 w-3" /> Done</> : <><Pencil className="h-3 w-3" /> Edit</>}
+            </button>
+          )}
+          <button onClick={onRegen} disabled={loading} className="inline-flex items-center gap-1 text-[10px] rounded-full bg-secondary px-2 py-0.5 disabled:opacity-50">
+            {loading ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />} Regen
+          </button>
+        </div>
+      </div>
+      {children}
+    </div>
+  );
+}
