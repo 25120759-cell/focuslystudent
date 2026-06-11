@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { motion } from "framer-motion";
 import {
-  Sparkles, Brain, CalendarClock, Target, MessageCircle,
-  WifiOff, MapPin, Keyboard, Users, ArrowRight, Clock, BookOpen, Trophy,
+  Sparkles, Brain, CalendarClock, Target, MessageCircle, ArrowRight,
+  WifiOff, Trophy, Clock, BookOpen, Users, Crown, Check, ChevronRight,
+  Eye, FileText, ImageIcon,
 } from "lucide-react";
 import { PublicHeader } from "@/components/PublicHeader";
 
@@ -10,127 +12,307 @@ export const Route = createFileRoute("/landing")({
   component: LandingPage,
   head: () => ({
     meta: [
-      { title: "Focusly — The AI study app that thinks ahead" },
-      { name: "description", content: "Plan, focus, and finish your schoolwork with an offline-first study app powered by AI, social tools, collectible cards, and gamified rewards." },
-      { property: "og:title", content: "Focusly — The AI study app that thinks ahead" },
-      { property: "og:description", content: "Offline-first AI study app: natural-language tasks, smart scheduling, focus timer, social tools, cards, and gamified rewards." },
+      { title: "Focusly — A calmer way to get schoolwork done" },
+      { name: "description", content: "Plan, focus, and finish your schoolwork with an offline-first AI study app. Calm by design, powerful when you need it." },
+      { property: "og:title", content: "Focusly — A calmer way to get schoolwork done" },
+      { property: "og:description", content: "Offline-first AI study app: natural-language tasks, smart scheduling, focus timer, deep AI study aids, and gamified rewards." },
     ],
   }),
 });
 
-function Section({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <section className={`mx-auto max-w-6xl px-6 py-20 ${className}`}>{children}</section>;
-}
-
-function Feature({ icon: Icon, title, body }: { icon: any; title: string; body: string }) {
-  return (
-    <div className="rounded-3xl glass p-6 transition-transform hover:-translate-y-1">
-      <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-        <Icon className="h-5 w-5" />
-      </div>
-      <h3 className="font-display text-lg font-semibold">{title}</h3>
-      <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{body}</p>
-    </div>
-  );
-}
-
 function LandingPage() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen text-foreground" style={{ backgroundColor: "#E8E4D8" }}>
       <PublicHeader />
 
-      {/* Hero */}
-      <Section className="text-center">
-        <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
-          <Sparkles className="h-3 w-3 text-primary" /> Built for students who actually have a life
-        </div>
-        <h1 className="mt-6 font-display text-5xl font-semibold tracking-tight md:text-7xl">
-          The study app that<br />
-          <span className="bg-gradient-to-r from-primary to-[color:var(--gold)] bg-clip-text text-transparent">
-            thinks ahead.
-          </span>
-        </h1>
-        <p className="mx-auto mt-6 max-w-2xl text-base text-muted-foreground md:text-lg">
-          Type tasks the way you'd say them. Focusly turns "essay due next Tuesday at noon" into a real
-          plan — scheduled around your timetable, broken into steps, and ordered by what matters now.
-        </p>
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link to="/login" className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90">
-            Sign in to Focusly <ArrowRight className="h-4 w-4" />
-          </Link>
-          <Link to="/plans" className="inline-flex items-center rounded-full border border-border bg-card px-6 py-3 text-sm font-medium hover:bg-accent">
-            See plans
-          </Link>
-        </div>
-        <p className="mt-4 text-xs text-muted-foreground">Free forever. 100 AI credits / month included.</p>
-      </Section>
+      {/* HERO */}
+      <section className="relative overflow-hidden">
+        <div
+          className="absolute inset-0 -z-10"
+          style={{
+            background:
+              "radial-gradient(1200px 600px at 10% -10%, rgba(15,27,45,0.08), transparent 60%), radial-gradient(800px 400px at 110% 30%, rgba(242,200,121,0.18), transparent 60%)",
+          }}
+        />
+        <div className="mx-auto max-w-6xl px-6 pt-20 pb-28 md:pt-28 md:pb-36 grid md:grid-cols-[1.1fr_0.9fr] gap-12 items-center">
+          <div>
+            <motion.div
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium"
+              style={{ backgroundColor: "rgba(15,27,45,0.06)", color: "#0F1B2D" }}
+            >
+              <Sparkles className="h-3 w-3" style={{ color: "#1E3A5F" }} /> Calmly engineered for students
+            </motion.div>
+            <motion.h1
+              initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.05 }}
+              className="mt-6 font-display text-5xl md:text-7xl font-semibold tracking-tight leading-[1.05]"
+              style={{ color: "#0F1B2D" }}
+            >
+              School, <em className="not-italic" style={{ color: "#1E3A5F" }}>without</em> the chaos.
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.15 }}
+              className="mt-6 max-w-xl text-base md:text-lg leading-relaxed"
+              style={{ color: "rgba(15,27,45,0.7)" }}
+            >
+              Focusly is the study app that turns "essay due next Tuesday" into a real plan — broken into
+              steps, scheduled around your day, and waiting for you offline.
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.25 }}
+              className="mt-8 flex flex-wrap gap-3"
+            >
+              <Link
+                to="/signup"
+                className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-medium shadow-sm hover:opacity-95"
+                style={{ backgroundColor: "#0F1B2D", color: "#E8E4D8" }}
+              >
+                Start free <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                to="/login"
+                className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-medium border"
+                style={{ borderColor: "rgba(15,27,45,0.15)", color: "#0F1B2D" }}
+              >
+                Sign in
+              </Link>
+            </motion.div>
+            <p className="mt-4 text-xs" style={{ color: "rgba(15,27,45,0.55)" }}>
+              Free forever · 100 AI credits / month included
+            </p>
+          </div>
 
-      {/* AI Features */}
-      <Section>
-        <div className="mb-12 text-center">
-          <span className="text-xs font-semibold uppercase tracking-widest text-primary">AI Superpowers</span>
-          <h2 className="mt-2 font-display text-3xl font-semibold md:text-4xl">Five ways AI does the boring part</h2>
+          {/* Editorial hero card */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.2 }}
+            className="relative"
+          >
+            <div className="absolute -inset-4 -z-10 rounded-[2.5rem]" style={{ background: "linear-gradient(135deg, rgba(242,200,121,0.3), rgba(30,58,95,0.05))" }} />
+            <div
+              className="rounded-[2rem] p-7 shadow-xl"
+              style={{ backgroundColor: "#FFFDF7", border: "1px solid rgba(15,27,45,0.08)" }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-[10px] uppercase tracking-widest font-semibold" style={{ color: "#1E3A5F" }}>Today's plan</span>
+                <span className="text-xs" style={{ color: "rgba(15,27,45,0.5)" }}>Tue · Mar 4</span>
+              </div>
+              <div className="space-y-2.5">
+                {[
+                  { time: "16:00", title: "Essay outline", dur: "45m", done: true },
+                  { time: "17:00", title: "Calculus practice set", dur: "30m", done: true },
+                  { time: "19:30", title: "History flashcards review", dur: "20m", done: false },
+                  { time: "20:00", title: "Read Ch. 4 — Macbeth", dur: "40m", done: false },
+                ].map((t, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 + i * 0.08 }}
+                    className="flex items-center gap-3 rounded-xl px-3 py-2.5"
+                    style={{ backgroundColor: t.done ? "rgba(30,58,95,0.05)" : "#E8E4D8" }}
+                  >
+                    <div
+                      className="h-5 w-5 rounded-md flex items-center justify-center flex-shrink-0"
+                      style={{ backgroundColor: t.done ? "#1E3A5F" : "transparent", border: t.done ? "none" : "1.5px solid rgba(15,27,45,0.3)" }}
+                    >
+                      {t.done && <Check className="h-3 w-3" style={{ color: "#E8E4D8" }} />}
+                    </div>
+                    <span className="text-xs font-mono w-10" style={{ color: "rgba(15,27,45,0.6)" }}>{t.time}</span>
+                    <span className={`flex-1 text-sm ${t.done ? "line-through" : ""}`} style={{ color: t.done ? "rgba(15,27,45,0.5)" : "#0F1B2D" }}>{t.title}</span>
+                    <span className="text-[10px]" style={{ color: "rgba(15,27,45,0.4)" }}>{t.dur}</span>
+                  </motion.div>
+                ))}
+              </div>
+              <div className="mt-5 pt-4 border-t" style={{ borderColor: "rgba(15,27,45,0.08)" }}>
+                <div className="flex items-center gap-2 text-xs" style={{ color: "rgba(15,27,45,0.6)" }}>
+                  <Sparkles className="h-3 w-3" style={{ color: "#F2C879" }} /> AI scheduled this around your timetable
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <Feature icon={MessageCircle} title="Natural language input" body='Type "remind me next Tuesday at noon" — Focusly parses dates, times, and categories. No forms, no dropdowns.' />
-          <Feature icon={Brain} title="Auto-breakdown" body='Drop in a big task. AI splits it into a step-by-step checklist of micro-actions you can actually start.' />
-          <Feature icon={CalendarClock} title="Dynamic scheduling" body="Tasks slot themselves into your free time around classes. Plans change? Focusly reshuffles, no burnout." />
-          <Feature icon={Target} title="Smart prioritization" body="Your messy list gets re-ranked by urgency, importance, and blockers — so you always know what's next." />
-          <Feature icon={Sparkles} title="Conversational coach" body="Ask anything about your schedule. Get summaries, check progress, or get a pep talk before a deadline." />
-        </div>
-      </Section>
+      </section>
 
-      <Section className="border-t border-border/50">
-        <div className="mb-12 text-center">
-          <span className="text-xs font-semibold uppercase tracking-widest text-primary">New engagement features</span>
-          <h2 className="mt-2 font-display text-3xl font-semibold md:text-4xl">Social, Cards, and AI in one study loop</h2>
-          <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground">Non-signed-in visitors can preview the biggest features here, then jump straight into an account when ready.</p>
+      {/* PILLARS */}
+      <section className="border-y" style={{ borderColor: "rgba(15,27,45,0.08)", backgroundColor: "#FFFDF7" }}>
+        <div className="mx-auto max-w-6xl px-6 py-20">
+          <div className="max-w-2xl">
+            <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#1E3A5F" }}>Three quiet superpowers</span>
+            <h2 className="mt-3 font-display text-3xl md:text-5xl font-semibold tracking-tight" style={{ color: "#0F1B2D" }}>
+              Less noise. More done.
+            </h2>
+          </div>
+          <div className="mt-12 grid gap-8 md:grid-cols-3">
+            {[
+              { icon: MessageCircle, t: "Type, don't form-fill", b: "Drop a sentence in. Focusly parses dates, times, and categories. No dropdowns." },
+              { icon: Brain, t: "Plan stays adapted", b: "Plans reshuffle when your schedule changes. You always know what to do next." },
+              { icon: WifiOff, t: "Always with you, even offline", b: "Tasks, notes, flashcards, and quizzes are cached locally and synced when you reconnect." },
+            ].map((p) => (
+              <div key={p.t} className="group">
+                <div
+                  className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl"
+                  style={{ backgroundColor: "#E8E4D8", color: "#1E3A5F" }}
+                >
+                  <p.icon className="h-5 w-5" />
+                </div>
+                <h3 className="font-display text-xl font-semibold" style={{ color: "#0F1B2D" }}>{p.t}</h3>
+                <p className="mt-2 text-sm leading-relaxed" style={{ color: "rgba(15,27,45,0.65)" }}>{p.b}</p>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="grid gap-4 md:grid-cols-3">
-          <Feature icon={Users} title="Social study feed" body="Post wins, message classmates, and keep study momentum visible without leaving Focusly." />
-          <Feature icon={Trophy} title="Collectible cards" body="Earn coins from study progress, open animated packs, sell duplicates, and trade with friends." />
-          <Feature icon={Brain} title="Focusly AI" body="Use credits for task parsing, planning, summaries, coaching, and admin-generated update posts." />
-        </div>
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link to="/engagement" className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-6 py-3 text-sm font-medium hover:bg-accent">Explore features <ArrowRight className="h-4 w-4" /></Link>
-          <Link to="/login" className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90">Sign in to start</Link>
-        </div>
-      </Section>
+      </section>
 
-      {/* Non-AI Features */}
-      <Section className="border-t border-border/50">
-        <div className="mb-12 text-center">
-          <span className="text-xs font-semibold uppercase tracking-widest text-primary">Rock-solid basics</span>
-          <h2 className="mt-2 font-display text-3xl font-semibold md:text-4xl">The non-AI stuff matters too</h2>
+      {/* AI FEATURE SHOWCASE */}
+      <section className="mx-auto max-w-6xl px-6 py-24">
+        <div className="grid md:grid-cols-2 gap-14 items-start">
+          <div className="md:sticky md:top-24">
+            <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#1E3A5F" }}>AI study aids</span>
+            <h2 className="mt-3 font-display text-3xl md:text-5xl font-semibold tracking-tight" style={{ color: "#0F1B2D" }}>
+              Notes in. Study aids out.
+            </h2>
+            <p className="mt-4 text-base leading-relaxed" style={{ color: "rgba(15,27,45,0.65)" }}>
+              Paste your lecture notes or textbook excerpt. Focusly returns a summary, flashcards, and a quiz
+              you can edit and regenerate by section.
+            </p>
+          </div>
+          <div className="space-y-4">
+            {[
+              { icon: FileText, t: "Smart summary", b: "Plain-English summary plus the key points that matter for your exam." },
+              { icon: Brain, t: "Auto flashcards", b: "Click-to-flip cards in batches of 8-15, sized to your plan." },
+              { icon: Target, t: "Practice quiz", b: "Multiple-choice with explanations — regenerate any section if it misses the mark." },
+              { icon: CalendarClock, t: "Assignment breakdown", b: "Big task in, micro-checklist plus a scheduled study plan out." },
+            ].map((f, i) => (
+              <motion.div
+                key={f.t}
+                initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
+                className="rounded-2xl p-5 flex gap-4"
+                style={{ backgroundColor: "#FFFDF7", border: "1px solid rgba(15,27,45,0.08)" }}
+              >
+                <div className="h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: "#E8E4D8", color: "#1E3A5F" }}>
+                  <f.icon className="h-4 w-4" />
+                </div>
+                <div>
+                  <h3 className="font-display text-lg font-semibold" style={{ color: "#0F1B2D" }}>{f.t}</h3>
+                  <p className="mt-1 text-sm" style={{ color: "rgba(15,27,45,0.65)" }}>{f.b}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <Feature icon={WifiOff} title="Robust offline mode" body="View, create, and check off tasks without internet. Syncs back automatically when you're online." />
-          <Feature icon={MapPin} title="Location reminders" body='Get a nudge to "buy milk" the moment you drive past the store — not at some arbitrary time.' />
-          <Feature icon={Keyboard} title="Keyboard shortcuts" body="Power users get full hotkey control. New task, complete, navigate — without touching the mouse." />
-          <Feature icon={Users} title="Shared lists & realtime" body="Plan with study buddies. Assign tasks, see updates instantly, no refresh required." />
-          <Feature icon={Clock} title="Focus timer + chimes" body="Pomodoro-style sessions with offline audio chimes and a full distraction-free fullscreen mode." />
-          <Feature icon={BookOpen} title="Smart files" body="Keep notes, links, and study materials beside the work they belong to, without digging through tabs." />
-        </div>
-      </Section>
+      </section>
 
-      {/* Rewards strip */}
-      <Section>
-        <div className="rounded-3xl border border-border bg-gradient-to-br from-primary/10 via-card to-[color:var(--gold)]/10 p-10 md:p-14 text-center">
-          <Trophy className="mx-auto h-8 w-8 text-[color:var(--gold)]" />
-          <h2 className="mt-4 font-display text-3xl font-semibold md:text-4xl">Studying that pays you back.</h2>
-          <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground md:text-base">
-            Earn points for completed assignments. Redeem them for real rewards — McDonald's,
-            Starbucks, and more drop in as you level up.
-          </p>
-          <Link to="/login" className="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90">
-            Start earning <ArrowRight className="h-4 w-4" />
-          </Link>
+      {/* PLANS — emphasizes Max-only capabilities */}
+      <section style={{ backgroundColor: "#0F1B2D", color: "#E8E4D8" }}>
+        <div className="mx-auto max-w-6xl px-6 py-24">
+          <div className="text-center max-w-2xl mx-auto">
+            <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#F2C879" }}>Choose your tier</span>
+            <h2 className="mt-3 font-display text-3xl md:text-5xl font-semibold tracking-tight">Power, when you need it.</h2>
+            <p className="mt-4 text-base" style={{ color: "rgba(232,228,216,0.7)" }}>
+              Free covers daily use. Pro adds more credits and longer inputs. Max unlocks deeper reasoning,
+              long documents, vision input, and auto-scheduling to your calendar.
+            </p>
+          </div>
+          <div className="mt-14 grid gap-5 md:grid-cols-3">
+            <PlanCard
+              name="Free"
+              price="$0"
+              tagline="For getting started"
+              features={[
+                "10 AI requests / day",
+                "100 / month",
+                "Up to 4k chars per request",
+                "All productivity tools",
+              ]}
+            />
+            <PlanCard
+              name="Pro"
+              price="$5"
+              tagline="For everyday studying"
+              accent
+              features={[
+                "100 AI requests / day",
+                "1,000 / month",
+                "Up to 8k chars per request",
+                "Full assistant + breakdowns",
+              ]}
+            />
+            <PlanCard
+              name="Max"
+              price="$12"
+              tagline="For serious students"
+              max
+              features={[
+                "500 AI requests / day · 10k/mo",
+                "Up to 20k chars per request",
+                "Smarter reasoning model",
+                "Vision: snap a photo of notes",
+                "Deep study plans + auto-schedule",
+              ]}
+              maxOnly={[
+                { icon: Crown, label: "Pro reasoning model" },
+                { icon: ImageIcon, label: "Image / handwriting input" },
+                { icon: Eye, label: "20k char long-doc mode" },
+                { icon: CalendarClock, label: "Auto-schedule to calendar" },
+              ]}
+            />
+          </div>
+          <div className="mt-10 text-center">
+            <Link
+              to="/plans"
+              className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-medium"
+              style={{ backgroundColor: "#F2C879", color: "#0F1B2D" }}
+            >
+              Compare all plans <ChevronRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
-      </Section>
+      </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border/50 px-6 py-10">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 text-sm text-muted-foreground">
+      {/* COMMUNITY */}
+      <section className="mx-auto max-w-6xl px-6 py-24">
+        <div className="rounded-[2rem] p-10 md:p-14" style={{ backgroundColor: "#FFFDF7", border: "1px solid rgba(15,27,45,0.08)" }}>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="md:col-span-2">
+              <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#1E3A5F" }}>Stay in the loop</span>
+              <h2 className="mt-3 font-display text-3xl md:text-4xl font-semibold" style={{ color: "#0F1B2D" }}>Study isn't a solo sport.</h2>
+              <p className="mt-4 max-w-xl text-sm leading-relaxed" style={{ color: "rgba(15,27,45,0.65)" }}>
+                Post wins, message classmates, collect cards from your study streak, and turn points into
+                real-world rewards.
+              </p>
+            </div>
+            <div className="space-y-3">
+              {[
+                { icon: Users, label: "Social feed" },
+                { icon: Trophy, label: "Collectible cards" },
+                { icon: Clock, label: "Focus timer + chimes" },
+                { icon: BookOpen, label: "Shared lists" },
+              ].map((c) => (
+                <div key={c.label} className="flex items-center gap-3 rounded-xl px-4 py-2.5" style={{ backgroundColor: "#E8E4D8" }}>
+                  <c.icon className="h-4 w-4" style={{ color: "#1E3A5F" }} />
+                  <span className="text-sm font-medium" style={{ color: "#0F1B2D" }}>{c.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="mx-auto max-w-4xl px-6 pb-28 text-center">
+        <h2 className="font-display text-4xl md:text-5xl font-semibold" style={{ color: "#0F1B2D" }}>
+          Close the tabs. Open Focusly.
+        </h2>
+        <p className="mt-4 text-base" style={{ color: "rgba(15,27,45,0.65)" }}>Free to start. Three minutes to set up. Quieter studying from today.</p>
+        <Link
+          to="/signup"
+          className="mt-8 inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-medium shadow-sm"
+          style={{ backgroundColor: "#0F1B2D", color: "#E8E4D8" }}
+        >
+          Get started free <ArrowRight className="h-4 w-4" />
+        </Link>
+      </section>
+
+      <footer className="border-t" style={{ borderColor: "rgba(15,27,45,0.08)" }}>
+        <div className="mx-auto max-w-6xl px-6 py-10 flex flex-wrap items-center justify-between gap-4 text-sm" style={{ color: "rgba(15,27,45,0.55)" }}>
           <span>© {new Date().getFullYear()} Focusly · A Lura app</span>
           <div className="flex gap-4">
             <Link to="/engagement" className="hover:text-foreground">Community</Link>
@@ -142,5 +324,53 @@ function LandingPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+function PlanCard({ name, price, tagline, features, accent, max, maxOnly }: {
+  name: string; price: string; tagline: string; features: string[];
+  accent?: boolean; max?: boolean;
+  maxOnly?: { icon: any; label: string }[];
+}) {
+  const bg = max ? "#F2C879" : accent ? "#1E3A5F" : "rgba(232,228,216,0.08)";
+  const fg = max ? "#0F1B2D" : "#E8E4D8";
+  const mute = max ? "rgba(15,27,45,0.65)" : "rgba(232,228,216,0.65)";
+  const border = max ? "transparent" : "rgba(232,228,216,0.12)";
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+      className="rounded-3xl p-7 relative"
+      style={{ backgroundColor: bg, color: fg, border: `1px solid ${border}` }}
+    >
+      {max && (
+        <div className="absolute -top-3 right-6 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-widest" style={{ backgroundColor: "#0F1B2D", color: "#F2C879" }}>
+          Most powerful
+        </div>
+      )}
+      <div className="flex items-center gap-2">
+        {max && <Crown className="h-4 w-4" />}
+        <h3 className="font-display text-xl font-semibold">{name}</h3>
+      </div>
+      <p className="text-xs mt-1" style={{ color: mute }}>{tagline}</p>
+      <div className="mt-5 flex items-baseline gap-1">
+        <span className="font-display text-4xl font-semibold">{price}</span>
+        <span className="text-xs" style={{ color: mute }}>/mo</span>
+      </div>
+      <ul className="mt-6 space-y-2 text-sm">
+        {features.map((f) => (
+          <li key={f} className="flex gap-2"><Check className="h-4 w-4 flex-shrink-0 mt-0.5" /> {f}</li>
+        ))}
+      </ul>
+      {maxOnly && (
+        <div className="mt-5 pt-5 border-t space-y-2" style={{ borderColor: "rgba(15,27,45,0.15)" }}>
+          <p className="text-[10px] uppercase tracking-widest font-semibold">Max-only</p>
+          {maxOnly.map((m) => (
+            <div key={m.label} className="flex items-center gap-2 text-sm font-medium">
+              <m.icon className="h-3.5 w-3.5" /> {m.label}
+            </div>
+          ))}
+        </div>
+      )}
+    </motion.div>
   );
 }
