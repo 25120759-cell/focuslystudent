@@ -50,9 +50,11 @@ async function checkCredits(supabase: any, userId: string): Promise<PlanInfo & {
   return { ...info, dayUsed, monthUsed };
 }
 
-async function recordUsage(supabase: any, userId: string, model: string, inTok = 0, outTok = 0, kind = "chat", plan = "free") {
-  await supabase.from("ai_usage").insert({ user_id: userId, model, tokens_in: inTok, tokens_out: outTok, kind, plan });
+async function recordUsage(_supabase: any, userId: string, model: string, inTok = 0, outTok = 0, kind = "chat", plan = "free") {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  await supabaseAdmin.from("ai_usage").insert({ user_id: userId, model, tokens_in: inTok, tokens_out: outTok, kind, plan });
 }
+
 
 async function callGateway(body: any) {
   const apiKey = process.env.LOVABLE_API_KEY;
