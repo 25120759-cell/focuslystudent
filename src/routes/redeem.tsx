@@ -7,7 +7,7 @@ import { z } from "zod";
 import { redeemPlanCode } from "@/lib/plans.functions";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
-import { PublicHeader } from "@/components/PublicHeader";
+
 
 const PLAN_DETAILS: Record<string, { name: string; price: string; tagline: string; perks: string[]; icon: any; color: string }> = {
   pro: {
