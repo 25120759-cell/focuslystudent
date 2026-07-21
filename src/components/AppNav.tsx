@@ -33,7 +33,7 @@ export function AppNav() {
       active ? "bg-primary text-primary-foreground" : "text-foreground/70 hover:bg-accent"
     }`;
 
-  const communityActive = ["/cards", "/social", "/rewards", "/redeem"].some((p) => path === p || path.startsWith(p + "/"));
+  const communityActive = ["/cards", "/social", "/redeem"].some((p) => path === p || path.startsWith(p + "/"));
   const accountActive = path === "/settings" || path === "/usage" || path === "/support";
 
   return (
@@ -67,7 +67,7 @@ export function AppNav() {
           items={[
             { to: "/social", label: "Social feed", icon: Users },
             { to: "/cards", label: "Cards", icon: Layers },
-            { to: "/rewards", label: `Rewards · ${state.gamification.points} pts`, icon: Trophy },
+            
             { to: "/redeem", label: "Redeem code", icon: Gift },
           ]}
         />
