@@ -31,12 +31,8 @@ export interface ActionPlan {
   steps: ActionPlanStep[];
 }
 
-export interface RedeemedVoucher {
-  id: string;
-  name: string;
-  code: string;
-  redeemedAt: string;
-}
+
+
 
 export interface ChatMessage {
   role: "user" | "assistant";
@@ -73,8 +69,8 @@ export interface State {
     level: number;
     assignmentsToNextLevel: number;
     completedCount: number;
-    redeemedVouchers: RedeemedVoucher[];
   };
+
   actionPlans: Record<string, ActionPlan>;
   chat: ChatMessage[];
 }
@@ -122,7 +118,7 @@ const DEFAULT_STATE: State = {
     },
   },
   timer: { isRunning: false, isPaused: false, timeLeft: 30 * 60, isBreak: false, isFullscreen: false },
-  gamification: { points: 150, level: 1, assignmentsToNextLevel: 5, completedCount: 0, redeemedVouchers: [] },
+  gamification: { points: 150, level: 1, assignmentsToNextLevel: 5, completedCount: 0 },
   actionPlans: {
     "roman-empire": {
       id: "roman-empire",
@@ -163,7 +159,7 @@ type Action =
   | { type: "ADD_ASSIGNMENT"; assignment: Assignment }
   | { type: "UPDATE_ASSIGNMENT"; id: string; patch: Partial<Assignment> }
   | { type: "DELETE_ASSIGNMENT"; id: string }
-  | { type: "REDEEM"; voucher: { id: string; name: string; cost: number; codePrefix: string } }
+  
   | { type: "TIMER_TICK" }
   | { type: "TIMER_SET"; patch: Partial<State["timer"]> }
   | { type: "UPLOAD_TIMETABLE" }
@@ -214,24 +210,6 @@ function reducer(state: State, action: Action): State {
       return { ...state, assignments: state.assignments.map((a) => a.id === action.id ? { ...a, ...action.patch } : a) };
     case "DELETE_ASSIGNMENT":
       return { ...state, assignments: state.assignments.filter((a) => a.id !== action.id) };
-    case "REDEEM": {
-      if (state.gamification.points < action.voucher.cost) return state;
-      const code = `${action.voucher.codePrefix}-${action.voucher.cost}-${Math.random()
-        .toString(36)
-        .slice(2, 6)
-        .toUpperCase()}`;
-      return {
-        ...state,
-        gamification: {
-          ...state.gamification,
-          points: state.gamification.points - action.voucher.cost,
-          redeemedVouchers: [
-            ...state.gamification.redeemedVouchers,
-            { id: action.voucher.id, name: action.voucher.name, code, redeemedAt: new Date().toISOString() },
-          ],
-        },
-      };
-    }
     case "TIMER_TICK":
       if (!state.timer.isRunning || state.timer.isPaused) return state;
       if (state.timer.timeLeft <= 1)
