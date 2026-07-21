@@ -23,7 +23,6 @@ import { Route as UpdatesSlugRouteImport } from './routes/updates.$slug'
 import { Route as AuthenticatedUsageRouteImport } from './routes/_authenticated/usage'
 import { Route as AuthenticatedSocialRouteImport } from './routes/_authenticated/social'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
-import { Route as AuthenticatedRewardsRouteImport } from './routes/_authenticated/rewards'
 import { Route as AuthenticatedNotesRouteImport } from './routes/_authenticated/notes'
 import { Route as AuthenticatedDocsRouteImport } from './routes/_authenticated/docs'
 import { Route as AuthenticatedCardsRouteImport } from './routes/_authenticated/cards'
@@ -105,11 +104,6 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedRewardsRoute = AuthenticatedRewardsRouteImport.update({
-  id: '/rewards',
-  path: '/rewards',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedNotesRoute = AuthenticatedNotesRouteImport.update({
   id: '/notes',
   path: '/notes',
@@ -186,7 +180,6 @@ export interface FileRoutesByFullPath {
   '/cards': typeof AuthenticatedCardsRoute
   '/docs': typeof AuthenticatedDocsRouteWithChildren
   '/notes': typeof AuthenticatedNotesRoute
-  '/rewards': typeof AuthenticatedRewardsRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/social': typeof AuthenticatedSocialRoute
   '/usage': typeof AuthenticatedUsageRoute
@@ -213,7 +206,6 @@ export interface FileRoutesByTo {
   '/cards': typeof AuthenticatedCardsRoute
   '/docs': typeof AuthenticatedDocsRouteWithChildren
   '/notes': typeof AuthenticatedNotesRoute
-  '/rewards': typeof AuthenticatedRewardsRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/social': typeof AuthenticatedSocialRoute
   '/usage': typeof AuthenticatedUsageRoute
@@ -242,7 +234,6 @@ export interface FileRoutesById {
   '/_authenticated/cards': typeof AuthenticatedCardsRoute
   '/_authenticated/docs': typeof AuthenticatedDocsRouteWithChildren
   '/_authenticated/notes': typeof AuthenticatedNotesRoute
-  '/_authenticated/rewards': typeof AuthenticatedRewardsRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/social': typeof AuthenticatedSocialRoute
   '/_authenticated/usage': typeof AuthenticatedUsageRoute
@@ -271,7 +262,6 @@ export interface FileRouteTypes {
     | '/cards'
     | '/docs'
     | '/notes'
-    | '/rewards'
     | '/settings'
     | '/social'
     | '/usage'
@@ -298,7 +288,6 @@ export interface FileRouteTypes {
     | '/cards'
     | '/docs'
     | '/notes'
-    | '/rewards'
     | '/settings'
     | '/social'
     | '/usage'
@@ -326,7 +315,6 @@ export interface FileRouteTypes {
     | '/_authenticated/cards'
     | '/_authenticated/docs'
     | '/_authenticated/notes'
-    | '/_authenticated/rewards'
     | '/_authenticated/settings'
     | '/_authenticated/social'
     | '/_authenticated/usage'
@@ -452,13 +440,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/rewards': {
-      id: '/_authenticated/rewards'
-      path: '/rewards'
-      fullPath: '/rewards'
-      preLoaderRoute: typeof AuthenticatedRewardsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/notes': {
       id: '/_authenticated/notes'
       path: '/notes'
@@ -572,7 +553,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCardsRoute: typeof AuthenticatedCardsRoute
   AuthenticatedDocsRoute: typeof AuthenticatedDocsRouteWithChildren
   AuthenticatedNotesRoute: typeof AuthenticatedNotesRoute
-  AuthenticatedRewardsRoute: typeof AuthenticatedRewardsRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedSocialRoute: typeof AuthenticatedSocialRoute
   AuthenticatedUsageRoute: typeof AuthenticatedUsageRoute
@@ -586,7 +566,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCardsRoute: AuthenticatedCardsRoute,
   AuthenticatedDocsRoute: AuthenticatedDocsRouteWithChildren,
   AuthenticatedNotesRoute: AuthenticatedNotesRoute,
-  AuthenticatedRewardsRoute: AuthenticatedRewardsRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedSocialRoute: AuthenticatedSocialRoute,
   AuthenticatedUsageRoute: AuthenticatedUsageRoute,

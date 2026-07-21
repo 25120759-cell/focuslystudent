@@ -4,14 +4,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { Sparkles } from "lucide-react";
 
+import { z } from "zod";
+
 export const Route = createFileRoute("/login")({
   ssr: false,
+  validateSearch: (s) => z.object({ redirect: z.string().optional() }).parse(s),
   component: LoginPage,
   head: () => ({ meta: [{ title: "Sign in — Focusly" }] }),
 });
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { redirect } = Route.useSearch();
+  const dest = redirect && redirect.startsWith("/") ? redirect : "/app";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState<string | null>(null);
@@ -19,9 +24,9 @@ function LoginPage() {
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data, error }) => {
-      if (!error && data.user) navigate({ to: "/app", replace: true });
+      if (!error && data.user) navigate({ to: dest, replace: true });
     });
-  }, [navigate]);
+  }, [navigate, dest]);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -30,17 +35,19 @@ function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) return setErr(error.message);
-    navigate({ to: "/app" });
+    navigate({ to: dest });
   }
 
   async function onGoogle() {
     setErr(null);
+    try { sessionStorage.setItem("post_auth_redirect", dest); } catch {}
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.origin,
     });
     if (result.error) setErr(result.error.message || "Google sign-in failed");
-    else if (!result.redirected) navigate({ to: "/app" });
+    else if (!result.redirected) navigate({ to: dest });
   }
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-6">

@@ -7,7 +7,7 @@ import { z } from "zod";
 import { redeemPlanCode } from "@/lib/plans.functions";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
-import { PublicHeader } from "@/components/PublicHeader";
+
 
 const PLAN_DETAILS: Record<string, { name: string; price: string; tagline: string; perks: string[]; icon: any; color: string }> = {
   pro: {
@@ -71,7 +71,7 @@ function RedeemPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <PublicHeader />
+
       <motion.section
         initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
         className="mx-auto max-w-2xl px-6 py-16"

@@ -10,7 +10,7 @@ import { aiChat, aiCredits } from "@/lib/ai.functions";
 import { AICreditCard } from "./AICreditCard";
 import { FocuslyAIWordmark } from "./FocuslyAILogo";
 
-const ROUTES = ["/app", "/assignments", "/calender", "/rewards", "/social", "/cards", "/support"] as const;
+const ROUTES = ["/app", "/assignments", "/calender", "/social", "/cards", "/support"] as const;
 
 export function AIChat({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { state, dispatch } = useStore();
@@ -77,11 +77,6 @@ export function AIChat({ open, onClose }: { open: boolean; onClose: () => void }
       if (name === "stop_timer") {
         dispatch({ type: "TIMER_SET", patch: { isRunning: false, isPaused: false } });
         return `⏸️ Timer stopped.`;
-      }
-      if (name === "redeem_reward" && args.voucher_id) {
-        const map: any = { "starbucks-50": { id: "starbucks-50", name: "Starbucks $5", cost: 50, codePrefix: "SBX" }, "mcd-100": { id: "mcd-100", name: "McDonald's Meal", cost: 100, codePrefix: "MCD" }, "amazon-200": { id: "amazon-200", name: "Amazon $20", cost: 200, codePrefix: "AMZ" } };
-        const v = map[args.voucher_id];
-        if (v) { dispatch({ type: "REDEEM", voucher: v }); return `🎁 Redeemed ${v.name}.`; }
       }
       if (name === "set_setting" && args.key && args.value !== undefined) {
         dispatch({ type: "PATCH_SETTINGS", patch: { [args.key]: args.value } as any });
@@ -164,7 +159,7 @@ export function AIChat({ open, onClose }: { open: boolean; onClose: () => void }
               )}
               {user && state.chat.length === 0 && (
                 <div className="space-y-2 text-sm text-muted-foreground">
-                  <p>Hi! I can do anything you can — create, edit, delete tasks, start your timer, redeem rewards, change settings, navigate, and more.</p>
+                  <p>Hi! I can do anything you can — create, edit, delete tasks, start your timer, change settings, navigate, and more.</p>
                   <p className="text-xs">Try: "Plan my history essay due Friday", "delete the math one", or "start a 25 min timer".</p>
                 </div>
               )}
