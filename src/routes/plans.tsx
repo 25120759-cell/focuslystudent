@@ -57,7 +57,6 @@ const PLANS = [
 
 function PlansPage() {
   const { user } = useAuth();
-  const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -74,27 +73,15 @@ function PlansPage() {
         <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
           1 credit = 1 AI action. Paid plans activate with a redemption code from an admin.
         </p>
-
-        <div className="mt-6 inline-flex rounded-full border border-border bg-card p-1 text-xs">
-          {(["monthly", "yearly"] as const).map((b) => (
-            <button
-              key={b}
-              onClick={() => setBilling(b)}
-              className={`rounded-full px-4 py-1.5 capitalize transition ${billing === b ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
-            >
-              {b} {b === "yearly" && <span className="ml-1 rounded-full bg-[color:var(--gold)]/20 px-1.5 text-[10px] font-semibold text-[color:var(--gold)]">2 mo free</span>}
-            </button>
-          ))}
-        </div>
       </motion.section>
 
       <section className="mx-auto grid max-w-6xl gap-6 px-6 pb-24 md:grid-cols-3">
         {PLANS.map((p, i) => {
           const Icon = p.icon;
-          const yearly = billing === "yearly" && p.key !== "free";
-          const price = yearly ? `$${Math.round(parseInt(p.price.replace("$", "")) * 10)}` : p.price;
-          const cadence = yearly ? "/ year" : p.cadence;
+          const price = p.price;
+          const cadence = p.cadence;
           const href = !user && p.key !== "free" ? `/login?redirect=${encodeURIComponent(p.href)}` : p.href;
+
           return (
             <motion.div
               key={p.key}
