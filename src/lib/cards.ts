@@ -212,4 +212,4 @@ export const CARD_SELL_VALUE: Record<Rarity, number> = {
 };
 
 export const PACK_COST = 50;
-export const PACK_DAILY_LIMIT: Record<string, number> = { free: 2, pro: 10, max: 50 };
+export const PACK_DAILY_LIMIT: Record<string, number> = { free: 3, pro: 10, max: 50 };

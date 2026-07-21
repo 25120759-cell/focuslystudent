@@ -7,7 +7,7 @@ const MODEL_FAST = "google/gemini-3-flash-preview";
 const MODEL_PRO = "google/gemini-3.1-pro-preview";
 
 const PLAN_LIMITS: Record<string, { day: number; month: number; max_chars: number; allow_vision: boolean; pro_model: boolean }> = {
-  free: { day: 10, month: 100, max_chars: 4000, allow_vision: false, pro_model: false },
+  free: { day: 10, month: 100, max_chars: 8000, allow_vision: false, pro_model: false },
   pro: { day: 100, month: 1000, max_chars: 8000, allow_vision: false, pro_model: false },
   max: { day: 500, month: 10000, max_chars: 20000, allow_vision: true, pro_model: true },
 };
