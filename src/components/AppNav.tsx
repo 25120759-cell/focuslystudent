@@ -2,13 +2,13 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LogIn, LogOut, Shield, Users, Layers, LifeBuoy, FileText, Brain, Settings as SettingsIcon, Sparkles, ChevronDown, Gift, Activity } from "lucide-react";
-import { useT, useStore } from "@/lib/store";
+import { useT } from "@/lib/store";
 import { useAuth } from "@/lib/auth";
 import { isPublicPath } from "@/lib/publicRoutes";
 
 export function AppNav() {
   const t = useT();
-  const { state } = useStore();
+
   const { user, signOut, isAdmin } = useAuth();
   const path = useRouterState({ select: (r) => r.location.pathname });
   const [openMenu, setOpenMenu] = useState<null | "community" | "account">(null);
