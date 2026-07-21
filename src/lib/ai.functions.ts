@@ -221,7 +221,7 @@ export const aiSupport = createServerFn({ method: "POST" })
         { role: "user", content: data.message },
       ],
     });
-    await supabase.from("support_usage").insert({ user_id: userId });
+    { const { supabaseAdmin } = await import("@/integrations/supabase/client.server"); await supabaseAdmin.from("support_usage").insert({ user_id: userId }); }
     const usage = json.usage ?? {};
     await recordUsage(supabase, userId, model, usage.prompt_tokens ?? 0, usage.completion_tokens ?? 0, "support", info.plan);
     const text = json.choices?.[0]?.message?.content ?? "";
