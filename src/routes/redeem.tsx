@@ -71,7 +71,7 @@ function RedeemPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <PublicHeader />
+
       <motion.section
         initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
         className="mx-auto max-w-2xl px-6 py-16"
