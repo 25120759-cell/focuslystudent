@@ -36,7 +36,7 @@ const PLANS = [
     price: "$6",
     cadence: "/ month",
     blurb: "10× more AI for serious students who plan ahead.",
-    perks: ["1,000 AI credits / month", "No daily cap", "10 packs / day", "Priority AI response", "Realtime shared lists", "Everything in Free"],
+    perks: ["1,000 AI credits / month", "No daily cap", "10 packs / day", "Priority AI response", "Everything in Free"],
     cta: "Go Pro",
     href: "/redeem?plan=pro",
     icon: Sparkles,
