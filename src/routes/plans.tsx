@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check, Sparkles, Crown, Zap } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { PublicHeader } from "@/components/PublicHeader";
+
 
 export const Route = createFileRoute("/plans")({
   ssr: false,
