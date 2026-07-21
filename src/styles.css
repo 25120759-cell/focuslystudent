@@ -43,61 +43,63 @@
 :root {
   --base-font-size: 16px;
   --radius: 1rem;
-  /* Light: clean lavender/blue */
-  --background: oklch(0.985 0.005 280);
-  --foreground: oklch(0.18 0.04 270);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.04 270);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.04 270);
-  --primary: oklch(0.5 0.22 280);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.95 0.02 280);
-  --secondary-foreground: oklch(0.25 0.06 280);
-  --muted: oklch(0.95 0.015 270);
-  --muted-foreground: oklch(0.5 0.03 270);
-  --accent: oklch(0.92 0.06 280);
-  --accent-foreground: oklch(0.25 0.08 280);
-  --destructive: oklch(0.6 0.22 25);
-  --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.9 0.02 280);
-  --input: oklch(0.92 0.02 280);
-  --ring: oklch(0.5 0.22 280);
-  --tt-blue: oklch(0.92 0.06 240);
-  --tt-purple: oklch(0.9 0.07 300);
-  --tt-teal: oklch(0.9 0.07 190);
-  --tt-peach: oklch(0.92 0.07 50);
-  --tt-break: oklch(0.92 0.08 170);
-  --gold: oklch(0.82 0.16 85);
+  /* Light: warm sand — bone paper, deep-navy ink, muted gold accent */
+  --background: oklch(0.902 0.017 85);        /* #E8E4D8 bone */
+  --foreground: oklch(0.235 0.045 258);       /* #0F1B2D deep navy */
+  --card: oklch(0.988 0.008 90);              /* #FFFDF7 warm white */
+  --card-foreground: oklch(0.235 0.045 258);
+  --popover: oklch(0.988 0.008 90);
+  --popover-foreground: oklch(0.235 0.045 258);
+  --primary: oklch(0.34 0.075 253);           /* #1E3A5F navy */
+  --primary-foreground: oklch(0.938 0.014 85);
+  --secondary: oklch(0.94 0.012 85);
+  --secondary-foreground: oklch(0.34 0.075 253);
+  --muted: oklch(0.87 0.017 85);
+  --muted-foreground: oklch(0.44 0.03 258);
+  --accent: oklch(0.855 0.09 78);             /* #F2C879 gold, softened */
+  --accent-foreground: oklch(0.235 0.045 258);
+  --destructive: oklch(0.55 0.2 25);
+  --destructive-foreground: oklch(0.988 0.008 90);
+  --border: oklch(0.82 0.02 85);
+  --input: oklch(0.86 0.015 85);
+  --ring: oklch(0.34 0.075 253);
+  --tt-blue: oklch(0.9 0.045 245);
+  --tt-purple: oklch(0.88 0.045 300);
+  --tt-teal: oklch(0.9 0.05 195);
+  --tt-peach: oklch(0.9 0.06 55);
+  --tt-break: oklch(0.9 0.06 165);
+  --gold: oklch(0.83 0.11 78);                /* #F2C879 */
 }
 
 .dark {
-  --background: oklch(0.13 0.04 265);
-  --foreground: oklch(0.97 0.01 270);
-  --card: oklch(0.18 0.05 265);
-  --card-foreground: oklch(0.97 0.01 270);
-  --popover: oklch(0.18 0.05 265);
-  --popover-foreground: oklch(0.97 0.01 270);
-  --primary: oklch(0.72 0.18 220);
-  --primary-foreground: oklch(0.13 0.04 265);
-  --secondary: oklch(0.23 0.05 265);
-  --secondary-foreground: oklch(0.97 0.01 270);
-  --muted: oklch(0.22 0.04 265);
-  --muted-foreground: oklch(0.7 0.03 270);
-  --accent: oklch(0.28 0.08 260);
-  --accent-foreground: oklch(0.97 0.01 270);
-  --destructive: oklch(0.65 0.22 25);
-  --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.27 0.04 265);
-  --input: oklch(0.25 0.04 265);
-  --ring: oklch(0.72 0.18 220);
-  --tt-blue: oklch(0.35 0.09 240);
-  --tt-purple: oklch(0.35 0.09 300);
-  --tt-teal: oklch(0.35 0.09 190);
-  --tt-peach: oklch(0.4 0.08 50);
-  --tt-break: oklch(0.4 0.1 170);
-  --gold: oklch(0.78 0.17 85);
+  /* Dark: navy paper, bone ink, gold accent */
+  --background: oklch(0.235 0.045 258);       /* #0F1B2D */
+  --foreground: oklch(0.902 0.017 85);        /* bone */
+  --card: oklch(0.28 0.05 258);
+  --card-foreground: oklch(0.902 0.017 85);
+  --popover: oklch(0.28 0.05 258);
+  --popover-foreground: oklch(0.902 0.017 85);
+  --primary: oklch(0.83 0.11 78);             /* gold */
+  --primary-foreground: oklch(0.235 0.045 258);
+  --secondary: oklch(0.32 0.055 258);
+  --secondary-foreground: oklch(0.902 0.017 85);
+  --muted: oklch(0.3 0.05 258);
+  --muted-foreground: oklch(0.72 0.02 85);
+  --accent: oklch(0.5 0.11 78);
+  --accent-foreground: oklch(0.98 0.01 85);
+  --destructive: oklch(0.62 0.22 25);
+  --destructive-foreground: oklch(0.988 0.008 90);
+  --border: oklch(0.36 0.05 258);
+  --input: oklch(0.34 0.05 258);
+  --ring: oklch(0.83 0.11 78);
+  --tt-blue: oklch(0.4 0.09 240);
+  --tt-purple: oklch(0.4 0.09 300);
+  --tt-teal: oklch(0.4 0.09 190);
+  --tt-peach: oklch(0.42 0.09 55);
+  --tt-break: oklch(0.42 0.1 170);
+  --gold: oklch(0.83 0.11 78);
 }
+
 
 html { font-size: var(--base-font-size); }
 
