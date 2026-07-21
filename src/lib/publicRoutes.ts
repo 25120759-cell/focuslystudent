@@ -3,7 +3,7 @@
 export const PUBLIC_ROUTES = [
   "/landing",
   "/plans",
-  "/redeem",
+  
   "/updates",
   "/login",
   "/signup",
