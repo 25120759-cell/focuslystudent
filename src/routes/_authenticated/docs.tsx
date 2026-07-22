@@ -2,8 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useServerFn } from "@tanstack/react-start";
-import { FileText, Plus, Trash2, ShieldCheck, Loader2, Clock } from "lucide-react";
+import { FileText, Plus, Trash2, ShieldCheck, Loader2, Clock, Users } from "lucide-react";
 import { listDocs, createDoc, deleteDoc } from "@/lib/docs.functions";
+import { listSharedWithMe } from "@/lib/doc-collab.functions";
 
 export const Route = createFileRoute("/_authenticated/docs")({
   component: DocsList,
@@ -11,18 +12,23 @@ export const Route = createFileRoute("/_authenticated/docs")({
 });
 
 interface DocRow { id: string; title: string; word_count: number; paste_count: number; edit_seconds: number; share_token: string | null; updated_at: string; created_at: string }
+interface SharedDoc { id: string; title: string; updated_at: string; role: string }
 
 function DocsList() {
   const listFn = useServerFn(listDocs);
+  const sharedFn = useServerFn(listSharedWithMe);
   const createFn = useServerFn(createDoc);
   const deleteFn = useServerFn(deleteDoc);
   const [docs, setDocs] = useState<DocRow[]>([]);
+  const [shared, setShared] = useState<SharedDoc[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [creating, setCreating] = useState(false);
 
   async function load() {
-    try { const r: any = await listFn(); setDocs(r.docs); }
-    finally { setLoaded(true); }
+    try {
+      const [r, s]: any = await Promise.all([listFn(), sharedFn()]);
+      setDocs(r.docs); setShared(s.docs ?? []);
+    } finally { setLoaded(true); }
   }
   useEffect(() => { load(); }, []);
 

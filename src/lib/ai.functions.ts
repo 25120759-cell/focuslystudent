@@ -83,9 +83,8 @@ const TOOLS = [
   { type: "function", function: { name: "create_action_plan", description: "Break a goal into a step-by-step plan.", parameters: { type: "object", properties: { title: { type: "string" }, steps: { type: "array", items: { type: "object", properties: { action: { type: "string" }, date: { type: "string" }, progress: { type: "string" }, status: { type: "string" } }, required: ["action", "date", "progress", "status"] } } }, required: ["title", "steps"] } } },
   { type: "function", function: { name: "start_timer", description: "Start the study timer.", parameters: { type: "object", properties: { minutes: { type: "number" } } } } },
   { type: "function", function: { name: "stop_timer", description: "Stop the study timer.", parameters: { type: "object", properties: {} } } },
-  { type: "function", function: { name: "redeem_reward", description: "Redeem a reward voucher by id.", parameters: { type: "object", properties: { voucher_id: { type: "string" } }, required: ["voucher_id"] } } },
   { type: "function", function: { name: "set_setting", description: "Change a user setting.", parameters: { type: "object", properties: { key: { type: "string", enum: ["theme", "fontSize", "language", "assistantPersonality"] }, value: { type: "string" } }, required: ["key", "value"] } } },
-  { type: "function", function: { name: "navigate", description: "Navigate to a route in the app.", parameters: { type: "object", properties: { route: { type: "string", description: "e.g. /app, /assignments, /calender, /rewards" } }, required: ["route"] } } },
+  { type: "function", function: { name: "navigate", description: "Navigate to a route in the app.", parameters: { type: "object", properties: { route: { type: "string", description: "e.g. /app, /assignments, /calender, /docs, /notes, /social, /cards" } }, required: ["route"] } } },
 ];
 
 function modelFor(info: PlanInfo, preferPro = false) {
