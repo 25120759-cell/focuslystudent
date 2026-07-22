@@ -102,6 +102,26 @@ function DocsList() {
           </AnimatePresence>
         </div>
       )}
+
+      {shared.length > 0 && (
+        <div className="pt-6">
+          <h2 className="font-display text-xl font-semibold flex items-center gap-2 mb-3">
+            <Users className="h-5 w-5 text-primary" /> Shared with me
+          </h2>
+          <div className="grid gap-3 md:grid-cols-2">
+            {shared.map((d) => (
+              <Link key={d.id} to="/docs/$id" params={{ id: d.id }}
+                className="rounded-2xl border border-border bg-card p-4 hover:shadow-sm transition">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-display text-base font-semibold truncate">{d.title}</h3>
+                  <span className="rounded-full bg-primary/10 text-primary px-2 py-0.5 text-[10px] capitalize">{d.role}</span>
+                </div>
+                <div className="mt-1 text-[10px] text-muted-foreground">Updated {new Date(d.updated_at).toLocaleDateString()}</div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
