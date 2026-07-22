@@ -231,6 +231,153 @@ export type Database = {
         }
         Relationships: []
       }
+      doc_comments: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          doc_id: string
+          id: string
+          resolved: boolean
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          doc_id: string
+          id?: string
+          resolved?: boolean
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          doc_id?: string
+          id?: string
+          resolved?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "doc_comments_doc_id_fkey"
+            columns: ["doc_id"]
+            isOneToOne: false
+            referencedRelation: "docs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      doc_events: {
+        Row: {
+          chars: number
+          created_at: string
+          doc_id: string
+          id: string
+          kind: string
+          user_id: string
+        }
+        Insert: {
+          chars?: number
+          created_at?: string
+          doc_id: string
+          id?: string
+          kind: string
+          user_id: string
+        }
+        Update: {
+          chars?: number
+          created_at?: string
+          doc_id?: string
+          id?: string
+          kind?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "doc_events_doc_id_fkey"
+            columns: ["doc_id"]
+            isOneToOne: false
+            referencedRelation: "docs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      doc_shares: {
+        Row: {
+          created_at: string
+          doc_id: string
+          id: string
+          invite_token: string
+          owner_id: string
+          role: string
+          shared_with_email: string
+        }
+        Insert: {
+          created_at?: string
+          doc_id: string
+          id?: string
+          invite_token?: string
+          owner_id: string
+          role: string
+          shared_with_email: string
+        }
+        Update: {
+          created_at?: string
+          doc_id?: string
+          id?: string
+          invite_token?: string
+          owner_id?: string
+          role?: string
+          shared_with_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "doc_shares_doc_id_fkey"
+            columns: ["doc_id"]
+            isOneToOne: false
+            referencedRelation: "docs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      docs: {
+        Row: {
+          content_html: string
+          created_at: string
+          edit_seconds: number
+          id: string
+          paste_count: number
+          share_token: string | null
+          title: string
+          updated_at: string
+          user_id: string
+          word_count: number
+        }
+        Insert: {
+          content_html?: string
+          created_at?: string
+          edit_seconds?: number
+          id?: string
+          paste_count?: number
+          share_token?: string | null
+          title?: string
+          updated_at?: string
+          user_id: string
+          word_count?: number
+        }
+        Update: {
+          content_html?: string
+          created_at?: string
+          edit_seconds?: number
+          id?: string
+          paste_count?: number
+          share_token?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+          word_count?: number
+        }
+        Relationships: []
+      }
       feed_post_likes: {
         Row: {
           created_at: string
@@ -581,6 +728,33 @@ export type Database = {
         }
         Relationships: []
       }
+      user_files: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -607,6 +781,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      doc_role_for: {
+        Args: { _doc_id: string; _user_id: string }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

@@ -2,8 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useServerFn } from "@tanstack/react-start";
-import { FileText, Plus, Trash2, ShieldCheck, Loader2, Clock } from "lucide-react";
+import { FileText, Plus, Trash2, ShieldCheck, Loader2, Clock, Users } from "lucide-react";
 import { listDocs, createDoc, deleteDoc } from "@/lib/docs.functions";
+import { listSharedWithMe } from "@/lib/doc-collab.functions";
 
 export const Route = createFileRoute("/_authenticated/docs")({
   component: DocsList,
@@ -11,18 +12,23 @@ export const Route = createFileRoute("/_authenticated/docs")({
 });
 
 interface DocRow { id: string; title: string; word_count: number; paste_count: number; edit_seconds: number; share_token: string | null; updated_at: string; created_at: string }
+interface SharedDoc { id: string; title: string; updated_at: string; role: string }
 
 function DocsList() {
   const listFn = useServerFn(listDocs);
+  const sharedFn = useServerFn(listSharedWithMe);
   const createFn = useServerFn(createDoc);
   const deleteFn = useServerFn(deleteDoc);
   const [docs, setDocs] = useState<DocRow[]>([]);
+  const [shared, setShared] = useState<SharedDoc[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [creating, setCreating] = useState(false);
 
   async function load() {
-    try { const r: any = await listFn(); setDocs(r.docs); }
-    finally { setLoaded(true); }
+    try {
+      const [r, s]: any = await Promise.all([listFn(), sharedFn()]);
+      setDocs(r.docs); setShared(s.docs ?? []);
+    } finally { setLoaded(true); }
   }
   useEffect(() => { load(); }, []);
 
@@ -94,6 +100,26 @@ function DocsList() {
               </motion.div>
             ))}
           </AnimatePresence>
+        </div>
+      )}
+
+      {shared.length > 0 && (
+        <div className="pt-6">
+          <h2 className="font-display text-xl font-semibold flex items-center gap-2 mb-3">
+            <Users className="h-5 w-5 text-primary" /> Shared with me
+          </h2>
+          <div className="grid gap-3 md:grid-cols-2">
+            {shared.map((d) => (
+              <Link key={d.id} to="/docs/$id" params={{ id: d.id }}
+                className="rounded-2xl border border-border bg-card p-4 hover:shadow-sm transition">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-display text-base font-semibold truncate">{d.title}</h3>
+                  <span className="rounded-full bg-primary/10 text-primary px-2 py-0.5 text-[10px] capitalize">{d.role}</span>
+                </div>
+                <div className="mt-1 text-[10px] text-muted-foreground">Updated {new Date(d.updated_at).toLocaleDateString()}</div>
+              </Link>
+            ))}
+          </div>
         </div>
       )}
     </div>
