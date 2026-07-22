@@ -78,15 +78,20 @@ export function AICreditCard({ dayUsed, monthUsed, dayLimit, monthLimit, plan }:
       {out && (
         <motion.div
           initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }}
-          className="relative mt-3 flex items-center gap-1.5 text-[11px] text-destructive"
+          className="relative mt-3 space-y-1 rounded-lg bg-destructive/5 p-2 text-[11px] text-destructive"
         >
-          <AlertTriangle className="h-3 w-3" />
-          AI features are paused until tomorrow or until you upgrade.
+          <div className="flex items-center gap-1.5 font-medium">
+            <AlertTriangle className="h-3 w-3" />
+            AI is paused — every other feature still works.
+          </div>
+          <div className="text-[10px] text-destructive/80">
+            Credits reset {dayUsed >= dayLimit && monthUsed < monthLimit ? "tomorrow" : "next month"}. Upgrade for more.
+          </div>
         </motion.div>
       )}
       {low && !out && (
         <div className="relative mt-3 flex items-center gap-1.5 text-[11px] text-amber-600 dark:text-amber-400">
-          <Zap className="h-3 w-3" /> Running low — consider upgrading soon.
+          <Zap className="h-3 w-3" /> Running low — {plan === "free" ? "upgrade or wait for reset." : "consider upgrading."}
         </div>
       )}
     </motion.div>
