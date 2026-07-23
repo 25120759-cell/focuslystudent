@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/auth";
 import { aiChat, aiCredits } from "@/lib/ai.functions";
 import { AICreditCard } from "./AICreditCard";
 import { FocuslyAIWordmark } from "./FocuslyAILogo";
+import { getAgentController, type AgentAction } from "./AgentCursor";
 
 const ROUTES = ["/app", "/assignments", "/calender", "/social", "/cards", "/support"] as const;
 
@@ -86,11 +87,22 @@ export function AIChat({ open, onClose }: { open: boolean; onClose: () => void }
         navigate({ to: args.route });
         return `➡️ Navigated to ${args.route}.`;
       }
+      // Agentic actions — enqueue on the visible cursor controller
+      const agent = getAgentController();
+      if (agent) {
+        agent.setNavigate((path: string) => navigate({ to: path as any }));
+        if (name === "agent_click") { agent.enqueue([{ type: "click", selector: args.selector, label: args.label } as AgentAction]); return `🖱️ Clicking ${args.label ?? args.selector}.`; }
+        if (name === "agent_type") { agent.enqueue([{ type: "type", selector: args.selector, text: args.text, label: args.label } as AgentAction]); return `⌨️ Typing into ${args.label ?? args.selector}.`; }
+        if (name === "agent_hover") { agent.enqueue([{ type: "hover", selector: args.selector, label: args.label } as AgentAction]); return `👉 Hovering ${args.label ?? args.selector}.`; }
+        if (name === "agent_navigate" && args.route) { agent.enqueue([{ type: "navigate", route: args.route, label: args.label } as AgentAction]); return `➡️ ${args.label ?? "Going to " + args.route}.`; }
+        if (name === "agent_say" && args.text) { agent.enqueue([{ type: "say", text: args.text } as AgentAction]); return ""; }
+      }
     } catch (e: any) {
       return `⚠️ Couldn't run ${name}: ${e.message}`;
     }
     return "";
   }
+
 
   async function send(useTools = true) {
     if (!input.trim() || loading || outOfCredits) return;

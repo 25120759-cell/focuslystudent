@@ -66,6 +66,7 @@ function DocEditor() {
   const lastSavedHtml = useRef<string>("");
 
   const editor = useEditor({
+    immediatelyRender: false,
     extensions: [
       StarterKit.configure({ codeBlock: {} }),
       Placeholder.configure({ placeholder: "Start writing… (autosaves)" }),

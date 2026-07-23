@@ -17,6 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AppNav } from "@/components/AppNav";
 import { FloatingAI } from "@/components/FloatingAI";
 import { NewPostToast } from "@/components/NewPostToast";
+import { AgentCursorOverlay } from "@/components/AgentCursor";
 import { isPublicPath } from "@/lib/publicRoutes";
 
 
@@ -87,12 +88,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head><HeadContent /></head>
-      <body>{children}<Scripts /></body>
+      <body suppressHydrationWarning>{children}<Scripts /></body>
     </html>
   );
 }
+
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
@@ -110,6 +112,7 @@ function RootComponent() {
             </main>
             {!publicPage && <FloatingAI />}
             <NewPostToast />
+            <AgentCursorOverlay />
           </div>
         </StoreProvider>
       </AuthProvider>
