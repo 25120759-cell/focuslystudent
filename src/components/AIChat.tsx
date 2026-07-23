@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/auth";
 import { aiChat, aiCredits } from "@/lib/ai.functions";
 import { AICreditCard } from "./AICreditCard";
 import { FocuslyAIWordmark } from "./FocuslyAILogo";
+import { getAgentController, type AgentAction } from "./AgentCursor";
 
 const ROUTES = ["/app", "/assignments", "/calender", "/social", "/cards", "/support"] as const;
 
