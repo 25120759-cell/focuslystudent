@@ -148,7 +148,7 @@ export const aiChat = createServerFn({ method: "POST" })
     const { supabase, userId } = context as any;
     const info = await checkCredits(supabase, userId);
     const planNote = `\n\nThe user is on the ${info.plan.toUpperCase()} plan. ${info.plan === "max" ? "You have access to deeper reasoning and long-context analysis." : info.plan === "pro" ? "Pro users get standard fast responses." : "Free plan — keep replies concise."}`;
-    const sys = PERSONAS[data.personality] + planNote + (data.context ? `\n\nCurrent app state:\n${data.context}` : "") + "\n\nWhen the user requests an action you can perform via a tool, call the tool. You can chain multiple tools in one reply.";
+    const sys = PERSONAS[data.personality] + planNote + (data.context ? `\n\nCurrent app state:\n${data.context}` : "") + "\n\nWhen the user requests an action you can perform via a tool, call the tool. You can chain multiple tools in one reply.\n\nAGENTIC MODE: When the user asks you to *demonstrate*, *show me how*, *do it for me*, or otherwise wants to see actions happen live on screen, use the agent_* tools (agent_click, agent_type, agent_hover, agent_navigate, agent_say) to move a visible cursor and interact with the real UI. Common selectors: nav links like 'a[href=\"/assignments\"]', buttons like 'button[title=\"Bold\"]', or the shorthand 'text=Save' to match visible button/link text. Chain agent_say → agent_navigate → agent_click → agent_type sequences to guide the user visibly.";
     const messages = [
       { role: "system", content: sys },
       ...data.history.map((m) => ({ role: m.role, content: m.content })),
