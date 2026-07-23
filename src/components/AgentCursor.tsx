@@ -121,7 +121,8 @@ export function AgentCursorOverlay() {
   useEffect(() => {
     const c = getAgentController();
     if (!c) return;
-    return c.subscribe(setS);
+    const unsub = c.subscribe(setS);
+    return () => { unsub(); };
   }, []);
   return (
     <AnimatePresence>
