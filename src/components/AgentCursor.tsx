@@ -20,8 +20,8 @@ class AgentController {
   private running = false;
   private listeners = new Set<Listener>();
   private navigateFn: ((path: string) => void) | null = null;
-  x = window?.innerWidth ? window.innerWidth / 2 : 400;
-  y = window?.innerHeight ? window.innerHeight / 2 : 300;
+  x = typeof window !== "undefined" ? window.innerWidth / 2 : 400;
+  y = typeof window !== "undefined" ? window.innerHeight / 2 : 300;
   visible = false;
   label: string | null = null;
   busy = false;
