@@ -85,7 +85,13 @@ const TOOLS = [
   { type: "function", function: { name: "stop_timer", description: "Stop the study timer.", parameters: { type: "object", properties: {} } } },
   { type: "function", function: { name: "set_setting", description: "Change a user setting.", parameters: { type: "object", properties: { key: { type: "string", enum: ["theme", "fontSize", "language", "assistantPersonality"] }, value: { type: "string" } }, required: ["key", "value"] } } },
   { type: "function", function: { name: "navigate", description: "Navigate to a route in the app.", parameters: { type: "object", properties: { route: { type: "string", description: "e.g. /app, /assignments, /calender, /docs, /notes, /social, /cards" } }, required: ["route"] } } },
+  { type: "function", function: { name: "agent_click", description: "AGENTIC MODE: Move the visible on-screen cursor to a UI element and click it. Use a CSS selector like 'button[title=\"Insert link\"]' or the shorthand 'text=Save' to match visible button/link text.", parameters: { type: "object", properties: { selector: { type: "string" }, label: { type: "string", description: "Short human label shown next to the cursor" } }, required: ["selector"] } } },
+  { type: "function", function: { name: "agent_type", description: "AGENTIC MODE: Move the visible cursor to an input/textarea and type text into it character by character.", parameters: { type: "object", properties: { selector: { type: "string" }, text: { type: "string" }, label: { type: "string" } }, required: ["selector", "text"] } } },
+  { type: "function", function: { name: "agent_hover", description: "AGENTIC MODE: Move the visible cursor to an element and hover.", parameters: { type: "object", properties: { selector: { type: "string" }, label: { type: "string" } }, required: ["selector"] } } },
+  { type: "function", function: { name: "agent_navigate", description: "AGENTIC MODE: Narrate a navigation with the visible cursor before switching routes.", parameters: { type: "object", properties: { route: { type: "string" }, label: { type: "string" } }, required: ["route"] } } },
+  { type: "function", function: { name: "agent_say", description: "AGENTIC MODE: Show a short caption next to the cursor (narration).", parameters: { type: "object", properties: { text: { type: "string" } }, required: ["text"] } } },
 ];
+
 
 function modelFor(info: PlanInfo, preferPro = false) {
   return info.pro_model && preferPro ? MODEL_PRO : MODEL_FAST;
