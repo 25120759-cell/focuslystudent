@@ -17,6 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AppNav } from "@/components/AppNav";
 import { FloatingAI } from "@/components/FloatingAI";
 import { NewPostToast } from "@/components/NewPostToast";
+import { AgentCursorOverlay } from "@/components/AgentCursor";
 import { isPublicPath } from "@/lib/publicRoutes";
 
 
