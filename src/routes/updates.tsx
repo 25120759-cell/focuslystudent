@@ -120,10 +120,24 @@ function UpdatesPage() {
     <div className="min-h-screen bg-background text-foreground">
       <PublicHeader />
 
-      <section className="mx-auto max-w-3xl px-6 py-16">
-        <span className="text-xs font-semibold uppercase tracking-widest text-primary">Changelog</span>
-        <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight md:text-5xl">Updates</h1>
-        <p className="mt-3 text-muted-foreground">What's new, what's next, and what we're fixing.</p>
+      <section className="relative overflow-hidden">
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 bg-[radial-gradient(900px_500px_at_-10%_0%,color-mix(in_oklab,var(--primary)_10%,transparent),transparent_60%),radial-gradient(700px_400px_at_110%_10%,color-mix(in_oklab,var(--gold)_22%,transparent),transparent_60%)]"
+        />
+        <div className="mx-auto max-w-3xl px-6 pt-20 pb-10 md:pt-24">
+          <span className="text-xs font-semibold uppercase tracking-widest text-primary">Changelog</span>
+          <h1 className="mt-3 font-display text-5xl md:text-6xl font-semibold tracking-tight leading-[1.05]">
+            What's <em className="not-italic text-primary">new</em>.
+          </h1>
+          <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground">
+            Product updates, fixes, and what we're shipping next.
+          </p>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-6 pb-16">
+
 
         {isAdmin && (
           <div className="mt-8">
