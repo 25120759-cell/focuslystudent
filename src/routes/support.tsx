@@ -71,23 +71,34 @@ function SupportPage() {
     <div className="min-h-screen bg-background text-foreground">
       <PublicHeader />
 
-      <section className="mx-auto max-w-3xl px-6 py-16">
-        <span className="text-xs font-semibold uppercase tracking-widest text-primary">Support</span>
-        <h1 className="mt-2 font-display text-4xl md:text-5xl font-semibold tracking-tight">Focusly docs</h1>
-        <p className="mt-3 text-muted-foreground">Browse the guides below, or chat with the free Support assistant — bottom-right.</p>
+      <section className="relative overflow-hidden">
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 bg-[radial-gradient(900px_500px_at_-10%_0%,color-mix(in_oklab,var(--primary)_10%,transparent),transparent_60%),radial-gradient(700px_400px_at_110%_10%,color-mix(in_oklab,var(--gold)_22%,transparent),transparent_60%)]"
+        />
+        <div className="mx-auto max-w-3xl px-6 pt-20 pb-10 md:pt-24">
+          <span className="text-xs font-semibold uppercase tracking-widest text-primary">Support</span>
+          <h1 className="mt-3 font-display text-5xl md:text-6xl font-semibold tracking-tight leading-[1.05]">
+            How can we <em className="not-italic text-primary">help</em>?
+          </h1>
+          <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground">
+            Browse the guides below, or ask the Support assistant — bottom-right. It only answers questions about Focusly.
+          </p>
 
-        <motion.a
-          href="https://luraapps.base44.app/feedback"
-          target="_blank" rel="noreferrer"
-          whileHover={{ y: -2 }}
-          className="mt-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-5 py-2.5 text-sm font-medium text-primary hover:bg-primary/15"
-        >
-          <Bug className="h-4 w-4" /> Report a glitch or request a feature
-          <ExternalLink className="h-3 w-3 opacity-60" />
-        </motion.a>
+          <motion.a
+            href="https://luraapps.base44.app/feedback"
+            target="_blank" rel="noreferrer"
+            whileHover={{ y: -2 }}
+            className="mt-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-5 py-2.5 text-sm font-medium text-primary hover:bg-primary/15"
+          >
+            <Bug className="h-4 w-4" /> Report a glitch or request a feature
+            <ExternalLink className="h-3 w-3 opacity-60" />
+          </motion.a>
+        </div>
+      </section>
 
-
-        <div className="mt-10 grid gap-4 md:grid-cols-2">
+      <section className="mx-auto max-w-6xl px-6 pb-20">
+        <div className="grid gap-5 md:grid-cols-2">
           {SECTIONS.map((s, i) => {
             const Icon = s.icon;
             return (
@@ -97,11 +108,13 @@ function SupportPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.04 }}
                 whileHover={{ y: -3 }}
-                className="rounded-3xl glass p-5"
+                className="rounded-2xl border border-border/60 bg-card p-6"
               >
-                <Icon className="h-5 w-5 text-primary mb-2" />
+                <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-background text-primary">
+                  <Icon className="h-4 w-4" />
+                </div>
                 <h3 className="font-display text-lg font-semibold">{s.title}</h3>
-                <p className="mt-1 text-sm text-muted-foreground leading-relaxed">{s.body}</p>
+                <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{s.body}</p>
               </motion.div>
             );
           })}

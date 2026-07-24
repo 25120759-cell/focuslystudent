@@ -101,18 +101,25 @@ function PlansPage() {
     <div className="min-h-screen bg-background text-foreground">
       <PublicHeader />
 
-      <motion.section
-        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-        className="mx-auto max-w-6xl px-6 pt-20 pb-6 text-center"
-      >
-        <span className="text-xs font-semibold uppercase tracking-widest text-primary">Pricing</span>
-        <h1 className="mt-2 font-display text-4xl font-semibold tracking-tight md:text-5xl">
-          Every feature is free. AI just scales.
-        </h1>
-        <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-          You never lose a feature by staying on Free — you only run out of AI credits sooner. Pro and Max buy more credits, faster models, and higher daily caps. That's it. No hidden feature paywalls.
-        </p>
-      </motion.section>
+      <section className="relative overflow-hidden">
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 bg-[radial-gradient(1000px_520px_at_-10%_0%,color-mix(in_oklab,var(--primary)_10%,transparent),transparent_60%),radial-gradient(700px_400px_at_110%_10%,color-mix(in_oklab,var(--gold)_24%,transparent),transparent_60%)]"
+        />
+        <motion.div
+          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+          className="mx-auto max-w-4xl px-6 pt-20 pb-8 md:pt-24 text-center"
+        >
+          <span className="text-xs font-semibold uppercase tracking-widest text-primary">Pricing</span>
+          <h1 className="mt-3 font-display text-5xl md:text-6xl font-semibold tracking-tight leading-[1.05]">
+            Every feature is <em className="not-italic text-primary">free</em>. AI just scales.
+          </h1>
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground">
+            You never lose a feature by staying on Free — you only run out of AI credits sooner. Pro and Max buy more credits, faster models, and higher daily caps. That's it.
+          </p>
+        </motion.div>
+      </section>
+
 
       {/* What Free actually includes */}
       <motion.section
