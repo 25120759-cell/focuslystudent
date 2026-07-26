@@ -105,9 +105,9 @@ function RootComponent() {
       <AuthProvider>
         <StoreProvider>
           <AuthSync />
-          <div className="min-h-screen">
+          <div className={`min-h-screen ${publicPage ? "" : "app-canvas"}`}>
             {!publicPage && <AppNav />}
-            <main className={publicPage ? "" : "px-4 pb-12 pt-6 max-w-7xl mx-auto"}>
+            <main className={publicPage ? "" : "px-5 pb-24 pt-8 max-w-7xl mx-auto"}>
               <Outlet />
             </main>
             {!publicPage && <FloatingAI />}
