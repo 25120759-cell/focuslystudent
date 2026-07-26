@@ -6,7 +6,8 @@ import { useT } from "@/lib/store";
 import { useAuth } from "@/lib/auth";
 import { parseTask } from "@/lib/ai.functions";
 import { createAssignment, deleteAssignment, listAssignments, updateAssignment } from "@/lib/assignments.functions";
-import { FileText, Check, AlertTriangle, Sparkles, Plus, Trash2 } from "lucide-react";
+import { FileText, Check, AlertTriangle, Sparkles, Plus, Trash2, ClipboardList } from "lucide-react";
+import { PageHeader } from "@/components/app/PageHeader";
 
 export const Route = createFileRoute("/_authenticated/assignments")({
   component: AssignmentsPage,
