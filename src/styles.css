@@ -150,3 +150,82 @@ html { font-size: var(--base-font-size); }
   background: var(--background);
   display: flex; align-items: center; justify-content: center;
 }
+
+/* ── In-app editorial design language ───────────────────────────── */
+
+/* Paper canvas behind the signed-in app */
+@utility app-canvas {
+  position: relative;
+  background-image:
+    radial-gradient(900px 480px at 8% -8%, color-mix(in oklab, var(--primary) 8%, transparent), transparent 62%),
+    radial-gradient(700px 420px at 108% 4%, color-mix(in oklab, var(--gold) 20%, transparent), transparent 60%);
+  background-attachment: fixed;
+}
+
+/* Warm paper surface — the default in-app container */
+@utility paper {
+  background: var(--card);
+  border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+  border-radius: 1.25rem;
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 5%, transparent),
+              0 12px 32px -24px color-mix(in oklab, var(--foreground) 40%, transparent);
+}
+
+/* Raised / feature surface */
+@utility paper-raised {
+  background: var(--card);
+  border: 1px solid color-mix(in oklab, var(--border) 80%, transparent);
+  border-radius: 1.75rem;
+  box-shadow: 0 2px 4px color-mix(in oklab, var(--foreground) 5%, transparent),
+              0 28px 60px -40px color-mix(in oklab, var(--foreground) 55%, transparent);
+}
+
+/* Small uppercase editorial label */
+@utility eyebrow {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--primary) 85%, transparent);
+}
+
+/* Thin editorial rule */
+@utility hairline {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(to right,
+    color-mix(in oklab, var(--foreground) 22%, transparent),
+    color-mix(in oklab, var(--border) 60%, transparent) 45%,
+    transparent);
+}
+
+/* Underline-on-active nav item */
+@utility nav-link {
+  position: relative;
+  padding-bottom: 0.35rem;
+  transition: color 0.18s ease;
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  &:hover::after { transform: scaleX(0.45); }
+}
+@utility nav-link-active {
+  color: var(--foreground);
+  &::after { transform: scaleX(1) !important; }
+}
+
+@keyframes focusly-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+@utility rise-in {
+  animation: focusly-rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
