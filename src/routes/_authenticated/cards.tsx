@@ -258,7 +258,7 @@ function CardsPage() {
         <div className="space-y-3">
           {trades.length === 0 && <p className="text-sm text-muted-foreground text-center py-8">No trades yet. Use the in-game share link from a friend's collection to send a trade offer.</p>}
           {trades.map((t) => (
-            <div key={t.id} className="rounded-2xl glass p-4 flex items-center justify-between gap-3">
+            <div key={t.id} className="paper p-4 flex items-center justify-between gap-3">
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] uppercase font-semibold text-primary">{t.direction}</span>
                 <div className="text-sm">

@@ -186,7 +186,7 @@ function NotesPage() {
       )}
 
       {showSaved && (
-        <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl glass p-4 space-y-2 max-h-80 overflow-auto">
+        <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="paper-raised p-4 space-y-2 max-h-80 overflow-auto">
           {savedList.length === 0 && <p className="text-xs text-muted-foreground">Nothing saved yet.</p>}
           {savedList.map((it: any) => (
             <div key={it.key} className="flex items-center justify-between gap-2 rounded-xl bg-card border border-border px-3 py-2">
@@ -203,7 +203,7 @@ function NotesPage() {
         </motion.div>
       )}
 
-      <div className="rounded-3xl glass p-5 space-y-3">
+      <div className="paper-raised p-5 space-y-3">
         <input
           value={title}
           onChange={(e) => { setTitle(e.target.value); if (result) persist(result); }}
@@ -300,7 +300,7 @@ function SummaryView({ result, onChange }: { result: Result; onChange: (p: Parti
   const [points, setPoints] = useState(result.key_points.join("\n"));
   useEffect(() => { setSummary(result.summary); setPoints(result.key_points.join("\n")); }, [result.summary, result.key_points]);
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-3xl glass p-6 space-y-4">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="paper-raised p-6 space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="font-display text-lg font-semibold">Summary</h2>
         {editing ? (
@@ -336,7 +336,7 @@ function FlashcardsView({ cards, onChange }: { cards: Flashcard[]; onChange: (c:
   const [i, setI] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [editing, setEditing] = useState(false);
-  if (cards.length === 0) return <div className="rounded-3xl glass p-6 text-sm text-muted-foreground">No flashcards generated.</div>;
+  if (cards.length === 0) return <div className="paper-raised p-6 text-sm text-muted-foreground">No flashcards generated.</div>;
   const card = cards[Math.min(i, cards.length - 1)];
 
   function patch(field: "front" | "back", v: string) {
@@ -372,7 +372,7 @@ function FlashcardsView({ cards, onChange }: { cards: Flashcard[]; onChange: (c:
         animate={{ rotateY: 0, opacity: 1 }}
         transition={{ duration: 0.2 }}
         onClick={() => !editing && setFlipped((f) => !f)}
-        className="rounded-3xl glass p-10 min-h-[220px] flex items-center justify-center text-center cursor-pointer select-none"
+        className="paper-raised p-10 min-h-[220px] flex items-center justify-center text-center cursor-pointer select-none"
       >
         <div className="w-full">
           <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-3">{flipped ? "Back" : "Front"}</div>
@@ -402,7 +402,7 @@ function QuizView({ quiz, onChange }: { quiz: QuizQ[]; onChange: (q: QuizQ[]) =>
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [submitted, setSubmitted] = useState(false);
   const [editIdx, setEditIdx] = useState<number | null>(null);
-  if (quiz.length === 0) return <div className="rounded-3xl glass p-6 text-sm text-muted-foreground">No quiz generated.</div>;
+  if (quiz.length === 0) return <div className="paper-raised p-6 text-sm text-muted-foreground">No quiz generated.</div>;
   const score = quiz.reduce((s, q, i) => s + (answers[i] === q.answer_index ? 1 : 0), 0);
 
   function updateQ(idx: number, patch: Partial<QuizQ>) {
@@ -416,7 +416,7 @@ function QuizView({ quiz, onChange }: { quiz: QuizQ[]; onChange: (q: QuizQ[]) =>
         const picked = answers[qi];
         const isEditing = editIdx === qi;
         return (
-          <div key={qi} className="rounded-3xl glass p-5">
+          <div key={qi} className="paper-raised p-5">
             <div className="flex items-start justify-between gap-2 mb-3">
               {isEditing ? (
                 <input value={q.question} onChange={(e) => updateQ(qi, { question: e.target.value })} className="flex-1 bg-transparent border-b border-input text-sm font-medium" />
@@ -471,7 +471,7 @@ function QuizView({ quiz, onChange }: { quiz: QuizQ[]; onChange: (q: QuizQ[]) =>
           </div>
         );
       })}
-      <div className="flex items-center justify-between rounded-3xl glass p-4">
+      <div className="flex items-center justify-between paper-raised p-4">
         {!submitted ? (
           <>
             <span className="text-xs text-muted-foreground">{Object.keys(answers).length} of {quiz.length} answered</span>

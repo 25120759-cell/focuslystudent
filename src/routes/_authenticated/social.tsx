@@ -65,7 +65,7 @@ function Feed({ userId }: { userId: string | null }) {
 
   return (
     <>
-      <div className="rounded-3xl glass p-4">
+      <div className="paper-raised p-4">
         <textarea
           value={body} onChange={(e) => setBody(e.target.value)} rows={3}
           maxLength={2000} placeholder="Share a study win, ask for tips..."
@@ -84,7 +84,7 @@ function Feed({ userId }: { userId: string | null }) {
           {posts.map((p) => (
             <motion.article key={p.id} layout
               initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: -20 }}
-              className="rounded-3xl glass p-5">
+              className="paper-raised p-5">
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span className="font-medium text-foreground">{p.author}</span>
                 <span>{new Date(p.created_at).toLocaleString()}</span>
@@ -157,7 +157,7 @@ function DMs({ userId }: { userId: string | null }) {
 
   if (active) {
     return (
-      <div className="rounded-3xl glass flex flex-col h-[60vh] overflow-hidden">
+      <div className="paper-raised flex flex-col h-[60vh] overflow-hidden">
         <div className="flex items-center gap-2 border-b border-border px-4 py-3">
           <button onClick={() => setActive(null)} className="rounded-full p-1 hover:bg-accent"><ArrowLeft className="h-4 w-4" /></button>
           <span className="font-medium text-sm">{active.peer_name}</span>
@@ -185,7 +185,7 @@ function DMs({ userId }: { userId: string | null }) {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-3xl glass p-4">
+      <div className="paper-raised p-4">
         <label className="text-xs font-medium text-muted-foreground flex items-center gap-1"><Search className="h-3 w-3" /> Find someone</label>
         <div className="mt-2 flex gap-2">
           <input value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => e.key === "Enter" && doSearch()}

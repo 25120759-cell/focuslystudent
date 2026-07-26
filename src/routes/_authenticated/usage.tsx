@@ -95,7 +95,7 @@ function UsagePage() {
       )}
 
       {credits && (
-        <div className="rounded-3xl glass p-5">
+        <div className="paper-raised p-5">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
               <div className="flex items-center gap-2">
@@ -129,7 +129,7 @@ function UsagePage() {
         </motion.div>
       )}
 
-      <div className="rounded-3xl glass p-5">
+      <div className="paper-raised p-5">
         <h2 className="font-display text-lg font-semibold mb-3">Recent generations</h2>
         {loading ? (
           <p className="text-xs text-muted-foreground">Loading…</p>
@@ -158,7 +158,7 @@ function UsagePage() {
 
 function Meter({ icon, label, used, limit, pct, exhausted }: { icon: React.ReactNode; label: string; used: number; limit: number; pct: number; exhausted: boolean }) {
   return (
-    <div className="rounded-3xl glass p-5">
+    <div className="paper-raised p-5">
       <div className="flex items-center justify-between mb-2">
         <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground flex items-center gap-1">{icon} {label}</span>
         <span className={`text-xs ${exhausted ? "text-destructive font-semibold" : "text-muted-foreground"}`}>{used} / {limit}</span>

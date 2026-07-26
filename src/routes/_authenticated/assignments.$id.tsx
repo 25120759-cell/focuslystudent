@@ -213,7 +213,7 @@ function AssignmentDetail() {
         </div>
       </div>
 
-      <div className="rounded-3xl glass p-6 space-y-4">
+      <div className="paper-raised p-6 space-y-4">
         {edit ? (
           <>
             <input
@@ -264,7 +264,7 @@ function AssignmentDetail() {
         )}
       </div>
 
-      <div className="rounded-3xl glass p-6">
+      <div className="paper-raised p-6">
         <h2 className="font-display text-lg font-semibold mb-3">Subtasks</h2>
         <div className="space-y-2">
           {subtasks.map((s) => (
@@ -290,7 +290,7 @@ function AssignmentDetail() {
         </div>
       </div>
 
-      <div className="rounded-3xl glass p-6">
+      <div className="paper-raised p-6">
         <div className="flex items-center justify-between mb-3 gap-3 flex-wrap">
           <h2 className="font-display text-lg font-semibold flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" /> AI Breakdown
@@ -400,7 +400,7 @@ function AssignmentDetail() {
 
 
       {current.resources.length > 0 && (
-        <div className="rounded-3xl glass p-6">
+        <div className="paper-raised p-6">
           <h2 className="font-display text-lg font-semibold mb-3">Resources</h2>
           <div className="flex flex-wrap gap-2">
             {current.resources.map((r) => (

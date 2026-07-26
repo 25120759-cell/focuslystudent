@@ -62,9 +62,9 @@ function DocsList() {
       </div>
 
       {!loaded ? (
-        <div className="rounded-3xl glass p-16 text-center text-sm text-muted-foreground"><Loader2 className="inline mr-2 h-4 w-4 animate-spin" />Loading…</div>
+        <div className="paper-raised p-16 text-center text-sm text-muted-foreground"><Loader2 className="inline mr-2 h-4 w-4 animate-spin" />Loading…</div>
       ) : docs.length === 0 ? (
-        <div className="rounded-3xl glass p-16 text-center">
+        <div className="paper-raised p-16 text-center">
           <FileText className="mx-auto h-10 w-10 text-muted-foreground/40" />
           <p className="mt-3 text-sm text-muted-foreground">No docs yet. Create your first one above.</p>
         </div>
@@ -80,7 +80,7 @@ function DocsList() {
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ delay: i * 0.03 }}
                 whileHover={{ y: -2 }}
-                className="rounded-2xl glass p-5 flex flex-col gap-2 group"
+                className="paper p-5 flex flex-col gap-2 group"
               >
                 <Link to="/docs/$id" params={{ id: d.id }} className="flex-1">
                   <h3 className="font-display text-lg font-semibold truncate">{d.title}</h3>

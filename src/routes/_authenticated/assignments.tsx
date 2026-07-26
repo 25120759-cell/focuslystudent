@@ -104,7 +104,7 @@ function AssignmentsPage() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, x: -20, scale: 0.95 }}
-              className="rounded-3xl glass p-6 group"
+              className="paper-raised p-6 group"
             >
               <div className="flex items-start justify-between gap-4 mb-3">
                 <Link to="/assignments/$id" params={{ id: a.id }} className="flex-1 block">
@@ -139,9 +139,9 @@ function AssignmentsPage() {
             </motion.article>
           ))}
         </AnimatePresence>
-        {!loaded && <div className="rounded-3xl glass p-12 text-center text-muted-foreground text-sm">Loading assignments…</div>}
+        {!loaded && <div className="paper-raised p-12 text-center text-muted-foreground text-sm">Loading assignments…</div>}
         {loaded && assignments.length === 0 && (
-          <div className="rounded-3xl glass p-12 text-center text-muted-foreground text-sm">
+          <div className="paper-raised p-12 text-center text-muted-foreground text-sm">
             No assignments yet. Add one above.
           </div>
         )}
