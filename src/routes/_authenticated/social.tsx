@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useServerFn } from "@tanstack/react-start";
-import { Send, MessageCircle, Trash2, Search, ArrowLeft } from "lucide-react";
+import { Send, MessageCircle, Trash2, Search, ArrowLeft, Users } from "lucide-react";
+import { PageHeader } from "@/components/app/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import {

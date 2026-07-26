@@ -6,6 +6,7 @@ import { Shield, Loader2, Ticket, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { adminListUsers, adminSetPlan } from "@/lib/ai.functions";
 import { adminCreatePlanCode, adminListPlanCodes, adminTogglePlanCode } from "@/lib/plans.functions";
+import { PageHeader } from "@/components/app/PageHeader";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   beforeLoad: async () => {

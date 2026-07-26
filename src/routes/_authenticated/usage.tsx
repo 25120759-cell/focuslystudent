@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Activity, Zap, Crown, Calendar, Sparkles, AlertTriangle, RefreshCw } from "lucide-react";
 import { aiCredits, aiUsageLog } from "@/lib/ai.functions";
 import { Link } from "@tanstack/react-router";
+import { PageHeader } from "@/components/app/PageHeader";
 
 export const Route = createFileRoute("/_authenticated/usage")({
   component: UsagePage,
