@@ -4,6 +4,7 @@ import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from
 import { useServerFn } from "@tanstack/react-start";
 import { Sparkles, Package, Coins, ArrowLeftRight, Check, X } from "lucide-react";
 import { getWallet, openPack, listMyCards, sellCard, listMyTrades, respondTrade } from "@/lib/cards.functions";
+import { PageHeader } from "@/components/app/PageHeader";
 import { rarityGradient, rarityRing, rarityLabel, getCatalog, CARD_SELL_VALUE, CARD_ART, cardEmoji, type CardDef } from "@/lib/cards";
 
 export const Route = createFileRoute("/_authenticated/cards")({
