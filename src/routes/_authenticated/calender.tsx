@@ -47,23 +47,26 @@ function CalendarPage() {
   const monthName = first.toLocaleString(undefined, { month: "long", year: "numeric" });
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="font-display text-3xl font-semibold flex items-center gap-2">
-          <CalendarDays className="h-6 w-6 text-primary" /> {t("calender")}
-        </h1>
-        <div className="flex items-center gap-2">
-          <button onClick={() => setCursor(new Date(year, month - 1, 1))} className="rounded-full border border-border bg-card p-2 hover:bg-accent">
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-          <span className="min-w-[180px] text-center text-sm font-medium">{monthName}</span>
-          <button onClick={() => setCursor(new Date(year, month + 1, 1))} className="rounded-full border border-border bg-card p-2 hover:bg-accent">
-            <ChevronRight className="h-4 w-4" />
-          </button>
-        </div>
-      </div>
+    <div className="space-y-6 rise-in">
+      <PageHeader
+        eyebrow="The month ahead"
+        icon={CalendarDays}
+        title={t("calender")}
+        description="Every deadline plotted so nothing arrives by surprise."
+        actions={
+          <div className="flex items-center gap-1.5">
+            <button onClick={() => setCursor(new Date(year, month - 1, 1))} className="rounded-full border border-border/70 p-2 transition-colors hover:bg-accent/40">
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <span className="min-w-[170px] text-center font-display text-sm font-semibold">{monthName}</span>
+            <button onClick={() => setCursor(new Date(year, month + 1, 1))} className="rounded-full border border-border/70 p-2 transition-colors hover:bg-accent/40">
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        }
+      />
 
-      <div className="rounded-3xl glass p-4">
+      <div className="paper p-5">
         <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-medium text-muted-foreground mb-2">
           {DAYS.map((d) => <div key={d}>{d}</div>)}
         </div>
