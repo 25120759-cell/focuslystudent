@@ -24,14 +24,19 @@ function SocialPage() {
   const [tab, setTab] = useState<"feed" | "dms">("feed");
 
   return (
-    <div className="space-y-4 max-w-3xl mx-auto">
-      <div className="flex items-center justify-between">
-        <h1 className="font-display text-3xl font-semibold">Social</h1>
-        <div className="inline-flex rounded-full border border-border bg-card p-1 text-xs">
-          <button onClick={() => setTab("feed")} className={`rounded-full px-3 py-1.5 ${tab === "feed" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>Feed</button>
-          <button onClick={() => setTab("dms")} className={`rounded-full px-3 py-1.5 ${tab === "dms" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>Messages</button>
-        </div>
-      </div>
+    <div className="space-y-6 max-w-3xl mx-auto rise-in">
+      <PageHeader
+        eyebrow="The common room"
+        icon={Users}
+        title="Social"
+        description="Share a win, ask for help, or message a classmate directly."
+        actions={
+          <div className="inline-flex rounded-full border border-border/70 p-1 text-xs">
+            <button onClick={() => setTab("feed")} className={`rounded-full px-3.5 py-1.5 font-medium transition-colors ${tab === "feed" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>Feed</button>
+            <button onClick={() => setTab("dms")} className={`rounded-full px-3.5 py-1.5 font-medium transition-colors ${tab === "dms" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>Messages</button>
+          </div>
+        }
+      />
       {tab === "feed" ? <Feed userId={user?.id ?? null} /> : <DMs userId={user?.id ?? null} />}
     </div>
   );
