@@ -62,10 +62,15 @@ function AssignmentsPage() {
   }
 
   return (
-    <div className="space-y-4">
-      <h1 className="font-display text-3xl font-semibold">{t("assignments")}</h1>
+    <div className="space-y-6 rise-in">
+      <PageHeader
+        eyebrow="Your workload"
+        icon={ClipboardList}
+        title={t("assignments")}
+        description="Everything due, in one calm list. Type a sentence and Focusly turns it into a scheduled task."
+      />
 
-      <div className="rounded-3xl glass p-4">
+      <div className="paper p-5">
         <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
           <Sparkles className="h-3 w-3 text-primary" /> Quick add — type naturally
         </label>
