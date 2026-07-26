@@ -96,5 +96,5 @@ export function StudyClock() {
       </div>
     );
   }
-  return <div className="rounded-3xl glass p-6">{content}</div>;
+  return <div className="paper-raised p-6">{content}</div>;
 }

@@ -58,9 +58,11 @@ function SettingsPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto grid gap-6 md:grid-cols-[220px_1fr]">
+    <div className="max-w-6xl mx-auto grid gap-8 md:grid-cols-[220px_1fr] rise-in">
       <aside className="md:sticky md:top-24 md:self-start">
-        <h1 className="font-display text-2xl font-semibold mb-4">Settings</h1>
+        <div className="eyebrow mb-1.5">Preferences</div>
+        <h1 className="font-display text-2xl font-semibold">Settings</h1>
+        <div className="hairline my-4" />
         <nav className="flex md:flex-col gap-1 overflow-x-auto pb-2 md:pb-0">
           {SECTIONS.map((sec) => {
             const Icon = sec.icon;
@@ -168,7 +170,7 @@ function SettingsPage() {
 
 function Section({ id, title, desc, children }: { id: string; title: string; desc: string; children: React.ReactNode }) {
   return (
-    <motion.section id={id} initial={{ opacity: 0, y: 6 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-3xl glass p-6 scroll-mt-24">
+    <motion.section id={id} initial={{ opacity: 0, y: 6 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="paper-raised p-6 scroll-mt-24">
       <h2 className="font-display text-xl font-semibold">{title}</h2>
       <p className="text-xs text-muted-foreground mt-1 mb-4">{desc}</p>
       <div className="space-y-3">{children}</div>

@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { aiCredits, aiStudyNotes, saveArtifact, listArtifacts } from "@/lib/ai.functions";
 import { saveLocal, getLocal, listLocal, deleteLocal, markClean, makeKey, listDirty } from "@/lib/ai-cache";
+import { PageHeader } from "@/components/app/PageHeader";
 
 export const Route = createFileRoute("/_authenticated/notes")({
   component: NotesPage,
@@ -155,25 +156,26 @@ function NotesPage() {
   const isPro = creds?.plan === "pro";
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <h1 className="font-display text-3xl font-semibold flex items-center gap-2">
-            <Brain className="h-7 w-7 text-primary" /> AI Study Notes
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">Paste notes — get a summary, flashcards, and quiz. Saved offline.</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-full bg-card border border-border">
-            {online ? <Cloud className="h-3 w-3 text-emerald-500" /> : <WifiOff className="h-3 w-3 text-amber-500" />}
-            {online ? "Online" : "Offline"}
-          </span>
-          <button onClick={() => setShowSaved((s) => !s)} className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs hover:bg-accent">
-            <History className="h-3 w-3" /> Saved ({savedList.length})
-          </button>
-          <button onClick={newDoc} className="rounded-full border border-border bg-card px-3 py-1.5 text-xs hover:bg-accent">+ New</button>
-        </div>
-      </div>
+    <div className="max-w-4xl mx-auto space-y-6 rise-in">
+      <PageHeader
+        eyebrow="Revision, distilled"
+        icon={Brain}
+        title="AI Study"
+        accent="Notes"
+        description="Paste notes — get a summary, flashcards, and a quiz. Saved offline automatically."
+        actions={
+          <>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 px-2.5 py-1 text-[10px] font-medium">
+              {online ? <Cloud className="h-3 w-3 text-emerald-500" /> : <WifiOff className="h-3 w-3 text-amber-500" />}
+              {online ? "Online" : "Offline"}
+            </span>
+            <button onClick={() => setShowSaved((s) => !s)} className="inline-flex items-center gap-1.5 rounded-full border border-border/70 px-3.5 py-1.5 text-xs font-medium transition-colors hover:bg-accent/40">
+              <History className="h-3 w-3" /> Saved ({savedList.length})
+            </button>
+            <button onClick={newDoc} className="rounded-full bg-primary px-3.5 py-1.5 text-xs font-medium text-primary-foreground transition-opacity hover:opacity-90">+ New</button>
+          </>
+        }
+      />
 
       {creds && (
         <div className="rounded-2xl border border-border bg-card px-4 py-2 text-xs flex items-center justify-between gap-2 flex-wrap">
@@ -186,7 +188,7 @@ function NotesPage() {
       )}
 
       {showSaved && (
-        <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl glass p-4 space-y-2 max-h-80 overflow-auto">
+        <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="paper-raised p-4 space-y-2 max-h-80 overflow-auto">
           {savedList.length === 0 && <p className="text-xs text-muted-foreground">Nothing saved yet.</p>}
           {savedList.map((it: any) => (
             <div key={it.key} className="flex items-center justify-between gap-2 rounded-xl bg-card border border-border px-3 py-2">
@@ -203,7 +205,7 @@ function NotesPage() {
         </motion.div>
       )}
 
-      <div className="rounded-3xl glass p-5 space-y-3">
+      <div className="paper-raised p-5 space-y-3">
         <input
           value={title}
           onChange={(e) => { setTitle(e.target.value); if (result) persist(result); }}
@@ -300,7 +302,7 @@ function SummaryView({ result, onChange }: { result: Result; onChange: (p: Parti
   const [points, setPoints] = useState(result.key_points.join("\n"));
   useEffect(() => { setSummary(result.summary); setPoints(result.key_points.join("\n")); }, [result.summary, result.key_points]);
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-3xl glass p-6 space-y-4">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="paper-raised p-6 space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="font-display text-lg font-semibold">Summary</h2>
         {editing ? (
@@ -336,7 +338,7 @@ function FlashcardsView({ cards, onChange }: { cards: Flashcard[]; onChange: (c:
   const [i, setI] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [editing, setEditing] = useState(false);
-  if (cards.length === 0) return <div className="rounded-3xl glass p-6 text-sm text-muted-foreground">No flashcards generated.</div>;
+  if (cards.length === 0) return <div className="paper-raised p-6 text-sm text-muted-foreground">No flashcards generated.</div>;
   const card = cards[Math.min(i, cards.length - 1)];
 
   function patch(field: "front" | "back", v: string) {
@@ -372,7 +374,7 @@ function FlashcardsView({ cards, onChange }: { cards: Flashcard[]; onChange: (c:
         animate={{ rotateY: 0, opacity: 1 }}
         transition={{ duration: 0.2 }}
         onClick={() => !editing && setFlipped((f) => !f)}
-        className="rounded-3xl glass p-10 min-h-[220px] flex items-center justify-center text-center cursor-pointer select-none"
+        className="paper-raised p-10 min-h-[220px] flex items-center justify-center text-center cursor-pointer select-none"
       >
         <div className="w-full">
           <div className="text-[10px] uppercase tracking-widest text-muted-foreground mb-3">{flipped ? "Back" : "Front"}</div>
@@ -402,7 +404,7 @@ function QuizView({ quiz, onChange }: { quiz: QuizQ[]; onChange: (q: QuizQ[]) =>
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [submitted, setSubmitted] = useState(false);
   const [editIdx, setEditIdx] = useState<number | null>(null);
-  if (quiz.length === 0) return <div className="rounded-3xl glass p-6 text-sm text-muted-foreground">No quiz generated.</div>;
+  if (quiz.length === 0) return <div className="paper-raised p-6 text-sm text-muted-foreground">No quiz generated.</div>;
   const score = quiz.reduce((s, q, i) => s + (answers[i] === q.answer_index ? 1 : 0), 0);
 
   function updateQ(idx: number, patch: Partial<QuizQ>) {
@@ -416,7 +418,7 @@ function QuizView({ quiz, onChange }: { quiz: QuizQ[]; onChange: (q: QuizQ[]) =>
         const picked = answers[qi];
         const isEditing = editIdx === qi;
         return (
-          <div key={qi} className="rounded-3xl glass p-5">
+          <div key={qi} className="paper-raised p-5">
             <div className="flex items-start justify-between gap-2 mb-3">
               {isEditing ? (
                 <input value={q.question} onChange={(e) => updateQ(qi, { question: e.target.value })} className="flex-1 bg-transparent border-b border-input text-sm font-medium" />
@@ -471,7 +473,7 @@ function QuizView({ quiz, onChange }: { quiz: QuizQ[]; onChange: (q: QuizQ[]) =>
           </div>
         );
       })}
-      <div className="flex items-center justify-between rounded-3xl glass p-4">
+      <div className="flex items-center justify-between paper-raised p-4">
         {!submitted ? (
           <>
             <span className="text-xs text-muted-foreground">{Object.keys(answers).length} of {quiz.length} answered</span>

@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Activity, Zap, Crown, Calendar, Sparkles, AlertTriangle, RefreshCw } from "lucide-react";
 import { aiCredits, aiUsageLog } from "@/lib/ai.functions";
 import { Link } from "@tanstack/react-router";
+import { PageHeader } from "@/components/app/PageHeader";
 
 export const Route = createFileRoute("/_authenticated/usage")({
   component: UsagePage,
@@ -58,18 +59,19 @@ function UsagePage() {
   const exhaustedMonth = credits ? credits.monthUsed >= credits.monthLimit : false;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-display text-3xl font-semibold flex items-center gap-2">
-            <Activity className="h-7 w-7 text-primary" /> AI Usage
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">Track every AI generation and what's left in your quota.</p>
-        </div>
-        <button onClick={load} className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs hover:bg-accent">
-          <RefreshCw className="h-3 w-3" /> Refresh
-        </button>
-      </div>
+    <div className="max-w-4xl mx-auto space-y-6 rise-in">
+      <PageHeader
+        eyebrow="Credits & history"
+        icon={Activity}
+        title="AI"
+        accent="Usage"
+        description="Track every AI generation and exactly what's left in your quota."
+        actions={
+          <button onClick={load} className="inline-flex items-center gap-1.5 rounded-full border border-border/70 px-3.5 py-1.5 text-xs font-medium transition-colors hover:bg-accent/40">
+            <RefreshCw className="h-3 w-3" /> Refresh
+          </button>
+        }
+      />
 
       {credits && (
         <div className="grid gap-4 md:grid-cols-2">
@@ -93,7 +95,7 @@ function UsagePage() {
       )}
 
       {credits && (
-        <div className="rounded-3xl glass p-5">
+        <div className="paper-raised p-5">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
               <div className="flex items-center gap-2">
@@ -127,7 +129,7 @@ function UsagePage() {
         </motion.div>
       )}
 
-      <div className="rounded-3xl glass p-5">
+      <div className="paper-raised p-5">
         <h2 className="font-display text-lg font-semibold mb-3">Recent generations</h2>
         {loading ? (
           <p className="text-xs text-muted-foreground">Loading…</p>
@@ -156,7 +158,7 @@ function UsagePage() {
 
 function Meter({ icon, label, used, limit, pct, exhausted }: { icon: React.ReactNode; label: string; used: number; limit: number; pct: number; exhausted: boolean }) {
   return (
-    <div className="rounded-3xl glass p-5">
+    <div className="paper-raised p-5">
       <div className="flex items-center justify-between mb-2">
         <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground flex items-center gap-1">{icon} {label}</span>
         <span className={`text-xs ${exhausted ? "text-destructive font-semibold" : "text-muted-foreground"}`}>{used} / {limit}</span>

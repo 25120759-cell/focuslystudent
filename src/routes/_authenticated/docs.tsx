@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { FileText, Plus, Trash2, ShieldCheck, Loader2, Clock, Users } from "lucide-react";
 import { listDocs, createDoc, deleteDoc } from "@/lib/docs.functions";
 import { listSharedWithMe } from "@/lib/doc-collab.functions";
+import { PageHeader } from "@/components/app/PageHeader";
 
 export const Route = createFileRoute("/_authenticated/docs")({
   component: DocsList,
@@ -47,24 +48,25 @@ function DocsList() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="font-display text-3xl font-semibold flex items-center gap-2">
-            <FileText className="h-6 w-6 text-primary" /> Focusly Docs
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">A simple writing surface with built-in authorship verification — like Grammarly's authorship, free.</p>
-        </div>
-        <motion.button whileTap={{ scale: 0.96 }} onClick={makeNew} disabled={creating}
-          className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50">
-          {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />} New doc
-        </motion.button>
-      </div>
+    <div className="max-w-5xl mx-auto space-y-6 rise-in">
+      <PageHeader
+        eyebrow="Write & prove it"
+        icon={FileText}
+        title="Focusly"
+        accent="Docs"
+        description="A calm writing surface with built-in authorship verification, sharing, and live collaboration."
+        actions={
+          <motion.button whileTap={{ scale: 0.96 }} onClick={makeNew} disabled={creating}
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50">
+            {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />} New doc
+          </motion.button>
+        }
+      />
 
       {!loaded ? (
-        <div className="rounded-3xl glass p-16 text-center text-sm text-muted-foreground"><Loader2 className="inline mr-2 h-4 w-4 animate-spin" />Loading…</div>
+        <div className="paper-raised p-16 text-center text-sm text-muted-foreground"><Loader2 className="inline mr-2 h-4 w-4 animate-spin" />Loading…</div>
       ) : docs.length === 0 ? (
-        <div className="rounded-3xl glass p-16 text-center">
+        <div className="paper-raised p-16 text-center">
           <FileText className="mx-auto h-10 w-10 text-muted-foreground/40" />
           <p className="mt-3 text-sm text-muted-foreground">No docs yet. Create your first one above.</p>
         </div>
@@ -80,7 +82,7 @@ function DocsList() {
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ delay: i * 0.03 }}
                 whileHover={{ y: -2 }}
-                className="rounded-2xl glass p-5 flex flex-col gap-2 group"
+                className="paper p-5 flex flex-col gap-2 group"
               >
                 <Link to="/docs/$id" params={{ id: d.id }} className="flex-1">
                   <h3 className="font-display text-lg font-semibold truncate">{d.title}</h3>

@@ -6,7 +6,8 @@ import { useT } from "@/lib/store";
 import { useAuth } from "@/lib/auth";
 import { parseTask } from "@/lib/ai.functions";
 import { createAssignment, deleteAssignment, listAssignments, updateAssignment } from "@/lib/assignments.functions";
-import { FileText, Check, AlertTriangle, Sparkles, Plus, Trash2 } from "lucide-react";
+import { FileText, Check, AlertTriangle, Sparkles, Plus, Trash2, ClipboardList } from "lucide-react";
+import { PageHeader } from "@/components/app/PageHeader";
 
 export const Route = createFileRoute("/_authenticated/assignments")({
   component: AssignmentsPage,
@@ -62,10 +63,15 @@ function AssignmentsPage() {
   }
 
   return (
-    <div className="space-y-4">
-      <h1 className="font-display text-3xl font-semibold">{t("assignments")}</h1>
+    <div className="space-y-6 rise-in">
+      <PageHeader
+        eyebrow="Your workload"
+        icon={ClipboardList}
+        title={t("assignments")}
+        description="Everything due, in one calm list. Type a sentence and Focusly turns it into a scheduled task."
+      />
 
-      <div className="rounded-3xl glass p-4">
+      <div className="paper p-5">
         <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
           <Sparkles className="h-3 w-3 text-primary" /> Quick add — type naturally
         </label>
@@ -98,7 +104,7 @@ function AssignmentsPage() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, x: -20, scale: 0.95 }}
-              className="rounded-3xl glass p-6 group"
+              className="paper-raised p-6 group"
             >
               <div className="flex items-start justify-between gap-4 mb-3">
                 <Link to="/assignments/$id" params={{ id: a.id }} className="flex-1 block">
@@ -133,9 +139,9 @@ function AssignmentsPage() {
             </motion.article>
           ))}
         </AnimatePresence>
-        {!loaded && <div className="rounded-3xl glass p-12 text-center text-muted-foreground text-sm">Loading assignments…</div>}
+        {!loaded && <div className="paper-raised p-12 text-center text-muted-foreground text-sm">Loading assignments…</div>}
         {loaded && assignments.length === 0 && (
-          <div className="rounded-3xl glass p-12 text-center text-muted-foreground text-sm">
+          <div className="paper-raised p-12 text-center text-muted-foreground text-sm">
             No assignments yet. Add one above.
           </div>
         )}

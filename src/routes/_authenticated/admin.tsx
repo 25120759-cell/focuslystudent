@@ -6,6 +6,7 @@ import { Shield, Loader2, Ticket, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { adminListUsers, adminSetPlan } from "@/lib/ai.functions";
 import { adminCreatePlanCode, adminListPlanCodes, adminTogglePlanCode } from "@/lib/plans.functions";
+import { PageHeader } from "@/components/app/PageHeader";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   beforeLoad: async () => {
@@ -72,18 +73,23 @@ function AdminPage() {
   }
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="font-display text-3xl font-semibold flex items-center gap-2">
-          <Shield className="h-6 w-6 text-primary" /> Admin console
-        </h1>
-        <Link to="/updates" className="text-xs text-muted-foreground hover:text-foreground underline">→ Compose post</Link>
-      </div>
-      <p className="text-sm text-muted-foreground">Hidden page. Change plans, create redeem codes, then jump to <Link to="/updates" className="text-primary underline">Updates</Link> to publish AI-drafted posts.</p>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 rise-in">
+      <PageHeader
+        eyebrow="Staff only"
+        icon={Shield}
+        title="Admin"
+        accent="console"
+        description="Change plans, mint redeem codes, then publish AI-drafted posts from Updates."
+        actions={
+          <Link to="/updates" className="inline-flex items-center gap-1.5 rounded-full border border-border/70 px-3.5 py-1.5 text-xs font-medium transition-colors hover:bg-accent/40">
+            Compose post →
+          </Link>
+        }
+      />
 
       {err && <p className="text-sm text-destructive">{err}</p>}
 
-      <div className="rounded-3xl glass overflow-hidden">
+      <div className="paper-raised overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-muted/40 text-left text-xs uppercase tracking-wider">
             <tr>
@@ -126,7 +132,7 @@ function AdminPage() {
         </table>
       </div>
 
-      <div className="rounded-3xl glass p-5 space-y-4">
+      <div className="paper-raised p-5 space-y-4">
         <h2 className="font-display text-xl font-semibold flex items-center gap-2"><Ticket className="h-5 w-5 text-primary" /> Plan redeem codes</h2>
         <div className="grid gap-2 md:grid-cols-[1fr_1fr_120px_auto]">
           <input value={customCode} onChange={(e) => setCustomCode(e.target.value)} placeholder="Optional custom code" className="rounded-xl border border-input bg-background px-3 py-2 text-sm" />

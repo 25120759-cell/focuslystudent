@@ -83,10 +83,10 @@ export function Timetable() {
     setClasses((c) => c.filter((x) => x.id !== id));
   }
 
-  if (!loaded) return <div className="rounded-3xl glass p-16 text-center text-sm text-muted-foreground"><Loader2 className="inline mr-2 h-4 w-4 animate-spin" />Loading timetable…</div>;
+  if (!loaded) return <div className="paper-raised p-16 text-center text-sm text-muted-foreground"><Loader2 className="inline mr-2 h-4 w-4 animate-spin" />Loading timetable…</div>;
 
   return (
-    <div className="rounded-3xl glass p-4 md:p-6">
+    <div className="paper-raised p-4 md:p-6">
       <div className="mb-3 flex items-center justify-between">
         <h3 className="font-display text-lg font-semibold">Weekly timetable</h3>
         <button

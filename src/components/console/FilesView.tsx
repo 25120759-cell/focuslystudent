@@ -48,11 +48,11 @@ export function FilesView() {
     if (active?.id === id) setActive(null);
   }
 
-  if (!loaded) return <div className="rounded-3xl glass p-16 text-center text-sm text-muted-foreground"><Loader2 className="inline mr-2 h-4 w-4 animate-spin" />Loading files…</div>;
+  if (!loaded) return <div className="paper-raised p-16 text-center text-sm text-muted-foreground"><Loader2 className="inline mr-2 h-4 w-4 animate-spin" />Loading files…</div>;
 
   return (
     <div className="grid gap-4 md:grid-cols-[260px,1fr]">
-      <div className="rounded-3xl glass p-4 space-y-2">
+      <div className="paper-raised p-4 space-y-2">
         <button onClick={makeNew} className="w-full inline-flex items-center justify-center gap-1 rounded-full bg-primary px-3 py-2 text-xs font-medium text-primary-foreground">
           <Plus className="h-3 w-3" /> New file
         </button>
@@ -85,7 +85,7 @@ export function FilesView() {
         </div>
       </div>
 
-      <div className="rounded-3xl glass p-4">
+      <div className="paper-raised p-4">
         {active ? (
           <div className="flex h-[450px] flex-col">
             <div className="flex items-center gap-2 mb-3">

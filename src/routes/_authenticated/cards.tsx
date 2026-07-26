@@ -4,6 +4,7 @@ import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from
 import { useServerFn } from "@tanstack/react-start";
 import { Sparkles, Package, Coins, ArrowLeftRight, Check, X } from "lucide-react";
 import { getWallet, openPack, listMyCards, sellCard, listMyTrades, respondTrade } from "@/lib/cards.functions";
+import { PageHeader } from "@/components/app/PageHeader";
 import { rarityGradient, rarityRing, rarityLabel, getCatalog, CARD_SELL_VALUE, CARD_ART, cardEmoji, type CardDef } from "@/lib/cards";
 
 export const Route = createFileRoute("/_authenticated/cards")({
@@ -165,12 +166,14 @@ function CardsPage() {
   const canOpen = wallet && wallet.coins >= wallet.packCost && wallet.packsOpened < wallet.packLimit;
 
   return (
-    <div className="space-y-5 max-w-5xl mx-auto">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-display text-3xl font-semibold flex items-center gap-2">
-          <Sparkles className="h-6 w-6 text-primary" /> Focusly Cards
-        </h1>
-        {wallet && (
+    <div className="space-y-6 max-w-5xl mx-auto rise-in">
+      <PageHeader
+        eyebrow="Collect · trade · flex"
+        icon={Sparkles}
+        title="Focusly"
+        accent="Cards"
+        description="Earn coins by studying, open packs, and hunt the one-of-a-million Eclipse card."
+        actions={wallet ? (
           <div className="flex items-center gap-2">
             <motion.span
               key={wallet.coins}
@@ -179,12 +182,12 @@ function CardsPage() {
             >
               <Coins className="h-4 w-4" /> {wallet.coins.toLocaleString()}
             </motion.span>
-            <span className="rounded-full bg-card border border-border px-2.5 py-1 text-[10px] uppercase font-medium">{wallet.plan}</span>
+            <span className="rounded-full border border-border/70 px-2.5 py-1 text-[10px] uppercase tracking-widest font-semibold">{wallet.plan}</span>
           </div>
-        )}
-      </div>
+        ) : null}
+      />
 
-      <div className="inline-flex rounded-full border border-border bg-card p-1 text-xs">
+      <div className="inline-flex rounded-full border border-border/70 p-1 text-xs">
         {(["open", "collection", "browse", "trades"] as const).map((t) => (
           <button key={t} onClick={() => setTab(t)}
             className={`rounded-full px-3 py-1.5 capitalize transition ${tab === t ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
@@ -194,7 +197,7 @@ function CardsPage() {
       </div>
 
       {tab === "open" && (
-        <div className="rounded-3xl glass p-6 text-center">
+        <div className="paper-raised p-6 text-center">
           <motion.div animate={{ y: [0, -6, 0] }} transition={{ repeat: Infinity, duration: 3 }}>
             <Package className="mx-auto h-10 w-10 text-primary" />
           </motion.div>
@@ -256,7 +259,7 @@ function CardsPage() {
         <div className="space-y-3">
           {trades.length === 0 && <p className="text-sm text-muted-foreground text-center py-8">No trades yet. Use the in-game share link from a friend's collection to send a trade offer.</p>}
           {trades.map((t) => (
-            <div key={t.id} className="rounded-2xl glass p-4 flex items-center justify-between gap-3">
+            <div key={t.id} className="paper p-4 flex items-center justify-between gap-3">
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] uppercase font-semibold text-primary">{t.direction}</span>
                 <div className="text-sm">
