@@ -181,12 +181,12 @@ function CardsPage() {
             >
               <Coins className="h-4 w-4" /> {wallet.coins.toLocaleString()}
             </motion.span>
-            <span className="rounded-full bg-card border border-border px-2.5 py-1 text-[10px] uppercase font-medium">{wallet.plan}</span>
+            <span className="rounded-full border border-border/70 px-2.5 py-1 text-[10px] uppercase tracking-widest font-semibold">{wallet.plan}</span>
           </div>
-        )}
-      </div>
+        ) : null}
+      />
 
-      <div className="inline-flex rounded-full border border-border bg-card p-1 text-xs">
+      <div className="inline-flex rounded-full border border-border/70 p-1 text-xs">
         {(["open", "collection", "browse", "trades"] as const).map((t) => (
           <button key={t} onClick={() => setTab(t)}
             className={`rounded-full px-3 py-1.5 capitalize transition ${tab === t ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
@@ -196,7 +196,7 @@ function CardsPage() {
       </div>
 
       {tab === "open" && (
-        <div className="rounded-3xl glass p-6 text-center">
+        <div className="paper-raised p-6 text-center">
           <motion.div animate={{ y: [0, -6, 0] }} transition={{ repeat: Infinity, duration: 3 }}>
             <Package className="mx-auto h-10 w-10 text-primary" />
           </motion.div>
