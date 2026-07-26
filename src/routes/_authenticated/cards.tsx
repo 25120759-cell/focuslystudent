@@ -165,12 +165,14 @@ function CardsPage() {
   const canOpen = wallet && wallet.coins >= wallet.packCost && wallet.packsOpened < wallet.packLimit;
 
   return (
-    <div className="space-y-5 max-w-5xl mx-auto">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-display text-3xl font-semibold flex items-center gap-2">
-          <Sparkles className="h-6 w-6 text-primary" /> Focusly Cards
-        </h1>
-        {wallet && (
+    <div className="space-y-6 max-w-5xl mx-auto rise-in">
+      <PageHeader
+        eyebrow="Collect · trade · flex"
+        icon={Sparkles}
+        title="Focusly"
+        accent="Cards"
+        description="Earn coins by studying, open packs, and hunt the one-of-a-million Eclipse card."
+        actions={wallet ? (
           <div className="flex items-center gap-2">
             <motion.span
               key={wallet.coins}

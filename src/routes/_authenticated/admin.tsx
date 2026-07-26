@@ -73,14 +73,19 @@ function AdminPage() {
   }
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="font-display text-3xl font-semibold flex items-center gap-2">
-          <Shield className="h-6 w-6 text-primary" /> Admin console
-        </h1>
-        <Link to="/updates" className="text-xs text-muted-foreground hover:text-foreground underline">→ Compose post</Link>
-      </div>
-      <p className="text-sm text-muted-foreground">Hidden page. Change plans, create redeem codes, then jump to <Link to="/updates" className="text-primary underline">Updates</Link> to publish AI-drafted posts.</p>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 rise-in">
+      <PageHeader
+        eyebrow="Staff only"
+        icon={Shield}
+        title="Admin"
+        accent="console"
+        description="Change plans, mint redeem codes, then publish AI-drafted posts from Updates."
+        actions={
+          <Link to="/updates" className="inline-flex items-center gap-1.5 rounded-full border border-border/70 px-3.5 py-1.5 text-xs font-medium transition-colors hover:bg-accent/40">
+            Compose post →
+          </Link>
+        }
+      />
 
       {err && <p className="text-sm text-destructive">{err}</p>}
 

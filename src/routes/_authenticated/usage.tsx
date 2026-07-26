@@ -59,18 +59,19 @@ function UsagePage() {
   const exhaustedMonth = credits ? credits.monthUsed >= credits.monthLimit : false;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-display text-3xl font-semibold flex items-center gap-2">
-            <Activity className="h-7 w-7 text-primary" /> AI Usage
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">Track every AI generation and what's left in your quota.</p>
-        </div>
-        <button onClick={load} className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs hover:bg-accent">
-          <RefreshCw className="h-3 w-3" /> Refresh
-        </button>
-      </div>
+    <div className="max-w-4xl mx-auto space-y-6 rise-in">
+      <PageHeader
+        eyebrow="Credits & history"
+        icon={Activity}
+        title="AI"
+        accent="Usage"
+        description="Track every AI generation and exactly what's left in your quota."
+        actions={
+          <button onClick={load} className="inline-flex items-center gap-1.5 rounded-full border border-border/70 px-3.5 py-1.5 text-xs font-medium transition-colors hover:bg-accent/40">
+            <RefreshCw className="h-3 w-3" /> Refresh
+          </button>
+        }
+      />
 
       {credits && (
         <div className="grid gap-4 md:grid-cols-2">
