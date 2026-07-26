@@ -58,9 +58,11 @@ function SettingsPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto grid gap-6 md:grid-cols-[220px_1fr]">
+    <div className="max-w-6xl mx-auto grid gap-8 md:grid-cols-[220px_1fr] rise-in">
       <aside className="md:sticky md:top-24 md:self-start">
-        <h1 className="font-display text-2xl font-semibold mb-4">Settings</h1>
+        <div className="eyebrow mb-1.5">Preferences</div>
+        <h1 className="font-display text-2xl font-semibold">Settings</h1>
+        <div className="hairline my-4" />
         <nav className="flex md:flex-col gap-1 overflow-x-auto pb-2 md:pb-0">
           {SECTIONS.map((sec) => {
             const Icon = sec.icon;

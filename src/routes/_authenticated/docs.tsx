@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { FileText, Plus, Trash2, ShieldCheck, Loader2, Clock, Users } from "lucide-react";
 import { listDocs, createDoc, deleteDoc } from "@/lib/docs.functions";
 import { listSharedWithMe } from "@/lib/doc-collab.functions";
+import { PageHeader } from "@/components/app/PageHeader";
 
 export const Route = createFileRoute("/_authenticated/docs")({
   component: DocsList,
@@ -47,19 +48,20 @@ function DocsList() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="font-display text-3xl font-semibold flex items-center gap-2">
-            <FileText className="h-6 w-6 text-primary" /> Focusly Docs
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">A simple writing surface with built-in authorship verification — like Grammarly's authorship, free.</p>
-        </div>
-        <motion.button whileTap={{ scale: 0.96 }} onClick={makeNew} disabled={creating}
-          className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50">
-          {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />} New doc
-        </motion.button>
-      </div>
+    <div className="max-w-5xl mx-auto space-y-6 rise-in">
+      <PageHeader
+        eyebrow="Write & prove it"
+        icon={FileText}
+        title="Focusly"
+        accent="Docs"
+        description="A calm writing surface with built-in authorship verification, sharing, and live collaboration."
+        actions={
+          <motion.button whileTap={{ scale: 0.96 }} onClick={makeNew} disabled={creating}
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50">
+            {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />} New doc
+          </motion.button>
+        }
+      />
 
       {!loaded ? (
         <div className="paper-raised p-16 text-center text-sm text-muted-foreground"><Loader2 className="inline mr-2 h-4 w-4 animate-spin" />Loading…</div>

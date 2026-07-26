@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { aiCredits, aiStudyNotes, saveArtifact, listArtifacts } from "@/lib/ai.functions";
 import { saveLocal, getLocal, listLocal, deleteLocal, markClean, makeKey, listDirty } from "@/lib/ai-cache";
+import { PageHeader } from "@/components/app/PageHeader";
 
 export const Route = createFileRoute("/_authenticated/notes")({
   component: NotesPage,
@@ -155,25 +156,26 @@ function NotesPage() {
   const isPro = creds?.plan === "pro";
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <h1 className="font-display text-3xl font-semibold flex items-center gap-2">
-            <Brain className="h-7 w-7 text-primary" /> AI Study Notes
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">Paste notes — get a summary, flashcards, and quiz. Saved offline.</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-full bg-card border border-border">
-            {online ? <Cloud className="h-3 w-3 text-emerald-500" /> : <WifiOff className="h-3 w-3 text-amber-500" />}
-            {online ? "Online" : "Offline"}
-          </span>
-          <button onClick={() => setShowSaved((s) => !s)} className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs hover:bg-accent">
-            <History className="h-3 w-3" /> Saved ({savedList.length})
-          </button>
-          <button onClick={newDoc} className="rounded-full border border-border bg-card px-3 py-1.5 text-xs hover:bg-accent">+ New</button>
-        </div>
-      </div>
+    <div className="max-w-4xl mx-auto space-y-6 rise-in">
+      <PageHeader
+        eyebrow="Revision, distilled"
+        icon={Brain}
+        title="AI Study"
+        accent="Notes"
+        description="Paste notes — get a summary, flashcards, and a quiz. Saved offline automatically."
+        actions={
+          <>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 px-2.5 py-1 text-[10px] font-medium">
+              {online ? <Cloud className="h-3 w-3 text-emerald-500" /> : <WifiOff className="h-3 w-3 text-amber-500" />}
+              {online ? "Online" : "Offline"}
+            </span>
+            <button onClick={() => setShowSaved((s) => !s)} className="inline-flex items-center gap-1.5 rounded-full border border-border/70 px-3.5 py-1.5 text-xs font-medium transition-colors hover:bg-accent/40">
+              <History className="h-3 w-3" /> Saved ({savedList.length})
+            </button>
+            <button onClick={newDoc} className="rounded-full bg-primary px-3.5 py-1.5 text-xs font-medium text-primary-foreground transition-opacity hover:opacity-90">+ New</button>
+          </>
+        }
+      />
 
       {creds && (
         <div className="rounded-2xl border border-border bg-card px-4 py-2 text-xs flex items-center justify-between gap-2 flex-wrap">
