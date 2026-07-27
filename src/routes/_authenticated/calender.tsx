@@ -1,3 +1,4 @@
+import { RouteError } from "@/components/app/States";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -8,6 +9,7 @@ import { listAssignments } from "@/lib/assignments.functions";
 import { PageHeader } from "@/components/app/PageHeader";
 
 export const Route = createFileRoute("/_authenticated/calender")({
+  errorComponent: RouteError,
   component: CalendarPage,
   head: () => ({ meta: [{ title: "Calendar — Focusly" }] }),
 });

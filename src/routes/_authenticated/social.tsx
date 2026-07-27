@@ -1,3 +1,4 @@
+import { RouteError } from "@/components/app/States";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -12,6 +13,7 @@ import {
 } from "@/lib/social.functions";
 
 export const Route = createFileRoute("/_authenticated/social")({
+  errorComponent: RouteError,
   component: SocialPage,
   head: () => ({ meta: [{ title: "Social — Focusly" }] }),
 });

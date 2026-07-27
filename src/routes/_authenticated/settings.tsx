@@ -1,3 +1,4 @@
+import { RouteError } from "@/components/app/States";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -6,6 +7,7 @@ import { useStore, useT, type FontSize, type Language, type Theme, type Calendar
 import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/_authenticated/settings")({
+  errorComponent: RouteError,
   component: SettingsPage,
   head: () => ({ meta: [{ title: "Settings — Focusly" }] }),
 });

@@ -1,3 +1,4 @@
+import { RouteError } from "@/components/app/States";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from "framer-motion";
@@ -8,6 +9,7 @@ import { PageHeader } from "@/components/app/PageHeader";
 import { rarityGradient, rarityRing, rarityLabel, getCatalog, CARD_SELL_VALUE, CARD_ART, cardEmoji, type CardDef } from "@/lib/cards";
 
 export const Route = createFileRoute("/_authenticated/cards")({
+  errorComponent: RouteError,
   component: CardsPage,
   head: () => ({ meta: [{ title: "Cards — Focusly" }] }),
 });

@@ -1,3 +1,4 @@
+import { RouteError } from "@/components/app/States";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,6 +24,7 @@ interface AssignmentDetailRow {
 }
 
 export const Route = createFileRoute("/_authenticated/assignments/$id")({
+  errorComponent: RouteError,
   component: AssignmentDetail,
   notFoundComponent: () => (
     <div className="py-16 text-center">

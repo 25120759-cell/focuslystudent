@@ -1,3 +1,4 @@
+import { RouteError } from "@/components/app/States";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -8,6 +9,7 @@ import { listSharedWithMe } from "@/lib/doc-collab.functions";
 import { PageHeader } from "@/components/app/PageHeader";
 
 export const Route = createFileRoute("/_authenticated/docs")({
+  errorComponent: RouteError,
   component: DocsList,
   head: () => ({ meta: [{ title: "Focusly Docs — Focusly" }] }),
 });

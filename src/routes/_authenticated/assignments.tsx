@@ -1,3 +1,4 @@
+import { RouteError } from "@/components/app/States";
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,6 +11,7 @@ import { FileText, Check, AlertTriangle, Sparkles, Plus, Trash2, ClipboardList }
 import { PageHeader } from "@/components/app/PageHeader";
 
 export const Route = createFileRoute("/_authenticated/assignments")({
+  errorComponent: RouteError,
   component: AssignmentsPage,
   head: () => ({ meta: [{ title: "Assignments — Focusly" }] }),
 });

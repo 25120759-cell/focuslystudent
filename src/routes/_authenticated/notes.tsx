@@ -1,3 +1,4 @@
+import { RouteError } from "@/components/app/States";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,6 +12,7 @@ import { saveLocal, getLocal, listLocal, deleteLocal, markClean, makeKey, listDi
 import { PageHeader } from "@/components/app/PageHeader";
 
 export const Route = createFileRoute("/_authenticated/notes")({
+  errorComponent: RouteError,
   component: NotesPage,
   head: () => ({ meta: [{ title: "AI Notes — Focusly" }] }),
 });

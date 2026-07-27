@@ -1,3 +1,4 @@
+import { RouteError } from "@/components/app/States";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -8,6 +9,7 @@ import { Link } from "@tanstack/react-router";
 import { PageHeader } from "@/components/app/PageHeader";
 
 export const Route = createFileRoute("/_authenticated/usage")({
+  errorComponent: RouteError,
   component: UsagePage,
   head: () => ({ meta: [{ title: "AI Usage — Focusly" }] }),
 });

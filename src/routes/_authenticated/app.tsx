@@ -1,3 +1,4 @@
+import { RouteError } from "@/components/app/States";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,6 +10,7 @@ import { AIChat } from "@/components/AIChat";
 import { PageHeader } from "@/components/app/PageHeader";
 
 export const Route = createFileRoute("/_authenticated/app")({
+  errorComponent: RouteError,
   component: Console,
   head: () => ({
     meta: [
