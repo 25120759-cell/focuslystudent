@@ -17,7 +17,14 @@ export const Route = createFileRoute("/login")({
       { name: "description", content: "Sign in to Focusly to sync your study plan, notes, cards, and AI credits across your devices." },
       { property: "og:title", content: "Sign in — Focusly" },
       { property: "og:description", content: "Pick up your plan on any device. Google or email, up to you." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://focuslystudent.lovable.app/login" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Sign in — Focusly" },
+      { name: "twitter:description", content: "Pick up your plan on any device. Google or email, up to you." },
+      { name: "robots", content: "noindex" },
     ],
+    links: [{ rel: "canonical", href: "https://focuslystudent.lovable.app/login" }],
   }),
 });
 
