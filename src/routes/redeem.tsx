@@ -38,7 +38,21 @@ export const Route = createFileRoute("/redeem")({
     }
   },
   component: RedeemPage,
-  head: () => ({ meta: [{ title: "Redeem plan — Focusly" }] }),
+  head: () => ({
+    meta: [
+      { title: "Redeem your plan code — Focusly" },
+      { name: "description", content: "Enter a Focusly redemption code to activate Pro or Max on your account." },
+      { property: "og:title", content: "Redeem your plan code — Focusly" },
+      { property: "og:description", content: "Enter a Focusly redemption code to activate Pro or Max on your account." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://focuslystudent.lovable.app/redeem" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Redeem your plan code — Focusly" },
+      { name: "twitter:description", content: "Enter a Focusly redemption code to activate Pro or Max on your account." },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: "https://focuslystudent.lovable.app/redeem" }],
+  }),
 });
 
 function RedeemPage() {
