@@ -1,3 +1,4 @@
+import { RouteError, SkeletonBlock, SkeletonList, EmptyState } from "@/components/app/States";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -8,6 +9,7 @@ import { Link } from "@tanstack/react-router";
 import { PageHeader } from "@/components/app/PageHeader";
 
 export const Route = createFileRoute("/_authenticated/usage")({
+  errorComponent: RouteError,
   component: UsagePage,
   head: () => ({ meta: [{ title: "AI Usage — Focusly" }] }),
 });
@@ -73,6 +75,13 @@ function UsagePage() {
         }
       />
 
+      {loading && !credits && (
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="paper-raised p-5"><SkeletonBlock className="h-3 w-24" /><SkeletonBlock className="mt-4 h-2 w-full" /><SkeletonBlock className="mt-3 h-3 w-32" /></div>
+          <div className="paper-raised p-5"><SkeletonBlock className="h-3 w-24" /><SkeletonBlock className="mt-4 h-2 w-full" /><SkeletonBlock className="mt-3 h-3 w-32" /></div>
+        </div>
+      )}
+
       {credits && (
         <div className="grid gap-4 md:grid-cols-2">
           <Meter
@@ -132,9 +141,9 @@ function UsagePage() {
       <div className="paper-raised p-5">
         <h2 className="font-display text-lg font-semibold mb-3">Recent generations</h2>
         {loading ? (
-          <p className="text-xs text-muted-foreground">Loading…</p>
+          <SkeletonList rows={3} lines={1} />
         ) : log.length === 0 ? (
-          <p className="text-xs text-muted-foreground">No AI usage yet.</p>
+          <EmptyState icon={Activity} title="No AI usage yet" description="Every generation you run will be logged here with its model and token count." />
         ) : (
           <div className="space-y-1">
             {log.map((e) => (

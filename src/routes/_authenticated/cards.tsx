@@ -1,3 +1,4 @@
+import { RouteError, SkeletonList, EmptyState, ErrorState } from "@/components/app/States";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from "framer-motion";
@@ -8,6 +9,7 @@ import { PageHeader } from "@/components/app/PageHeader";
 import { rarityGradient, rarityRing, rarityLabel, getCatalog, CARD_SELL_VALUE, CARD_ART, cardEmoji, type CardDef } from "@/lib/cards";
 
 export const Route = createFileRoute("/_authenticated/cards")({
+  errorComponent: RouteError,
   component: CardsPage,
   head: () => ({ meta: [{ title: "Cards — Focusly" }] }),
 });
@@ -142,14 +144,18 @@ function CardsPage() {
   const [opening, setOpening] = useState(false);
   const [pulled, setPulled] = useState<CardDef[] | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
+  const [loadErr, setLoadErr] = useState<string | null>(null);
 
   async function refresh() {
+    setLoadErr(null);
     try {
       const [w, c, t] = await Promise.all([walletFn(), listFn(), tradesFn()]);
       setWallet(w as any); setOwned((c as any).cards); setTrades((t as any).trades);
     } catch (e: any) {
       setErr(e.message);
-    }
+      setLoadErr(e?.message ?? "Failed to load your collection");
+    } finally { setLoaded(true); }
   }
   useEffect(() => { refresh(); }, []);
 
@@ -248,7 +254,15 @@ function CardsPage() {
                 </motion.div>
               ))}
             </AnimatePresence>
-            {owned.length === 0 && <p className="text-sm text-muted-foreground py-8">Open a pack to start your collection.</p>}
+            {!loaded && <SkeletonList rows={2} lines={1} className="w-full" />}
+            {loaded && loadErr && (
+              <div className="w-full"><ErrorState title="Collection didn't load" message={loadErr} onRetry={() => { setLoaded(false); refresh(); }} /></div>
+            )}
+            {loaded && !loadErr && owned.length === 0 && (
+              <div className="w-full">
+                <EmptyState icon={Package} title="Your binder is empty" description="Open your first booster pack to start collecting — coins come from study sessions." />
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -257,7 +271,10 @@ function CardsPage() {
 
       {tab === "trades" && (
         <div className="space-y-3">
-          {trades.length === 0 && <p className="text-sm text-muted-foreground text-center py-8">No trades yet. Use the in-game share link from a friend's collection to send a trade offer.</p>}
+          {!loaded && <SkeletonList rows={2} lines={1} />}
+          {loaded && trades.length === 0 && (
+            <EmptyState icon={ArrowLeftRight} title="No trades yet" description="Send a trade offer from a friend's collection link and it'll show up here." />
+          )}
           {trades.map((t) => (
             <div key={t.id} className="paper p-4 flex items-center justify-between gap-3">
               <div className="flex items-center gap-3 flex-1 min-w-0">

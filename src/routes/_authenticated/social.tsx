@@ -1,3 +1,4 @@
+import { RouteError, SkeletonList, EmptyState, ErrorState } from "@/components/app/States";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -12,6 +13,7 @@ import {
 } from "@/lib/social.functions";
 
 export const Route = createFileRoute("/_authenticated/social")({
+  errorComponent: RouteError,
   component: SocialPage,
   head: () => ({ meta: [{ title: "Social — Focusly" }] }),
 });
@@ -50,9 +52,16 @@ function Feed({ userId }: { userId: string | null }) {
   const [posts, setPosts] = useState<FeedPost[]>([]);
   const [body, setBody] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [feedErr, setFeedErr] = useState<string | null>(null);
 
   async function load() {
-    const r: any = await listFn(); setPosts(r.posts);
+    setFeedErr(null);
+    try {
+      const r: any = await listFn(); setPosts(r.posts ?? []);
+    } catch (e: any) {
+      setFeedErr(e?.message ?? "Failed to load the feed");
+    } finally { setLoaded(true); }
   }
   useEffect(() => { load(); }, []);
 
@@ -99,7 +108,17 @@ function Feed({ userId }: { userId: string | null }) {
             </motion.article>
           ))}
         </AnimatePresence>
-        {posts.length === 0 && <p className="text-sm text-muted-foreground text-center py-8">No posts yet — be the first!</p>}
+        {!loaded && <SkeletonList rows={3} lines={2} />}
+        {loaded && feedErr && (
+          <ErrorState title="The feed didn't load" message={feedErr} onRetry={() => { setLoaded(false); load(); }} />
+        )}
+        {loaded && !feedErr && posts.length === 0 && (
+          <EmptyState
+            icon={Users}
+            title="Nothing here yet"
+            description="Be the first to post — share a study win or ask the room for help."
+          />
+        )}
       </div>
     </>
   );
@@ -119,7 +138,17 @@ function DMs({ userId }: { userId: string | null }) {
   const [q, setQ] = useState("");
   const [results, setResults] = useState<{ id: string; display_name: string | null }[]>([]);
 
-  async function loadConvs() { const r: any = await listConvFn(); setConversations(r.conversations); }
+  const [convLoaded, setConvLoaded] = useState(false);
+  const [convErr, setConvErr] = useState<string | null>(null);
+
+  async function loadConvs() {
+    setConvErr(null);
+    try {
+      const r: any = await listConvFn(); setConversations(r.conversations ?? []);
+    } catch (e: any) {
+      setConvErr(e?.message ?? "Failed to load conversations");
+    } finally { setConvLoaded(true); }
+  }
   useEffect(() => { loadConvs(); }, []);
 
   useEffect(() => {
@@ -212,7 +241,17 @@ function DMs({ userId }: { userId: string | null }) {
             <span className="text-xs text-muted-foreground">{new Date(c.last_message_at).toLocaleDateString()}</span>
           </button>
         ))}
-        {conversations.length === 0 && <p className="text-center text-sm text-muted-foreground py-8">No conversations yet — search for someone above.</p>}
+        {!convLoaded && <SkeletonList rows={2} lines={1} />}
+        {convLoaded && convErr && (
+          <ErrorState title="Messages didn't load" message={convErr} onRetry={() => { setConvLoaded(false); loadConvs(); }} />
+        )}
+        {convLoaded && !convErr && conversations.length === 0 && (
+          <EmptyState
+            icon={MessageCircle}
+            title="No conversations yet"
+            description="Search for a classmate above to start your first chat."
+          />
+        )}
       </div>
     </div>
   );

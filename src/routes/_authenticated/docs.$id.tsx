@@ -1,3 +1,4 @@
+import { RouteError } from "@/components/app/States";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -29,6 +30,7 @@ import {
 import { aiRewrite, aiGradeDoc, aiResearchAgent } from "@/lib/ai-max.functions";
 
 export const Route = createFileRoute("/_authenticated/docs/$id")({
+  errorComponent: RouteError,
   component: DocEditor,
   notFoundComponent: () => (
     <div className="py-16 text-center">

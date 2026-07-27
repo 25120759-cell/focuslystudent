@@ -1,3 +1,4 @@
+import { RouteError, SkeletonList, EmptyState, ErrorState } from "@/components/app/States";
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,6 +11,7 @@ import { FileText, Check, AlertTriangle, Sparkles, Plus, Trash2, ClipboardList }
 import { PageHeader } from "@/components/app/PageHeader";
 
 export const Route = createFileRoute("/_authenticated/assignments")({
+  errorComponent: RouteError,
   component: AssignmentsPage,
   head: () => ({ meta: [{ title: "Assignments — Focusly" }] }),
 });
@@ -25,11 +27,13 @@ function AssignmentsPage() {
   const parseFn = useServerFn(parseTask);
   const [assignments, setAssignments] = useState<any[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [loadErr, setLoadErr] = useState<string | null>(null);
   const [nlInput, setNlInput] = useState("");
   const [parsing, setParsing] = useState(false);
   const [parseErr, setParseErr] = useState<string | null>(null);
 
   async function load() {
+    setLoadErr(null);
     const r: any = await listFn();
     setAssignments(r.assignments ?? []);
     setLoaded(true);
@@ -37,7 +41,7 @@ function AssignmentsPage() {
 
   useEffect(() => {
     if (path !== "/assignments") return;
-    load().catch((e) => { setParseErr(e.message); setLoaded(true); });
+    load().catch((e) => { setLoadErr(e?.message ?? "Failed to load"); setLoaded(true); });
   }, [path]);
 
   if (path !== "/assignments") return <Outlet />;
@@ -139,11 +143,20 @@ function AssignmentsPage() {
             </motion.article>
           ))}
         </AnimatePresence>
-        {!loaded && <div className="paper-raised p-12 text-center text-muted-foreground text-sm">Loading assignments…</div>}
-        {loaded && assignments.length === 0 && (
-          <div className="paper-raised p-12 text-center text-muted-foreground text-sm">
-            No assignments yet. Add one above.
-          </div>
+        {!loaded && <SkeletonList rows={3} lines={2} />}
+        {loaded && loadErr && (
+          <ErrorState
+            title="We couldn't load your assignments"
+            message={loadErr}
+            onRetry={() => { setLoaded(false); load().catch((e) => { setLoadErr(e?.message ?? "Failed to load"); setLoaded(true); }); }}
+          />
+        )}
+        {loaded && !loadErr && assignments.length === 0 && (
+          <EmptyState
+            icon={ClipboardList}
+            title="Nothing due — yet"
+            description="Type something like “Read Hatchet ch 8 by Tuesday 9pm” in the quick add box and Focusly will schedule it for you."
+          />
         )}
       </div>
     </div>
