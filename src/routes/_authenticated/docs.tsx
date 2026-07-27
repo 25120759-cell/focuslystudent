@@ -1,4 +1,4 @@
-import { RouteError } from "@/components/app/States";
+import { RouteError, SkeletonGrid, EmptyState, ErrorState } from "@/components/app/States";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -25,12 +25,16 @@ function DocsList() {
   const [docs, setDocs] = useState<DocRow[]>([]);
   const [shared, setShared] = useState<SharedDoc[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [loadErr, setLoadErr] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
 
   async function load() {
+    setLoadErr(null);
     try {
       const [r, s]: any = await Promise.all([listFn(), sharedFn()]);
       setDocs(r.docs); setShared(s.docs ?? []);
+    } catch (e: any) {
+      setLoadErr(e?.message ?? "Failed to load your docs");
     } finally { setLoaded(true); }
   }
   useEffect(() => { load(); }, []);
@@ -66,12 +70,21 @@ function DocsList() {
       />
 
       {!loaded ? (
-        <div className="paper-raised p-16 text-center text-sm text-muted-foreground"><Loader2 className="inline mr-2 h-4 w-4 animate-spin" />Loading…</div>
+        <SkeletonGrid items={4} lines={2} />
+      ) : loadErr ? (
+        <ErrorState title="We couldn't load your docs" message={loadErr} onRetry={() => { setLoaded(false); load(); }} />
       ) : docs.length === 0 ? (
-        <div className="paper-raised p-16 text-center">
-          <FileText className="mx-auto h-10 w-10 text-muted-foreground/40" />
-          <p className="mt-3 text-sm text-muted-foreground">No docs yet. Create your first one above.</p>
-        </div>
+        <EmptyState
+          icon={FileText}
+          title="No docs yet"
+          description="Start a doc and Focusly tracks your writing so you can prove the work is yours."
+          action={
+            <button onClick={makeNew} disabled={creating}
+              className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50">
+              <Plus className="h-4 w-4" /> New doc
+            </button>
+          }
+        />
       ) : (
         <div className="grid gap-3 md:grid-cols-2">
           <AnimatePresence>
