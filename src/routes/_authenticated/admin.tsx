@@ -1,4 +1,4 @@
-import { RouteError } from "@/components/app/States";
+import { RouteError, SkeletonRows, EmptyState } from "@/components/app/States";
 import { createFileRoute, redirect, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -103,7 +103,7 @@ function AdminPage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={4} className="p-6 text-center text-muted-foreground"><Loader2 className="inline h-4 w-4 animate-spin" /> Loading…</td></tr>
+              <SkeletonRows rows={4} cols={4} />
             ) : users.map((u) => (
               <motion.tr
                 key={u.id}
@@ -158,7 +158,8 @@ function AdminPage() {
                   <td className="p-2"><button onClick={async () => { await toggleCodeFn({ data: { id: c.id, active: !c.active } }); await load(); }} className="rounded-full border border-border px-3 py-1 text-xs hover:bg-accent">{c.active ? "Disable" : "Enable"}</button></td>
                 </tr>
               ))}
-              {!loading && codes.length === 0 && <tr><td colSpan={5} className="p-6 text-center text-muted-foreground">No codes yet.</td></tr>}
+              {loading && <SkeletonRows rows={3} cols={5} />}
+              {!loading && codes.length === 0 && <tr><td colSpan={5} className="p-6 text-center text-sm text-muted-foreground">No codes yet — create one above to hand out a plan.</td></tr>}
             </tbody>
           </table>
         </div>
