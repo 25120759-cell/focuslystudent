@@ -33,6 +33,28 @@ export function AppNav() {
 
   useEffect(() => { setMobileOpen(false); setOpenMenu(null); }, [path]);
 
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") { setMobileOpen(false); setOpenMenu(null); }
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, [mobileOpen]);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const onChange = () => { if (mq.matches) setMobileOpen(false); };
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
   if (isPublicPath(path)) return null;
 
   const communityActive = ["/cards", "/social", "/redeem"].some((p) => path === p || path.startsWith(p + "/"));
@@ -54,17 +76,17 @@ export function AppNav() {
           : "border-transparent bg-transparent"
       }`}
     >
-      <div ref={ref} className="mx-auto flex max-w-7xl items-center gap-6 px-5 py-3.5">
+      <div ref={ref} className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:gap-6 sm:px-5 sm:py-3.5">
         {/* Wordmark */}
         <Link to="/app" className="group flex items-baseline gap-2 shrink-0">
           <span className="font-display text-lg font-semibold tracking-tight">Focusly</span>
           <Sparkles className="h-3.5 w-3.5 text-[color:var(--gold)] transition-transform duration-300 group-hover:rotate-12" />
         </Link>
 
-        <span className="hidden md:block h-6 w-px bg-border/80" />
+        <span className="hidden lg:block h-6 w-px bg-border/80" />
 
         {/* PRIMARY: productivity tools */}
-        <nav className="hidden md:flex items-center gap-6 text-sm">
+        <nav className="hidden lg:flex items-center gap-5 xl:gap-6 text-sm">
           {primaryItems.map((item) => {
             const active = item.match(path);
             return (
@@ -82,7 +104,7 @@ export function AppNav() {
         <div className="flex-1" />
 
         {/* SECONDARY */}
-        <div className="hidden md:flex items-center gap-2">
+        <div className="hidden lg:flex items-center gap-2">
           <Dropdown
             open={openMenu === "community"}
             onToggle={() => setOpenMenu((m) => (m === "community" ? null : "community"))}
@@ -133,7 +155,9 @@ export function AppNav() {
         <button
           onClick={() => setMobileOpen((o) => !o)}
           aria-label="Menu"
-          className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-full border border-border/70"
+          aria-expanded={mobileOpen}
+          aria-controls="mobile-nav"
+          className="lg:hidden inline-flex h-9 w-9 items-center justify-center rounded-full border border-border/70"
         >
           {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
         </button>
@@ -146,9 +170,10 @@ export function AppNav() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            className="md:hidden overflow-hidden border-t border-border/60 bg-card/95 backdrop-blur-xl"
+            id="mobile-nav"
+            className="lg:hidden overflow-hidden border-t border-border/60 bg-card/95 backdrop-blur-xl"
           >
-            <div className="mx-auto max-w-7xl px-5 py-4 grid gap-1">
+            <div className="mx-auto max-h-[calc(100dvh-4.5rem)] max-w-7xl overflow-y-auto overscroll-contain px-4 py-4 grid gap-1 sm:px-5">
               {primaryItems.map((item) => (
                 <MobileLink key={item.to} to={item.to} label={item.label} icon={item.icon} active={item.match(path)} />
               ))}
