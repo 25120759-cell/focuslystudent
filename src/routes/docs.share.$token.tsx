@@ -9,7 +9,21 @@ import { PublicHeader } from "@/components/PublicHeader";
 export const Route = createFileRoute("/docs/share/$token")({
   ssr: false,
   component: SharedDoc,
-  head: () => ({ meta: [{ title: "Authorship report — Focusly Docs" }] }),
+  head: ({ params }) => ({
+    meta: [
+      { title: "Authorship report — Focusly Docs" },
+      { name: "description", content: "A verified Focusly Docs authorship report showing writing time, edits, and paste activity for this document." },
+      { property: "og:title", content: "Authorship report — Focusly Docs" },
+      { property: "og:description", content: "Verified proof of how this document was written: writing time, edit history, and paste activity." },
+      { property: "og:type", content: "article" },
+      { property: "og:url", content: `https://focuslystudent.lovable.app/docs/share/${params.token}` },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Authorship report — Focusly Docs" },
+      { name: "twitter:description", content: "Verified proof of how this document was written." },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [{ rel: "canonical", href: `https://focuslystudent.lovable.app/docs/share/${params.token}` }],
+  }),
 });
 
 interface DocData { id: string; title: string; content_html: string; word_count: number; paste_count: number; edit_seconds: number; created_at: string; updated_at: string }
