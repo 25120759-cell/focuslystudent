@@ -16,7 +16,13 @@ export const Route = createFileRoute("/landing")({
       { name: "description", content: "Plan, focus, and finish your schoolwork with an offline-first AI study app. Calm by design, powerful when you need it." },
       { property: "og:title", content: "Focusly — A calmer way to get schoolwork done" },
       { property: "og:description", content: "Offline-first AI study app: natural-language tasks, smart scheduling, focus timer, deep AI study aids, and a study-themed card game." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://focuslystudent.lovable.app/landing" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Focusly — A calmer way to get schoolwork done" },
+      { name: "twitter:description", content: "Offline-first AI study app: natural-language tasks, smart scheduling, focus timer, deep AI study aids, and a study-themed card game." },
     ],
+    links: [{ rel: "canonical", href: "https://focuslystudent.lovable.app/landing" }],
   }),
 });
 
