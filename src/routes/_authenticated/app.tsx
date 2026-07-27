@@ -61,7 +61,7 @@ function Console() {
         accent={meta.accent}
         description={meta.blurb}
         actions={
-          <div className="hidden sm:flex items-center gap-1 rounded-full border border-border/70 p-1">
+          <div className="hidden md:flex items-center gap-1 rounded-full border border-border/70 p-1">
             {(Object.keys(VIEW_META) as View[]).map((v) => {
               const Icon = VIEW_META[v].icon;
               const active = v === view;
@@ -104,12 +104,12 @@ function Console() {
         </motion.div>
       </AnimatePresence>
 
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30">
+      <div className="pointer-events-none fixed inset-x-3 bottom-4 z-30 flex justify-center pr-16 sm:inset-x-0 sm:bottom-6 sm:pr-0">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.4 }}
-          className="nav-pill flex items-center gap-1 rounded-full px-2 py-2 shadow-xl"
+          className="nav-pill pointer-events-auto flex max-w-full items-center gap-1 overflow-x-auto rounded-full px-2 py-2 shadow-xl [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           <UBtn icon={<Sparkles className="h-4 w-4" />} label="Ask AI" onClick={() => setAiOpen(true)} />
           <span className="mx-1 h-5 w-px bg-border/70" />
@@ -130,7 +130,7 @@ function UBtn({ icon, label, onClick, active }: { icon: React.ReactNode; label: 
       whileTap={{ scale: 0.94 }}
       whileHover={{ y: -1 }}
       onClick={onClick}
-      className={`flex items-center gap-2 rounded-full px-3 py-2 text-xs font-medium transition-colors ${
+      className={`flex shrink-0 items-center gap-2 rounded-full px-3 py-2 text-xs font-medium transition-colors ${
         active ? "bg-primary text-primary-foreground" : "hover:bg-accent/50 text-foreground/80"
       }`}
     >
