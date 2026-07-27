@@ -9,6 +9,37 @@ import { PublicHeader } from "@/components/PublicHeader";
 export const Route = createFileRoute("/updates/$slug")({
   ssr: false,
   component: PostPage,
+  head: ({ params }) => {
+    const url = `https://focuslystudent.lovable.app/updates/${params.slug}`;
+    const title = `${params.slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())} — Focusly Updates`;
+    const description = "Read the latest Focusly release note: what changed, what's new, and what's next for the study app.";
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "article" },
+        { property: "og:url", content: url },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: title,
+            url,
+            publisher: { "@type": "Organization", name: "Focusly" },
+          }),
+        },
+      ],
+    };
+  },
 });
 
 interface Post { id: string; title: string; body: string; created_at: string; summary: string | null; cover_url: string | null }

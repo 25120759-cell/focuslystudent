@@ -13,7 +13,13 @@ export const Route = createFileRoute("/engagement")({
       { name: "description", content: "Focusly is more than tasks. Chat with other students, post wins to the feed, and collect 500 study-themed trading cards." },
       { property: "og:title", content: "Community & Cards — Focusly" },
       { property: "og:description", content: "Post wins, DM classmates, and open packs of a 500-card study-themed TCG." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://focuslystudent.lovable.app/engagement" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Community & Cards — Focusly" },
+      { name: "twitter:description", content: "Post wins, DM classmates, and open packs of a 500-card study-themed TCG." },
     ],
+    links: [{ rel: "canonical", href: "https://focuslystudent.lovable.app/engagement" }],
   }),
 });
 

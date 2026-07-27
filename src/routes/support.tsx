@@ -15,7 +15,15 @@ export const Route = createFileRoute("/support")({
     meta: [
       { title: "Support — Focusly" },
       { name: "description", content: "Help & docs for Focusly: study clock, assignments, AI assistant, rewards, cards, social, and settings." },
+      { property: "og:title", content: "Support — Focusly" },
+      { property: "og:description", content: "Guides for the study clock, assignments, AI assistant, cards, social, and settings — plus a bug report link." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://focuslystudent.lovable.app/support" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Support — Focusly" },
+      { name: "twitter:description", content: "Guides for the study clock, assignments, AI assistant, cards, social, and settings." },
     ],
+    links: [{ rel: "canonical", href: "https://focuslystudent.lovable.app/support" }],
   }),
 });
 
