@@ -13,7 +13,13 @@ export const Route = createFileRoute("/plans")({
       { name: "description", content: "Free is a real full-featured plan. Pro and Max just give you more AI, more packs, and smarter models." },
       { property: "og:title", content: "Plans & Pricing — Focusly" },
       { property: "og:description", content: "Free is fully-featured. Pro and Max only scale AI credits, daily limits, and model power." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://focuslystudent.lovable.app/plans" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Plans & Pricing — Focusly" },
+      { name: "twitter:description", content: "Free is fully-featured. Pro and Max only scale AI credits, daily limits, and model power." },
     ],
+    links: [{ rel: "canonical", href: "https://focuslystudent.lovable.app/plans" }],
   }),
 });
 
