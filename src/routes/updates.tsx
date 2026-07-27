@@ -18,7 +18,13 @@ export const Route = createFileRoute("/updates")({
       { name: "description", content: "Release notes and product updates for Focusly." },
       { property: "og:title", content: "Updates — Focusly" },
       { property: "og:description", content: "Release notes and product updates for Focusly." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://focuslystudent.lovable.app/updates" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Updates — Focusly" },
+      { name: "twitter:description", content: "Release notes and product updates for Focusly." },
     ],
+    links: [{ rel: "canonical", href: "https://focuslystudent.lovable.app/updates" }],
   }),
 });
 
