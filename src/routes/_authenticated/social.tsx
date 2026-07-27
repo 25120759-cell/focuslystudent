@@ -241,7 +241,17 @@ function DMs({ userId }: { userId: string | null }) {
             <span className="text-xs text-muted-foreground">{new Date(c.last_message_at).toLocaleDateString()}</span>
           </button>
         ))}
-        {conversations.length === 0 && <p className="text-center text-sm text-muted-foreground py-8">No conversations yet — search for someone above.</p>}
+        {!convLoaded && <SkeletonList rows={2} lines={1} />}
+        {convLoaded && convErr && (
+          <ErrorState title="Messages didn't load" message={convErr} onRetry={() => { setConvLoaded(false); loadConvs(); }} />
+        )}
+        {convLoaded && !convErr && conversations.length === 0 && (
+          <EmptyState
+            icon={MessageCircle}
+            title="No conversations yet"
+            description="Search for a classmate above to start your first chat."
+          />
+        )}
       </div>
     </div>
   );
