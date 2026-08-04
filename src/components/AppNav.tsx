@@ -57,9 +57,6 @@ export function AppNav() {
 
   if (isPublicPath(path)) return null;
 
-  const communityActive = ["/cards", "/social", "/redeem"].some((p) => path === p || path.startsWith(p + "/"));
-  const accountActive = path === "/settings" || path === "/usage" || path === "/support";
-
   const primaryItems = [
     { to: "/app", label: t("console"), icon: Clock, match: (p: string) => p === "/app" },
     { to: "/assignments", label: t("assignments"), icon: ClipboardList, match: (p: string) => p.startsWith("/assignments") },
@@ -68,78 +65,65 @@ export function AppNav() {
     { to: "/docs", label: "Docs", icon: FileText, match: (p: string) => p.startsWith("/docs") && !p.startsWith("/docs/share") },
   ];
 
+  const communityItems = [
+    { to: "/social", label: "Social", icon: Users, match: (p: string) => p === "/social" },
+    { to: "/cards", label: "Cards", icon: Layers, match: (p: string) => p === "/cards" },
+    { to: "/redeem", label: "Redeem", icon: Gift, match: (p: string) => p === "/redeem" },
+  ];
+
+  const accountItems = [
+    { to: "/settings", label: "Settings", icon: SettingsIcon, match: (p: string) => p === "/settings" },
+    { to: "/usage", label: "Usage", icon: Activity, match: (p: string) => p === "/usage" },
+    { to: "/support", label: "Support", icon: LifeBuoy, match: (p: string) => p === "/support" },
+    ...(isAdmin ? [{ to: "/admin", label: "Admin", icon: Shield, match: (p: string) => p === "/admin" }] : []),
+  ];
+
   return (
     <header
-      className={`sticky top-0 z-40 border-b transition-colors duration-300 ${
-        scrolled
-          ? "border-border/70 bg-[color-mix(in_oklab,var(--background)_85%,transparent)] backdrop-blur-xl"
-          : "border-transparent bg-transparent"
+      className={`sticky top-0 z-40 transition-colors duration-300 ${
+        scrolled ? "bg-[color-mix(in_oklab,var(--background)_75%,transparent)] backdrop-blur-xl" : "bg-transparent"
       }`}
     >
-      <div ref={ref} className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:gap-6 sm:px-5 sm:py-3.5">
+      <div ref={ref} className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-5">
         {/* Wordmark */}
-        <Link to="/app" className="group flex items-baseline gap-2 shrink-0">
+        <Link to="/app" className="group flex shrink-0 items-baseline gap-2">
           <span className="font-display text-lg font-semibold tracking-tight">Focusly</span>
-          <Sparkles className="h-3.5 w-3.5 text-[color:var(--gold)] transition-transform duration-300 group-hover:rotate-12" />
+          <Sparkles className="h-3.5 w-3.5 text-[color:var(--gold)] transition-transform duration-500 group-hover:rotate-180" />
         </Link>
 
-        <span className="hidden lg:block h-6 w-px bg-border/80" />
+        {/* Sticky pill bar — every destination in one animated rail */}
+        <motion.nav
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: "spring", damping: 24, stiffness: 260 }}
+          className="nav-pill hidden lg:flex mx-auto items-center gap-0.5 rounded-full px-1.5 py-1.5 shadow-sm"
+        >
+          {primaryItems.map((item) => (
+            <PillLink key={item.to} {...item} active={item.match(path)} emphasis />
+          ))}
+          <span className="mx-1 h-5 w-px bg-border/70" />
+          {communityItems.map((item) => (
+            <PillLink key={item.to} {...item} active={item.match(path)} />
+          ))}
+          <span className="mx-1 h-5 w-px bg-border/70" />
+          {accountItems.map((item) => (
+            <PillLink key={item.to} {...item} active={item.match(path)} iconOnly />
+          ))}
+        </motion.nav>
 
-        {/* PRIMARY: productivity tools */}
-        <nav className="hidden lg:flex items-center gap-5 xl:gap-6 text-sm">
-          {primaryItems.map((item) => {
-            const active = item.match(path);
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                className={`nav-link font-medium ${active ? "nav-link-active" : "text-muted-foreground hover:text-foreground"}`}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
+        <div className="flex-1 lg:hidden" />
 
-        <div className="flex-1" />
-
-        {/* SECONDARY */}
-        <div className="hidden lg:flex items-center gap-2">
-          <Dropdown
-            open={openMenu === "community"}
-            onToggle={() => setOpenMenu((m) => (m === "community" ? null : "community"))}
-            label="Community"
-            active={communityActive}
-            items={[
-              { to: "/social", label: "Social feed", icon: Users },
-              { to: "/cards", label: "Cards", icon: Layers },
-              { to: "/redeem", label: "Redeem code", icon: Gift },
-            ]}
-          />
-
-          <Dropdown
-            open={openMenu === "account"}
-            onToggle={() => setOpenMenu((m) => (m === "account" ? null : "account"))}
-            label={<SettingsIcon className="h-4 w-4" />}
-            ariaLabel="Account menu"
-            active={accountActive}
-            compact
-            items={[
-              { to: "/settings", label: "Settings", icon: SettingsIcon },
-              { to: "/usage", label: "AI Usage", icon: Activity },
-              { to: "/support", label: "Support", icon: LifeBuoy },
-              ...(isAdmin ? [{ to: "/admin", label: "Admin", icon: Shield }] : []),
-            ]}
-          />
-
+        <div className="hidden lg:flex shrink-0 items-center">
           {user ? (
-            <button
+            <motion.button
+              whileHover={{ y: -1 }}
+              whileTap={{ scale: 0.94 }}
               onClick={signOut}
               title={user.email ?? "Sign out"}
               className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border/70 text-muted-foreground transition-colors hover:bg-accent/40 hover:text-foreground"
             >
               <LogOut className="h-3.5 w-3.5" />
-            </button>
+            </motion.button>
           ) : (
             <Link
               to="/login"
@@ -152,15 +136,26 @@ export function AppNav() {
         </div>
 
         {/* Mobile trigger */}
-        <button
+        <motion.button
+          whileTap={{ scale: 0.92 }}
           onClick={() => setMobileOpen((o) => !o)}
           aria-label="Menu"
           aria-expanded={mobileOpen}
           aria-controls="mobile-nav"
           className="lg:hidden inline-flex h-9 w-9 items-center justify-center rounded-full border border-border/70"
         >
-          {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-        </button>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span
+              key={mobileOpen ? "x" : "menu"}
+              initial={{ rotate: -90, opacity: 0 }}
+              animate={{ rotate: 0, opacity: 1 }}
+              exit={{ rotate: 90, opacity: 0 }}
+              transition={{ duration: 0.16 }}
+            >
+              {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </motion.span>
+          </AnimatePresence>
+        </motion.button>
       </div>
 
       <AnimatePresence>
@@ -173,31 +168,71 @@ export function AppNav() {
             id="mobile-nav"
             className="lg:hidden overflow-hidden border-t border-border/60 bg-card/95 backdrop-blur-xl"
           >
-            <div className="mx-auto max-h-[calc(100dvh-4.5rem)] max-w-7xl overflow-y-auto overscroll-contain px-4 py-4 grid gap-1 sm:px-5">
-              {primaryItems.map((item) => (
-                <MobileLink key={item.to} to={item.to} label={item.label} icon={item.icon} active={item.match(path)} />
+            <motion.div
+              initial="hidden"
+              animate="show"
+              variants={{ show: { transition: { staggerChildren: 0.03 } } }}
+              className="mx-auto max-h-[calc(100dvh-4.5rem)] max-w-7xl overflow-y-auto overscroll-contain px-4 py-4 grid gap-1 sm:px-5"
+            >
+              {[...primaryItems, ...communityItems, ...accountItems].map((item) => (
+                <motion.div
+                  key={item.to}
+                  variants={{ hidden: { opacity: 0, x: -10 }, show: { opacity: 1, x: 0 } }}
+                >
+                  <MobileLink to={item.to} label={item.label} icon={item.icon} active={item.match(path)} />
+                </motion.div>
               ))}
-              <div className="hairline my-2" />
-              <MobileLink to="/social" label="Social feed" icon={Users} active={path === "/social"} />
-              <MobileLink to="/cards" label="Cards" icon={Layers} active={path === "/cards"} />
-              <MobileLink to="/redeem" label="Redeem code" icon={Gift} active={path === "/redeem"} />
-              <div className="hairline my-2" />
-              <MobileLink to="/settings" label="Settings" icon={SettingsIcon} active={path === "/settings"} />
-              <MobileLink to="/usage" label="AI Usage" icon={Activity} active={path === "/usage"} />
-              <MobileLink to="/support" label="Support" icon={LifeBuoy} active={path === "/support"} />
-              {isAdmin && <MobileLink to="/admin" label="Admin" icon={Shield} active={path === "/admin"} />}
               {user && (
                 <button onClick={signOut} className="mt-2 flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-muted-foreground hover:bg-accent/40">
                   <LogOut className="h-4 w-4" /> Sign out
                 </button>
               )}
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
     </header>
   );
 }
+
+function PillLink({
+  to,
+  label,
+  icon: Icon,
+  active,
+  emphasis = false,
+  iconOnly = false,
+}: {
+  to: string;
+  label: string;
+  icon: any;
+  active: boolean;
+  emphasis?: boolean;
+  iconOnly?: boolean;
+}) {
+  return (
+    <Link
+      to={to}
+      title={label}
+      className={`relative inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm transition-colors ${
+        emphasis ? "font-semibold" : "font-medium"
+      } ${active ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+    >
+      {active && (
+        <motion.span
+          layoutId="app-nav-active"
+          transition={{ type: "spring", stiffness: 420, damping: 34 }}
+          className="absolute inset-0 rounded-full bg-primary"
+        />
+      )}
+      <motion.span whileHover={{ y: -1 }} className="relative flex items-center gap-1.5">
+        <Icon className={emphasis ? "h-4 w-4" : "h-3.5 w-3.5"} />
+        {!iconOnly && <span>{label}</span>}
+      </motion.span>
+    </Link>
+  );
+}
+
 
 function MobileLink({ to, label, icon: Icon, active }: { to: string; label: string; icon: any; active: boolean }) {
   return (
