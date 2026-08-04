@@ -13,5 +13,7 @@ export const PUBLIC_ROUTES = [
 ];
 
 export function isPublicPath(path: string): boolean {
+  // "/" only redirects (to /landing or /app) — never render the app shell there.
+  if (path === "/") return true;
   return PUBLIC_ROUTES.some((p) => path === p || path.startsWith(`${p}/`));
 }
