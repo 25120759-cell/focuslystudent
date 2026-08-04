@@ -62,34 +62,6 @@ function Console() {
         title={meta.label}
         accent={meta.accent}
         description={meta.blurb}
-        actions={
-          <div className="hidden md:flex items-center gap-1 rounded-full border border-border/70 p-1">
-            {(Object.keys(VIEW_META) as View[]).map((v) => {
-              const Icon = VIEW_META[v].icon;
-              const active = v === view;
-              return (
-                <button
-                  key={v}
-                  onClick={() => setView(v)}
-                  className={`relative inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors ${
-                    active ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {active && (
-                    <motion.span
-                      layoutId="console-seg"
-                      transition={{ type: "spring", stiffness: 400, damping: 32 }}
-                      className="absolute inset-0 rounded-full bg-primary"
-                    />
-                  )}
-                  <span className="relative flex items-center gap-1.5">
-                    <Icon className="h-3.5 w-3.5" /> {VIEW_META[v].accent}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        }
       />
 
       <AnimatePresence mode="wait">
@@ -106,11 +78,13 @@ function Console() {
         </motion.div>
       </AnimatePresence>
 
-      <div className="pointer-events-none fixed inset-x-3 bottom-4 z-30 flex justify-center pr-16 sm:inset-x-0 sm:bottom-6 sm:pr-0">
+      {/* Always pinned to the bottom centre of the viewport */}
+      <div className="pointer-events-none fixed inset-x-0 bottom-5 z-40 flex justify-center px-3 sm:bottom-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.4 }}
+          layout
+          initial={{ opacity: 0, y: 24, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ type: "spring", damping: 24, stiffness: 260 }}
           className="nav-pill pointer-events-auto flex max-w-full items-center gap-1 overflow-x-auto rounded-full px-2 py-2 shadow-xl [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           <UBtn icon={<Sparkles className="h-4 w-4" />} label="Ask AI" onClick={() => setAiOpen(true)} />
@@ -120,6 +94,7 @@ function Console() {
           <UBtn icon={<FolderOpen className="h-4 w-4" />} label="Files" active={view === "files"} onClick={() => setView("files")} />
         </motion.div>
       </div>
+
 
       <AIChat open={aiOpen} onClose={() => setAiOpen(false)} />
     </div>
