@@ -105,13 +105,23 @@ function UBtn({ icon, label, onClick, active }: { icon: React.ReactNode; label: 
   return (
     <motion.button
       whileTap={{ scale: 0.94 }}
-      whileHover={{ y: -1 }}
+      whileHover={{ y: -2 }}
       onClick={onClick}
-      className={`flex shrink-0 items-center gap-2 rounded-full px-3 py-2 text-xs font-medium transition-colors ${
-        active ? "bg-primary text-primary-foreground" : "hover:bg-accent/50 text-foreground/80"
+      className={`relative flex shrink-0 items-center gap-2 rounded-full px-3 py-2 text-xs font-medium transition-colors ${
+        active ? "text-primary-foreground" : "text-foreground/80 hover:bg-accent/50"
       }`}
     >
-      {icon} <span className="hidden sm:inline">{label}</span>
+      {active && (
+        <motion.span
+          layoutId="console-dock-active"
+          transition={{ type: "spring", stiffness: 420, damping: 34 }}
+          className="absolute inset-0 rounded-full bg-primary"
+        />
+      )}
+      <span className="relative flex items-center gap-2">
+        {icon} <span className="hidden sm:inline">{label}</span>
+      </span>
     </motion.button>
   );
 }
+
