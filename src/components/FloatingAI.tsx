@@ -7,7 +7,9 @@ import { isPublicPath } from "@/lib/publicRoutes";
 export function FloatingAI() {
   const [open, setOpen] = useState(false);
   const loc = useLocation();
-  const hidden = isPublicPath(loc.pathname);
+  // Hidden on public pages, and on the Console (its dock already has "Ask AI").
+  const hidden = isPublicPath(loc.pathname) || loc.pathname === "/app";
+
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
