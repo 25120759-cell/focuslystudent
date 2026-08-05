@@ -62,6 +62,8 @@ function DocEditor() {
 
   const pasteCountRef = useRef(0);
   const keystrokesRef = useRef(0);
+  const bootedRef = useRef(false);
+
   const sessionStartRef = useRef(Date.now());
   const editSecondsRef = useRef(0);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
