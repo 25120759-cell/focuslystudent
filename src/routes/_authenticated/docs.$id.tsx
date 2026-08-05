@@ -70,7 +70,7 @@ function DocEditor() {
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
-      StarterKit.configure({ codeBlock: {} }),
+      StarterKit.configure({ codeBlock: {}, link: false, underline: false }),
       Placeholder.configure({ placeholder: "Start writing… (autosaves)" }),
       Underline,
       LinkExt.configure({ openOnClick: false, HTMLAttributes: { rel: "noopener noreferrer", target: "_blank" } }),
