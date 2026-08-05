@@ -14,7 +14,7 @@ import { TableCell } from "@tiptap/extension-table-cell";
 import Typography from "@tiptap/extension-typography";
 import TextAlign from "@tiptap/extension-text-align";
 
-export const Route = createFileRoute("/__docs-probe")({
+export const Route = createFileRoute("/docs-probe")({
   component: Probe,
 });
 
