@@ -120,29 +120,43 @@ function DocEditor() {
   }
 
   useEffect(() => {
-    (async () => {
-      try {
-        const r: any = await getFn({ data: { id } });
-        if (!r.doc) { setLoaded(true); return; }
-        setDoc(r.doc); setTitle(r.doc.title);
-        pasteCountRef.current = r.doc.paste_count;
-        editSecondsRef.current = r.doc.edit_seconds;
-        sessionStartRef.current = Date.now();
-        editor?.commands.setContent(r.doc.content_html || "");
-        lastSavedHtml.current = r.doc.content_html || "";
-        eventFn({ data: { doc_id: id, kind: "session_start", chars: 0 } }).catch(() => {});
-      } catch (e) { console.error(e); }
-      finally { setLoaded(true); }
-    })();
-    const flush = setInterval(() => {
+    if (!editor) return;
+    let cancelled = false;
+    if (!bootedRef.current) {
+      bootedRef.current = true;
+      (async () => {
+        try {
+          const r: any = await getFn({ data: { id } });
+          if (cancelled) return;
+          if (!r.doc) { setLoaded(true); return; }
+          setDoc(r.doc); setTitle(r.doc.title);
+          pasteCountRef.current = r.doc.paste_count;
+          editSecondsRef.current = r.doc.edit_seconds;
+          sessionStartRef.current = Date.now();
+          editor.commands.setContent(r.doc.content_html || "");
+          lastSavedHtml.current = r.doc.content_html || "";
+          eventFn({ data: { doc_id: id, kind: "session_start", chars: 0 } }).catch(() => {});
+        } catch (e) { console.error(e); }
+        finally { if (!cancelled) setLoaded(true); }
+      })();
+    }
+    const flushKeystrokes = () => {
       if (keystrokesRef.current > 0) {
-        eventFn({ data: { doc_id: id, kind: "keystroke", chars: keystrokesRef.current } }).catch(() => {});
+        const chars = keystrokesRef.current;
         keystrokesRef.current = 0;
+        eventFn({ data: { doc_id: id, kind: "keystroke", chars } }).catch(() => {});
       }
-    }, 30000);
-    return () => { clearInterval(flush); eventFn({ data: { doc_id: id, kind: "session_end", chars: 0 } }).catch(() => {}); };
+    };
+    const flush = setInterval(flushKeystrokes, 5000);
+    return () => {
+      cancelled = true;
+      clearInterval(flush);
+      flushKeystrokes();
+      eventFn({ data: { doc_id: id, kind: "session_end", chars: 0 } }).catch(() => {});
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, editor]);
+
 
   async function togglePublicShare() {
     if (!doc) return;
