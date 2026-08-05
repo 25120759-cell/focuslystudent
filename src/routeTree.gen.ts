@@ -31,6 +31,7 @@ import { Route as AuthenticatedCalenderRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAssignmentsRouteImport } from './routes/_authenticated/assignments'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedDocsIndexRouteImport } from './routes/_authenticated/docs.index'
 import { Route as DocsShareTokenRouteImport } from './routes/docs.share.$token'
 import { Route as ApiPublicExtensionVersionRouteImport } from './routes/api/public/extension-version'
 import { Route as AuthenticatedDocsIdRouteImport } from './routes/_authenticated/docs.$id'
@@ -146,6 +147,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDocsIndexRoute = AuthenticatedDocsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedDocsRoute,
+} as any)
 const DocsShareTokenRoute = DocsShareTokenRouteImport.update({
   id: '/docs/share/$token',
   path: '/docs/share/$token',
@@ -195,6 +201,7 @@ export interface FileRoutesByFullPath {
   '/docs/$id': typeof AuthenticatedDocsIdRoute
   '/api/public/extension-version': typeof ApiPublicExtensionVersionRoute
   '/docs/share/$token': typeof DocsShareTokenRoute
+  '/docs/': typeof AuthenticatedDocsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -212,7 +219,6 @@ export interface FileRoutesByTo {
   '/assignments': typeof AuthenticatedAssignmentsRouteWithChildren
   '/calender': typeof AuthenticatedCalenderRoute
   '/cards': typeof AuthenticatedCardsRoute
-  '/docs': typeof AuthenticatedDocsRouteWithChildren
   '/notes': typeof AuthenticatedNotesRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/social': typeof AuthenticatedSocialRoute
@@ -222,6 +228,7 @@ export interface FileRoutesByTo {
   '/docs/$id': typeof AuthenticatedDocsIdRoute
   '/api/public/extension-version': typeof ApiPublicExtensionVersionRoute
   '/docs/share/$token': typeof DocsShareTokenRoute
+  '/docs': typeof AuthenticatedDocsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -251,6 +258,7 @@ export interface FileRoutesById {
   '/_authenticated/docs/$id': typeof AuthenticatedDocsIdRoute
   '/api/public/extension-version': typeof ApiPublicExtensionVersionRoute
   '/docs/share/$token': typeof DocsShareTokenRoute
+  '/_authenticated/docs/': typeof AuthenticatedDocsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -280,6 +288,7 @@ export interface FileRouteTypes {
     | '/docs/$id'
     | '/api/public/extension-version'
     | '/docs/share/$token'
+    | '/docs/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -297,7 +306,6 @@ export interface FileRouteTypes {
     | '/assignments'
     | '/calender'
     | '/cards'
-    | '/docs'
     | '/notes'
     | '/settings'
     | '/social'
@@ -307,6 +315,7 @@ export interface FileRouteTypes {
     | '/docs/$id'
     | '/api/public/extension-version'
     | '/docs/share/$token'
+    | '/docs'
   id:
     | '__root__'
     | '/'
@@ -335,6 +344,7 @@ export interface FileRouteTypes {
     | '/_authenticated/docs/$id'
     | '/api/public/extension-version'
     | '/docs/share/$token'
+    | '/_authenticated/docs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -509,6 +519,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/docs/': {
+      id: '/_authenticated/docs/'
+      path: '/'
+      fullPath: '/docs/'
+      preLoaderRoute: typeof AuthenticatedDocsIndexRouteImport
+      parentRoute: typeof AuthenticatedDocsRoute
+    }
     '/docs/share/$token': {
       id: '/docs/share/$token'
       path: '/docs/share/$token'
@@ -556,10 +573,12 @@ const AuthenticatedAssignmentsRouteWithChildren =
 
 interface AuthenticatedDocsRouteChildren {
   AuthenticatedDocsIdRoute: typeof AuthenticatedDocsIdRoute
+  AuthenticatedDocsIndexRoute: typeof AuthenticatedDocsIndexRoute
 }
 
 const AuthenticatedDocsRouteChildren: AuthenticatedDocsRouteChildren = {
   AuthenticatedDocsIdRoute: AuthenticatedDocsIdRoute,
+  AuthenticatedDocsIndexRoute: AuthenticatedDocsIndexRoute,
 }
 
 const AuthenticatedDocsRouteWithChildren =
