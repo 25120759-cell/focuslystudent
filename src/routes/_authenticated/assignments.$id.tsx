@@ -275,17 +275,48 @@ function AssignmentDetail() {
       <div className="paper-raised p-6">
         <h2 className="font-display text-lg font-semibold mb-3">Subtasks</h2>
         <div className="space-y-2">
-          {subtasks.map((s) => (
-            <motion.div key={s.id} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-3 rounded-xl border border-border bg-card px-3 py-2">
-              <button onClick={() => toggleSub(s.id)} className={`flex h-5 w-5 items-center justify-center rounded-md border ${s.done ? "bg-primary border-primary text-primary-foreground" : "border-input"}`}>
-                {s.done && <Check className="h-3 w-3" />}
-              </button>
-              <span className={`flex-1 text-sm ${s.done ? "line-through text-muted-foreground" : ""}`}>{s.title}</span>
-              <button onClick={() => delSub(s.id)} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-3 w-3" /></button>
-            </motion.div>
-          ))}
-          {subtasks.length === 0 && <p className="text-xs text-muted-foreground">No subtasks yet.</p>}
+          <AnimatePresence initial={false}>
+            {openSubs.map((s) => (
+              <SubtaskRow key={s.id} s={s} onToggle={() => toggleSub(s.id)} onDelete={() => delSub(s.id)} />
+            ))}
+          </AnimatePresence>
+          {openSubs.length === 0 && (
+            <p className="text-xs text-muted-foreground">
+              {subtasks.length === 0 ? "No subtasks yet." : "All subtasks complete 🎉"}
+            </p>
+          )}
         </div>
+        {doneSubs.length > 0 && (
+          <div className="mt-4 rounded-xl border border-border bg-muted/30">
+            <button
+              onClick={() => setShowDoneSubs((v) => !v)}
+              className="flex w-full items-center gap-2 px-3 py-2 text-xs font-medium text-muted-foreground hover:text-foreground"
+            >
+              <motion.span animate={{ rotate: showDoneSubs ? 90 : 0 }} className="inline-flex">
+                <ChevronRight className="h-3.5 w-3.5" />
+              </motion.span>
+              {showDoneSubs ? <FolderOpen className="h-3.5 w-3.5" /> : <Folder className="h-3.5 w-3.5" />}
+              Completed ({doneSubs.length})
+            </button>
+            <AnimatePresence initial={false}>
+              {showDoneSubs && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="overflow-hidden"
+                >
+                  <div className="space-y-2 px-3 pb-3">
+                    {doneSubs.map((s) => (
+                      <SubtaskRow key={s.id} s={s} onToggle={() => toggleSub(s.id)} onDelete={() => delSub(s.id)} />
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
+
         <div className="mt-3 flex items-center gap-2">
           <input
             value={newSub}
