@@ -64,6 +64,8 @@ function AssignmentDetail() {
   const [instruction, setInstruction] = useState("");
   const [creds, setCreds] = useState<any>(null);
   const [editingSection, setEditingSection] = useState<null | "subtasks" | "tips">(null);
+  const [showDoneSubs, setShowDoneSubs] = useState(false);
+
 
 
 
