@@ -100,49 +100,38 @@ function AssignmentsPage() {
       </div>
 
       <div className="grid gap-4">
-        <AnimatePresence>
-          {assignments.map((a) => (
-            <motion.article
-              layout
-              key={a.id}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, x: -20, scale: 0.95 }}
-              className="paper-raised p-6 group"
-            >
-              <div className="flex items-start justify-between gap-4 mb-3">
-                <Link to="/assignments/$id" params={{ id: a.id }} className="flex-1 block">
-                  <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${a.status === "Completed" ? "bg-tt-break" : a.status === "Late" ? "bg-destructive text-destructive-foreground" : "bg-tt-peach"}`}>
-                    {a.status}
-                  </span>
-                  <h2 className="font-display text-xl font-semibold mt-2 hover:underline">{a.title}</h2>
-                  <p className="text-xs text-muted-foreground mt-1">{t("dueDate")}: {new Date(a.due).toLocaleString()}</p>
-                </Link>
-                <div className="flex gap-2 opacity-80 group-hover:opacity-100">
-                  <button onClick={async () => { await updateFn({ data: { id: a.id, patch: { status: "Completed" } } }); await load(); }} className="flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90">
-                    <Check className="h-3 w-3" /> {t("markComplete")}
-                  </button>
-                  <button onClick={async () => { await updateFn({ data: { id: a.id, patch: { status: "Late" } } }); await load(); }} className="flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-accent">
-                    <AlertTriangle className="h-3 w-3" /> {t("markLate")}
-                  </button>
-                  <button onClick={async () => { if (confirm("Delete this assignment?")) { await deleteFn({ data: { id: a.id } }); await load(); } }} className="flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-destructive hover:text-destructive-foreground" title="Delete">
-                    <Trash2 className="h-3 w-3" />
-                  </button>
-                </div>
-              </div>
-              {a.description && <p className="text-sm text-foreground/80 leading-relaxed line-clamp-2">{a.description}</p>}
-              {(a.resources ?? []).length > 0 && (
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {(a.resources ?? []).map((r: any) => (
-                    <a key={r.name} href={r.link} className="flex items-center gap-1 rounded-full bg-accent px-3 py-1 text-xs hover:bg-accent/80">
-                      <FileText className="h-3 w-3" /> {r.name}
-                    </a>
-                  ))}
-                </div>
-              )}
-            </motion.article>
+        <AnimatePresence initial={false}>
+          {openList.map((a) => (
+            <AssignmentCard key={a.id} a={a} t={t} onComplete={complete} onLate={markLate} onDelete={remove} />
           ))}
         </AnimatePresence>
+
+        {doneList.length > 0 && (
+          <div className="rounded-2xl border border-border bg-muted/30">
+            <button
+              onClick={() => setShowDone((v) => !v)}
+              className="flex w-full items-center gap-2 px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground"
+            >
+              <motion.span animate={{ rotate: showDone ? 90 : 0 }} className="inline-flex">
+                <ChevronRight className="h-4 w-4" />
+              </motion.span>
+              {showDone ? <FolderOpen className="h-4 w-4" /> : <Folder className="h-4 w-4" />}
+              Completed ({doneList.length})
+            </button>
+            <AnimatePresence initial={false}>
+              {showDone && (
+                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                  <div className="grid gap-4 px-4 pb-4">
+                    {doneList.map((a) => (
+                      <AssignmentCard key={a.id} a={a} t={t} onComplete={complete} onLate={markLate} onDelete={remove} />
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
+
         {!loaded && <SkeletonList rows={3} lines={2} />}
         {loaded && loadErr && (
           <ErrorState
@@ -158,7 +147,80 @@ function AssignmentsPage() {
             description="Type something like “Read Hatchet ch 8 by Tuesday 9pm” in the quick add box and Focusly will schedule it for you."
           />
         )}
+        {loaded && !loadErr && assignments.length > 0 && openList.length === 0 && (
+          <EmptyState
+            icon={PartyPopper}
+            title="All caught up 🎉"
+            description="Every assignment is complete. Open the Completed folder to review your wins."
+          />
+        )}
       </div>
     </div>
   );
 }
+
+function AssignmentCard({
+  a,
+  t,
+  onComplete,
+  onLate,
+  onDelete,
+}: {
+  a: any;
+  t: (k: any) => string;
+  onComplete: (id: string) => void;
+  onLate: (id: string) => void;
+  onDelete: (id: string) => void;
+}) {
+  return (
+    <motion.article
+      layout
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, x: -20, scale: 0.95 }}
+      transition={{ type: "spring", stiffness: 300, damping: 28 }}
+      className="paper-raised p-6 group"
+    >
+      <div className="flex items-start justify-between gap-4 mb-3 flex-wrap">
+        <Link to="/assignments/$id" params={{ id: a.id }} className="flex-1 block min-w-[200px]">
+          <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${a.status === "Completed" ? "bg-tt-break" : a.status === "Late" ? "bg-destructive text-destructive-foreground" : "bg-tt-peach"}`}>
+            {a.status}
+          </span>
+          <h2 className={`font-display text-xl font-semibold mt-2 hover:underline ${a.status === "Completed" ? "text-muted-foreground line-through" : ""}`}>{a.title}</h2>
+          {a.due && <p className="text-xs text-muted-foreground mt-1">{t("dueDate")}: {new Date(a.due).toLocaleString()}</p>}
+        </Link>
+        <div className="flex gap-2 opacity-80 group-hover:opacity-100">
+          {a.status !== "Completed" && (
+            <motion.button whileTap={{ scale: 0.94 }} onClick={() => onComplete(a.id)} className="flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90">
+              <Check className="h-3 w-3" /> {t("markComplete")}
+            </motion.button>
+          )}
+          {a.status !== "Late" && a.status !== "Completed" && (
+            <button onClick={() => onLate(a.id)} className="flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-accent">
+              <AlertTriangle className="h-3 w-3" /> {t("markLate")}
+            </button>
+          )}
+          {a.status === "Completed" && (
+            <button onClick={() => onLate(a.id)} className="flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-accent">
+              Reopen
+            </button>
+          )}
+          <button onClick={() => onDelete(a.id)} className="flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-destructive hover:text-destructive-foreground" title="Delete">
+            <Trash2 className="h-3 w-3" />
+          </button>
+        </div>
+      </div>
+      {a.description && <p className="text-sm text-foreground/80 leading-relaxed line-clamp-2">{a.description}</p>}
+      {(a.resources ?? []).length > 0 && (
+        <div className="mt-4 flex flex-wrap gap-2">
+          {(a.resources ?? []).map((r: any) => (
+            <a key={r.name} href={r.link} className="flex items-center gap-1 rounded-full bg-accent px-3 py-1 text-xs hover:bg-accent/80">
+              <FileText className="h-3 w-3" /> {r.name}
+            </a>
+          ))}
+        </div>
+      )}
+    </motion.article>
+  );
+}
+
