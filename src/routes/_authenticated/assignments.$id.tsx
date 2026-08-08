@@ -121,12 +121,18 @@ function AssignmentDetail() {
     setNewSub("");
   }
   async function toggleSub(sid: string) {
+    const target = subtasks.find((s) => s.id === sid);
     const next = subtasks.map((s) => (s.id === sid ? { ...s, done: !s.done } : s));
+    if (target && !target.done) {
+      const allDone = next.length > 0 && next.every((s) => s.done);
+      celebrate(allDone ? "assignment" : "subtask");
+    }
     await saveSubtasks(next);
   }
   async function delSub(sid: string) {
     await saveSubtasks(subtasks.filter((s) => s.id !== sid));
   }
+
 
   async function persistBreakdown(b: Breakdown) {
     const k = `breakdown:${id}`;
