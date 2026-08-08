@@ -487,3 +487,30 @@ function BreakdownSection({ title, onRegen, loading, onEdit, editing, extra, chi
     </div>
   );
 }
+
+function SubtaskRow({ s, onToggle, onDelete }: { s: { id: string; title: string; done: boolean }; onToggle: () => void; onDelete: () => void }) {
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, x: -12, scale: 0.97 }}
+      transition={{ type: "spring", stiffness: 320, damping: 26 }}
+      className="flex items-center gap-3 rounded-xl border border-border bg-card px-3 py-2"
+    >
+      <motion.button
+        whileTap={{ scale: 0.85 }}
+        onClick={onToggle}
+        className={`flex h-5 w-5 items-center justify-center rounded-md border transition-colors ${s.done ? "bg-primary border-primary text-primary-foreground" : "border-input"}`}
+      >
+        {s.done && (
+          <motion.span initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }}>
+            <Check className="h-3 w-3" />
+          </motion.span>
+        )}
+      </motion.button>
+      <span className={`flex-1 text-sm ${s.done ? "line-through text-muted-foreground" : ""}`}>{s.title}</span>
+      <button onClick={onDelete} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-3 w-3" /></button>
+    </motion.div>
+  );
+}
