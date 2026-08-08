@@ -113,6 +113,8 @@ function RootComponent() {
             {!publicPage && <FloatingAI />}
             <NewPostToast />
             <AgentCursorOverlay />
+            <CelebrationLayer />
+
           </div>
         </StoreProvider>
       </AuthProvider>
