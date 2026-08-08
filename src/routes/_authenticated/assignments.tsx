@@ -66,6 +66,25 @@ function AssignmentsPage() {
     }
   }
 
+  const openList = assignments.filter((a) => a.status !== "Completed");
+  const doneList = assignments.filter((a) => a.status === "Completed");
+
+  async function complete(id: string) {
+    celebrate("assignment");
+    await updateFn({ data: { id, patch: { status: "Completed" } } });
+    await load();
+  }
+  async function markLate(id: string) {
+    await updateFn({ data: { id, patch: { status: id && doneList.some((d) => d.id === id) ? "Opened" : "Late" } } });
+    await load();
+  }
+  async function remove(id: string) {
+    if (!confirm("Delete this assignment?")) return;
+    await deleteFn({ data: { id } });
+    await load();
+  }
+
+
   return (
     <div className="space-y-6 rise-in">
       <PageHeader
