@@ -33,6 +33,8 @@ function AssignmentsPage() {
   const [nlInput, setNlInput] = useState("");
   const [parsing, setParsing] = useState(false);
   const [parseErr, setParseErr] = useState<string | null>(null);
+  const [showDone, setShowDone] = useState(false);
+
 
   async function load() {
     setLoadErr(null);
