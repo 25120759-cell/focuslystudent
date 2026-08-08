@@ -104,13 +104,18 @@ function AssignmentDetail() {
   const assignment = a;
   const current = edit ? draft! : assignment;
   const subtasks = assignment.subtasks ?? [];
+  const openSubs = subtasks.filter((s) => !s.done);
+  const doneSubs = subtasks.filter((s) => s.done);
 
   async function save() {
     if (!draft) return;
+    const becameComplete = draft.status === "Completed" && assignment.status !== "Completed";
     const r: any = await updateFn({ data: { id: assignment.id, patch: draft } });
     setA({ ...r.assignment, subtasks: r.assignment.subtasks ?? [], resources: r.assignment.resources ?? [] });
     setEdit(false);
+    if (becameComplete) celebrate("assignment");
   }
+
 
   async function saveSubtasks(next: AssignmentDetailRow["subtasks"]) {
     const r: any = await updateFn({ data: { id: assignment.id, patch: { subtasks: next } } });
