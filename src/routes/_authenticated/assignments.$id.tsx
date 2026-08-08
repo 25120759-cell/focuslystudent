@@ -2,11 +2,13 @@ import { RouteError } from "@/components/app/States";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Edit2, Trash2, Save, X, Check, Plus, Calendar, Sparkles, Loader2, RefreshCw, Pencil, Crown } from "lucide-react";
+import { ArrowLeft, Edit2, Trash2, Save, X, Check, Plus, Calendar, Sparkles, Loader2, RefreshCw, Pencil, Crown, ChevronRight, Folder, FolderOpen } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { deleteAssignment, getAssignment, updateAssignment } from "@/lib/assignments.functions";
 import { aiBreakdownAssignment, aiCredits, saveArtifact } from "@/lib/ai.functions";
 import { saveLocal, getLocal, markClean } from "@/lib/ai-cache";
+import { celebrate } from "@/components/app/Celebration";
+
 
 
 
@@ -62,6 +64,8 @@ function AssignmentDetail() {
   const [instruction, setInstruction] = useState("");
   const [creds, setCreds] = useState<any>(null);
   const [editingSection, setEditingSection] = useState<null | "subtasks" | "tips">(null);
+  const [showDoneSubs, setShowDoneSubs] = useState(false);
+
 
 
 
@@ -100,13 +104,18 @@ function AssignmentDetail() {
   const assignment = a;
   const current = edit ? draft! : assignment;
   const subtasks = assignment.subtasks ?? [];
+  const openSubs = subtasks.filter((s) => !s.done);
+  const doneSubs = subtasks.filter((s) => s.done);
 
   async function save() {
     if (!draft) return;
+    const becameComplete = draft.status === "Completed" && assignment.status !== "Completed";
     const r: any = await updateFn({ data: { id: assignment.id, patch: draft } });
     setA({ ...r.assignment, subtasks: r.assignment.subtasks ?? [], resources: r.assignment.resources ?? [] });
     setEdit(false);
+    if (becameComplete) celebrate("assignment");
   }
+
 
   async function saveSubtasks(next: AssignmentDetailRow["subtasks"]) {
     const r: any = await updateFn({ data: { id: assignment.id, patch: { subtasks: next } } });
@@ -121,12 +130,18 @@ function AssignmentDetail() {
     setNewSub("");
   }
   async function toggleSub(sid: string) {
+    const target = subtasks.find((s) => s.id === sid);
     const next = subtasks.map((s) => (s.id === sid ? { ...s, done: !s.done } : s));
+    if (target && !target.done) {
+      const allDone = next.length > 0 && next.every((s) => s.done);
+      celebrate(allDone ? "assignment" : "subtask");
+    }
     await saveSubtasks(next);
   }
   async function delSub(sid: string) {
     await saveSubtasks(subtasks.filter((s) => s.id !== sid));
   }
+
 
   async function persistBreakdown(b: Breakdown) {
     const k = `breakdown:${id}`;
@@ -269,17 +284,48 @@ function AssignmentDetail() {
       <div className="paper-raised p-6">
         <h2 className="font-display text-lg font-semibold mb-3">Subtasks</h2>
         <div className="space-y-2">
-          {subtasks.map((s) => (
-            <motion.div key={s.id} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-3 rounded-xl border border-border bg-card px-3 py-2">
-              <button onClick={() => toggleSub(s.id)} className={`flex h-5 w-5 items-center justify-center rounded-md border ${s.done ? "bg-primary border-primary text-primary-foreground" : "border-input"}`}>
-                {s.done && <Check className="h-3 w-3" />}
-              </button>
-              <span className={`flex-1 text-sm ${s.done ? "line-through text-muted-foreground" : ""}`}>{s.title}</span>
-              <button onClick={() => delSub(s.id)} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-3 w-3" /></button>
-            </motion.div>
-          ))}
-          {subtasks.length === 0 && <p className="text-xs text-muted-foreground">No subtasks yet.</p>}
+          <AnimatePresence initial={false}>
+            {openSubs.map((s) => (
+              <SubtaskRow key={s.id} s={s} onToggle={() => toggleSub(s.id)} onDelete={() => delSub(s.id)} />
+            ))}
+          </AnimatePresence>
+          {openSubs.length === 0 && (
+            <p className="text-xs text-muted-foreground">
+              {subtasks.length === 0 ? "No subtasks yet." : "All subtasks complete 🎉"}
+            </p>
+          )}
         </div>
+        {doneSubs.length > 0 && (
+          <div className="mt-4 rounded-xl border border-border bg-muted/30">
+            <button
+              onClick={() => setShowDoneSubs((v) => !v)}
+              className="flex w-full items-center gap-2 px-3 py-2 text-xs font-medium text-muted-foreground hover:text-foreground"
+            >
+              <motion.span animate={{ rotate: showDoneSubs ? 90 : 0 }} className="inline-flex">
+                <ChevronRight className="h-3.5 w-3.5" />
+              </motion.span>
+              {showDoneSubs ? <FolderOpen className="h-3.5 w-3.5" /> : <Folder className="h-3.5 w-3.5" />}
+              Completed ({doneSubs.length})
+            </button>
+            <AnimatePresence initial={false}>
+              {showDoneSubs && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="overflow-hidden"
+                >
+                  <div className="space-y-2 px-3 pb-3">
+                    {doneSubs.map((s) => (
+                      <SubtaskRow key={s.id} s={s} onToggle={() => toggleSub(s.id)} onDelete={() => delSub(s.id)} />
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
+
         <div className="mt-3 flex items-center gap-2">
           <input
             value={newSub}
@@ -439,5 +485,32 @@ function BreakdownSection({ title, onRegen, loading, onEdit, editing, extra, chi
       </div>
       {children}
     </div>
+  );
+}
+
+function SubtaskRow({ s, onToggle, onDelete }: { s: { id: string; title: string; done: boolean }; onToggle: () => void; onDelete: () => void }) {
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, x: -12, scale: 0.97 }}
+      transition={{ type: "spring", stiffness: 320, damping: 26 }}
+      className="flex items-center gap-3 rounded-xl border border-border bg-card px-3 py-2"
+    >
+      <motion.button
+        whileTap={{ scale: 0.85 }}
+        onClick={onToggle}
+        className={`flex h-5 w-5 items-center justify-center rounded-md border transition-colors ${s.done ? "bg-primary border-primary text-primary-foreground" : "border-input"}`}
+      >
+        {s.done && (
+          <motion.span initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }}>
+            <Check className="h-3 w-3" />
+          </motion.span>
+        )}
+      </motion.button>
+      <span className={`flex-1 text-sm ${s.done ? "line-through text-muted-foreground" : ""}`}>{s.title}</span>
+      <button onClick={onDelete} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-3 w-3" /></button>
+    </motion.div>
   );
 }

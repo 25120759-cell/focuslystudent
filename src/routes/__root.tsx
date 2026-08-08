@@ -18,6 +18,8 @@ import { AppNav } from "@/components/AppNav";
 import { FloatingAI } from "@/components/FloatingAI";
 import { NewPostToast } from "@/components/NewPostToast";
 import { AgentCursorOverlay } from "@/components/AgentCursor";
+import { CelebrationLayer } from "@/components/app/Celebration";
+
 import { isPublicPath } from "@/lib/publicRoutes";
 
 
@@ -113,6 +115,8 @@ function RootComponent() {
             {!publicPage && <FloatingAI />}
             <NewPostToast />
             <AgentCursorOverlay />
+            <CelebrationLayer />
+
           </div>
         </StoreProvider>
       </AuthProvider>
