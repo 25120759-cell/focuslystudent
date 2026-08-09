@@ -2,9 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useServerFn } from "@tanstack/react-start";
-import { ShieldCheck, Clock, User, AlertTriangle, FileText, Sparkles, HelpCircle } from "lucide-react";
+import { ShieldCheck, Clock, User, AlertTriangle, FileText, Sparkles, HelpCircle, Download } from "lucide-react";
 import { getSharedDoc } from "@/lib/docs.functions";
 import { analyseAuthorship } from "@/lib/authorship";
+import { exportAuthorshipPdf } from "@/lib/authorship-pdf";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { PublicHeader } from "@/components/PublicHeader";
 
 
@@ -38,12 +41,26 @@ function SharedDoc() {
   const [events, setEvents] = useState<DocEvent[]>([]);
   const [author, setAuthor] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [unsure, setUnsure] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     getFn({ data: { token } }).then((r: any) => {
       setDoc(r.doc); setEvents(r.events ?? []); setAuthor(r.author);
     }).catch(console.error).finally(() => setLoaded(true));
   }, [token]);
+
+  useEffect(() => {
+    try { setUnsure(localStorage.getItem(`focusly:authorship-unsure:${token}`) === "1"); } catch { /* ignore */ }
+  }, [token]);
+
+  useEffect(() => {
+    try {
+      if (unsure) localStorage.setItem(`focusly:authorship-unsure:${token}`, "1");
+      else localStorage.removeItem(`focusly:authorship-unsure:${token}`);
+    } catch { /* ignore */ }
+  }, [unsure, token]);
+
 
   if (!loaded) return (
     <div className="min-h-screen bg-background"><PublicHeader />
@@ -60,31 +77,72 @@ function SharedDoc() {
   );
 
   const a = analyseAuthorship(doc, events as any);
+  const effectiveLevel = unsure ? "unsure" : a.level;
+  const onExport = async () => {
+    setExporting(true);
+    try {
+      await exportAuthorshipPdf({
+        title: doc.title,
+        author: author ?? "Unknown",
+        url: typeof window !== "undefined" ? window.location.href : "",
+        updatedAt: doc.updated_at,
+        wordCount: doc.word_count,
+        signals: a,
+        reviewerUnsure: unsure,
+        reviewerNote: unsure ? "Reviewer marked this report as unsure — evidence considered weak." : undefined,
+      });
+    } catch (e) {
+      console.error(e);
+      toast.error("Could not generate the PDF. Please try again.");
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const style =
-    a.level === "typed" ? { color: "text-emerald-600 dark:text-emerald-400", bar: "bg-emerald-500", icon: ShieldCheck } :
-    a.level === "mostly-typed" ? { color: "text-emerald-600 dark:text-emerald-400", bar: "bg-emerald-500", icon: ShieldCheck } :
-    a.level === "mixed" ? { color: "text-amber-600 dark:text-amber-400", bar: "bg-amber-500", icon: AlertTriangle } :
-    a.level === "pasted" ? { color: "text-red-600 dark:text-red-400", bar: "bg-red-500", icon: AlertTriangle } :
+    effectiveLevel === "typed" ? { color: "text-emerald-600 dark:text-emerald-400", bar: "bg-emerald-500", icon: ShieldCheck } :
+    effectiveLevel === "mostly-typed" ? { color: "text-emerald-600 dark:text-emerald-400", bar: "bg-emerald-500", icon: ShieldCheck } :
+    effectiveLevel === "mixed" ? { color: "text-amber-600 dark:text-amber-400", bar: "bg-amber-500", icon: AlertTriangle } :
+    effectiveLevel === "pasted" ? { color: "text-red-600 dark:text-red-400", bar: "bg-red-500", icon: AlertTriangle } :
     { color: "text-muted-foreground", bar: "bg-muted-foreground", icon: HelpCircle };
   const Icon = style.icon;
+  const confStyle =
+    a.confidence === "high" ? "border-emerald-500/40 text-emerald-600 dark:text-emerald-400" :
+    a.confidence === "moderate" ? "border-amber-500/40 text-amber-600 dark:text-amber-400" :
+    "border-border text-muted-foreground";
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <PublicHeader />
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mx-auto max-w-3xl px-6 py-12">
         <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <div className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 ${style.color}`}><Icon className="h-6 w-6" /></div>
-            <div>
+            <div className="min-w-0 flex-1">
               <p className="text-[11px] uppercase tracking-widest text-muted-foreground flex items-center gap-1"><Sparkles className="h-3 w-3" /> Focusly Authorship Report</p>
-              <h2 className={`font-display text-xl font-semibold ${style.color}`}>{a.label}</h2>
+              <h2 className={`font-display text-xl font-semibold ${style.color}`}>{unsure ? "Unsure — marked for review" : a.label}</h2>
             </div>
+            <Button variant="outline" size="sm" className="rounded-full" onClick={onExport} disabled={exporting}>
+              <Download className="mr-1.5 h-3.5 w-3.5" /> {exporting ? "Preparing…" : "Export PDF"}
+            </Button>
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <span className={`rounded-full border px-2.5 py-1 text-[11px] font-medium ${confStyle}`}>
+              Telemetry confidence: {a.confidence}
+            </span>
+            <button
+              onClick={() => setUnsure((v) => !v)}
+              className={`rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors ${unsure ? "border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-400" : "border-border text-muted-foreground hover:text-foreground"}`}
+            >
+              {unsure ? "Unsure label on — click to clear" : "Mark this report as unsure"}
+            </button>
           </div>
 
           {a.level !== "insufficient" && (
             <div className="mt-5">
               <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-                <span>Original-typing confidence</span>
+                <span>Original-typing score</span>
                 <span className={`font-semibold ${style.color}`}>{a.score}%</span>
               </div>
               <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-muted">
@@ -96,7 +154,8 @@ function SharedDoc() {
             </div>
           )}
 
-          <p className="mt-4 text-sm text-muted-foreground">{a.summary}</p>
+          <p className="mt-4 text-sm text-muted-foreground">{unsure ? "A reviewer has marked this report as unsure, so the automatic label below should be read as indicative only." : a.summary}</p>
+          <p className="mt-2 text-xs text-muted-foreground">{a.confidenceReason}</p>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-3 text-sm">
             <Stat label="Author" value={author ?? "Unknown"} icon={User} />
@@ -107,7 +166,36 @@ function SharedDoc() {
             <Stat label="Pasted share" value={`${a.pasteShare}%`} icon={AlertTriangle} />
             <Stat label="Unaccounted text" value={`${a.unaccounted}%`} icon={HelpCircle} />
             <Stat label="Paste events" value={String(a.pasteEvents)} icon={AlertTriangle} />
+            <Stat label="Large pastes (200+)" value={String(a.burstPastes)} icon={AlertTriangle} />
+            <Stat label="Largest paste" value={`${a.largestPaste.toLocaleString()} chars`} icon={AlertTriangle} />
             <Stat label="Recorded keystrokes" value={a.typedChars.toLocaleString()} icon={FileText} />
+            <Stat label="Typing speed" value={`${a.charsPerMinute.toLocaleString()}/min`} icon={Clock} />
+          </div>
+
+          {a.firstEventAt && (
+            <p className="mt-3 text-[11px] text-muted-foreground">
+              Activity window: {new Date(a.firstEventAt).toLocaleString()} → {a.lastEventAt ? new Date(a.lastEventAt).toLocaleString() : "—"} ({a.spanMinutes} min span)
+            </p>
+          )}
+
+          <div className="mt-5 rounded-2xl border border-border bg-background p-4">
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Evidence breakdown</div>
+            <div className="mt-3 space-y-3">
+              {a.evidence.map((e) => (
+                <div key={e.id} className="flex gap-3">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-xs font-semibold">{e.label}</span>
+                      <span className="text-xs text-muted-foreground">{e.value}</span>
+                    </div>
+                    <p className="mt-0.5 text-[11px] leading-relaxed text-muted-foreground">{e.detail}</p>
+                  </div>
+                  <span className={`shrink-0 text-xs font-semibold tabular-nums ${e.direction === "negative" ? "text-red-600 dark:text-red-400" : e.direction === "positive" ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
+                    {e.impact > 0 ? `+${e.impact}` : e.impact} pts
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
 
           {a.flags.length > 0 && (
@@ -122,9 +210,10 @@ function SharedDoc() {
           )}
 
           <p className="mt-6 text-[11px] text-muted-foreground">
-            This report is generated from edit telemetry captured by Focusly Docs while the author was writing. A high confidence score means the recorded keystrokes account for the finished text; it cannot prove the wording was not dictated or copied by hand. Pasted or unaccounted text may indicate AI or external sources were used.
+            This report is generated from edit telemetry captured by Focusly Docs while the author was writing. A high score means the recorded keystrokes account for the finished text; it cannot prove the wording was not dictated or copied by hand. Where telemetry confidence is low, or a reviewer has marked the report unsure, treat the result as indicative rather than conclusive.
           </p>
         </div>
+
 
 
         <article className="mt-8 rounded-3xl border border-border bg-card p-8">
