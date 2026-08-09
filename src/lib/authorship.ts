@@ -193,7 +193,7 @@ export function analyseAuthorship(
   }
 
   if (pasteShare > 15) {
-    const impact = -Math.min(50, (pasteShare - 15) * 0.55);
+    const impact = -Math.min(50, (pasteShare - 15) * 0.4);
     add({
       id: "paste-share",
       label: "Paste share",
@@ -311,12 +311,9 @@ export function analyseAuthorship(
     confidence = "moderate";
     confidenceReason = "The document is short or was edited briefly, so a few events swing the result.";
   }
-  if (textLength < 300 || editSeconds < 20 || (unaccounted > 40 && pasteEvents === 0)) {
+  if (textLength < 300 || editSeconds < 20 || (typedChars === 0 && pasteChars === 0)) {
     confidence = "low";
-    confidenceReason =
-      unaccounted > 40 && pasteEvents === 0
-        ? "A large share of the text has no recorded origin and no pastes were captured — telemetry may be incomplete (for example, writing began before sharing was enabled)."
-        : "Very little telemetry was captured, so the result is indicative only.";
+    confidenceReason = "Very little telemetry was captured, so the result is indicative only.";
   }
 
   const borderline = score >= 52 && score <= 68;
