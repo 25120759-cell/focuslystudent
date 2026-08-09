@@ -78,6 +78,27 @@ function SharedDoc() {
 
   const a = analyseAuthorship(doc, events as any);
   const effectiveLevel = unsure ? "unsure" : a.level;
+  const onExport = async () => {
+    setExporting(true);
+    try {
+      await exportAuthorshipPdf({
+        title: doc.title,
+        author: author ?? "Unknown",
+        url: typeof window !== "undefined" ? window.location.href : "",
+        updatedAt: doc.updated_at,
+        wordCount: doc.word_count,
+        signals: a,
+        reviewerUnsure: unsure,
+        reviewerNote: unsure ? "Reviewer marked this report as unsure — evidence considered weak." : undefined,
+      });
+    } catch (e) {
+      console.error(e);
+      toast.error("Could not generate the PDF. Please try again.");
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const style =
     effectiveLevel === "typed" ? { color: "text-emerald-600 dark:text-emerald-400", bar: "bg-emerald-500", icon: ShieldCheck } :
     effectiveLevel === "mostly-typed" ? { color: "text-emerald-600 dark:text-emerald-400", bar: "bg-emerald-500", icon: ShieldCheck } :
