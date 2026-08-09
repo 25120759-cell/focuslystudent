@@ -2,9 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useServerFn } from "@tanstack/react-start";
-import { ShieldCheck, Clock, User, AlertTriangle, FileText, Sparkles } from "lucide-react";
+import { ShieldCheck, Clock, User, AlertTriangle, FileText, Sparkles, HelpCircle } from "lucide-react";
 import { getSharedDoc } from "@/lib/docs.functions";
+import { analyseAuthorship } from "@/lib/authorship";
 import { PublicHeader } from "@/components/PublicHeader";
+
 
 export const Route = createFileRoute("/docs/share/$token")({
   ssr: false,
