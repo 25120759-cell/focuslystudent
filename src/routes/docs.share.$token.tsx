@@ -114,7 +114,7 @@ function SharedDoc() {
             <div className="mt-5 rounded-2xl border border-border bg-background p-4">
               <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Observations</div>
               <ul className="mt-2 space-y-1.5 text-xs text-muted-foreground">
-                {a.flags.map((f, i) => (
+                {a.flags.map((f: string, i: number) => (
                   <li key={i} className="flex gap-2"><span className={style.color}>•</span><span>{f}</span></li>
                 ))}
               </ul>
