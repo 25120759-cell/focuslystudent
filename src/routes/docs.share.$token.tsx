@@ -2,9 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useServerFn } from "@tanstack/react-start";
-import { ShieldCheck, Clock, User, AlertTriangle, FileText, Sparkles, HelpCircle } from "lucide-react";
+import { ShieldCheck, Clock, User, AlertTriangle, FileText, Sparkles, HelpCircle, Download } from "lucide-react";
 import { getSharedDoc } from "@/lib/docs.functions";
 import { analyseAuthorship } from "@/lib/authorship";
+import { exportAuthorshipPdf } from "@/lib/authorship-pdf";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { PublicHeader } from "@/components/PublicHeader";
 
 
