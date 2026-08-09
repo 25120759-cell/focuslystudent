@@ -94,7 +94,7 @@ export async function exportAuthorshipPdf(opts: {
     ["Final length", `${a.textLength.toLocaleString()} chars / ${opts.wordCount.toLocaleString()} words`],
     ["Typing speed", `${a.charsPerMinute.toLocaleString()} chars/min`],
     ["Edit time", `${a.minutes} min across ${a.sessions} session(s)`],
-    ["Activity window", a.firstEventAt ? `${new Date(a.firstEventAt).toLocaleString()} to ${a.lastEventAt ? new Date(a.lastEventAt).toLocaleString() : "—"} (${a.spanMinutes} min)` : "No events recorded"],
+    ["Activity window", a.firstEventAt ? `${new Date(a.firstEventAt).toLocaleString()} -> ${a.lastEventAt ? new Date(a.lastEventAt).toLocaleString() : "—"} (${a.spanMinutes} min)` : "No events recorded"],
   ];
   doc.setFontSize(10);
   for (const [k, v] of rows) {
