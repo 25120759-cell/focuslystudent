@@ -57,16 +57,14 @@ function SharedDoc() {
     </div>
   );
 
-  const totalKeystrokes = events.filter((e) => e.kind === "keystroke").reduce((a, b) => a + b.chars, 0);
-  const totalPasteChars = events.filter((e) => e.kind === "paste").reduce((a, b) => a + b.chars, 0);
-  const pasteRatio = doc.word_count > 0 ? Math.min(100, Math.round((totalPasteChars / Math.max(1, doc.word_count * 6)) * 100)) : 0;
-  const sessions = events.filter((e) => e.kind === "session_start").length;
-  const minutes = Math.max(1, Math.round(doc.edit_seconds / 60));
-  const verdict =
-    pasteRatio > 60 ? { label: "Heavy paste activity", color: "text-amber-600 dark:text-amber-400", icon: AlertTriangle } :
-    doc.paste_count > 10 ? { label: "Some pasted content", color: "text-amber-600 dark:text-amber-400", icon: AlertTriangle } :
-    { label: "Authored by hand", color: "text-emerald-600 dark:text-emerald-400", icon: ShieldCheck };
-  const Icon = verdict.icon;
+  const a = analyseAuthorship(doc, events as any);
+  const style =
+    a.level === "typed" ? { color: "text-emerald-600 dark:text-emerald-400", bar: "bg-emerald-500", icon: ShieldCheck } :
+    a.level === "mostly-typed" ? { color: "text-emerald-600 dark:text-emerald-400", bar: "bg-emerald-500", icon: ShieldCheck } :
+    a.level === "mixed" ? { color: "text-amber-600 dark:text-amber-400", bar: "bg-amber-500", icon: AlertTriangle } :
+    a.level === "pasted" ? { color: "text-red-600 dark:text-red-400", bar: "bg-red-500", icon: AlertTriangle } :
+    { color: "text-muted-foreground", bar: "bg-muted-foreground", icon: HelpCircle };
+  const Icon = style.icon;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -74,24 +72,58 @@ function SharedDoc() {
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mx-auto max-w-3xl px-6 py-12">
         <div className="rounded-3xl border border-border bg-card p-6 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 ${verdict.color}`}><Icon className="h-6 w-6" /></div>
+            <div className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 ${style.color}`}><Icon className="h-6 w-6" /></div>
             <div>
               <p className="text-[11px] uppercase tracking-widest text-muted-foreground flex items-center gap-1"><Sparkles className="h-3 w-3" /> Focusly Authorship Report</p>
-              <h2 className={`font-display text-xl font-semibold ${verdict.color}`}>{verdict.label}</h2>
+              <h2 className={`font-display text-xl font-semibold ${style.color}`}>{a.label}</h2>
             </div>
           </div>
+
+          {a.level !== "insufficient" && (
+            <div className="mt-5">
+              <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                <span>Original-typing confidence</span>
+                <span className={`font-semibold ${style.color}`}>{a.score}%</span>
+              </div>
+              <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-muted">
+                <motion.div
+                  initial={{ width: 0 }} animate={{ width: `${a.score}%` }} transition={{ duration: 0.8, ease: "easeOut" }}
+                  className={`h-full rounded-full ${style.bar}`}
+                />
+              </div>
+            </div>
+          )}
+
+          <p className="mt-4 text-sm text-muted-foreground">{a.summary}</p>
+
           <div className="mt-6 grid gap-3 sm:grid-cols-3 text-sm">
             <Stat label="Author" value={author ?? "Unknown"} icon={User} />
             <Stat label="Word count" value={String(doc.word_count)} icon={FileText} />
-            <Stat label="Total edit time" value={`${minutes} min`} icon={Clock} />
-            <Stat label="Edit sessions" value={String(sessions || 1)} icon={Clock} />
-            <Stat label="Paste events" value={String(doc.paste_count)} icon={AlertTriangle} />
-            <Stat label="Recorded keystrokes" value={totalKeystrokes.toLocaleString()} icon={FileText} />
+            <Stat label="Total edit time" value={`${a.minutes} min`} icon={Clock} />
+            <Stat label="Edit sessions" value={String(a.sessions)} icon={Clock} />
+            <Stat label="Typed coverage" value={`${a.typedCoverage}%`} icon={FileText} />
+            <Stat label="Pasted share" value={`${a.pasteShare}%`} icon={AlertTriangle} />
+            <Stat label="Unaccounted text" value={`${a.unaccounted}%`} icon={HelpCircle} />
+            <Stat label="Paste events" value={String(a.pasteEvents)} icon={AlertTriangle} />
+            <Stat label="Recorded keystrokes" value={a.typedChars.toLocaleString()} icon={FileText} />
           </div>
+
+          {a.flags.length > 0 && (
+            <div className="mt-5 rounded-2xl border border-border bg-background p-4">
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Observations</div>
+              <ul className="mt-2 space-y-1.5 text-xs text-muted-foreground">
+                {a.flags.map((f, i) => (
+                  <li key={i} className="flex gap-2"><span className={style.color}>•</span><span>{f}</span></li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           <p className="mt-6 text-[11px] text-muted-foreground">
-            This report is generated from edit telemetry captured by Focusly Docs while the author was writing. It does NOT prove the author wrote every word from scratch — only that the captured edit pattern is consistent with original authorship. Heavy paste activity may indicate AI or external sources were used.
+            This report is generated from edit telemetry captured by Focusly Docs while the author was writing. A high confidence score means the recorded keystrokes account for the finished text; it cannot prove the wording was not dictated or copied by hand. Pasted or unaccounted text may indicate AI or external sources were used.
           </p>
         </div>
+
 
         <article className="mt-8 rounded-3xl border border-border bg-card p-8">
           <h1 className="font-display text-3xl font-semibold tracking-tight">{doc.title}</h1>
