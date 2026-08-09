@@ -335,7 +335,7 @@ export function analyseAuthorship(
     level = "mostly-typed";
     label = "Mostly typed, some inserted text";
     summary = `Most of the text was typed live, but about ${Math.max(pasteShare, unaccounted)}% arrived by paste or without recorded keystrokes.`;
-  } else if (score >= 35) {
+  } else if (score >= 20) {
     level = "mixed";
     label = "Mixed typing and pasted content";
     summary = `A substantial part of this document was not typed in the editor. Pasted or unaccounted text makes up roughly ${Math.max(pasteShare, unaccounted)}% of the final text.`;
