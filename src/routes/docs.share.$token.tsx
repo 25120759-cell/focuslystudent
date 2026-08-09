@@ -41,12 +41,26 @@ function SharedDoc() {
   const [events, setEvents] = useState<DocEvent[]>([]);
   const [author, setAuthor] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [unsure, setUnsure] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     getFn({ data: { token } }).then((r: any) => {
       setDoc(r.doc); setEvents(r.events ?? []); setAuthor(r.author);
     }).catch(console.error).finally(() => setLoaded(true));
   }, [token]);
+
+  useEffect(() => {
+    try { setUnsure(localStorage.getItem(`focusly:authorship-unsure:${token}`) === "1"); } catch { /* ignore */ }
+  }, [token]);
+
+  useEffect(() => {
+    try {
+      if (unsure) localStorage.setItem(`focusly:authorship-unsure:${token}`, "1");
+      else localStorage.removeItem(`focusly:authorship-unsure:${token}`);
+    } catch { /* ignore */ }
+  }, [unsure, token]);
+
 
   if (!loaded) return (
     <div className="min-h-screen bg-background"><PublicHeader />
