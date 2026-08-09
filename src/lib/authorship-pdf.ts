@@ -60,13 +60,15 @@ export async function exportAuthorshipPdf(opts: {
     M + 14,
     y + 44,
   );
-  // score bar
+  // score bar (hidden when there is not enough evidence to score)
+  if (a.level !== "insufficient") {
   const barW = W - M * 2 - 28;
   doc.setFillColor(226, 222, 214);
   doc.roundedRect(M + 14, y + 52, barW, 6, 3, 3, "F");
   const fill = a.level === "typed" || a.level === "mostly-typed" ? [34, 150, 94] : a.level === "unsure" || a.level === "mixed" ? [200, 145, 30] : [190, 60, 55];
   doc.setFillColor(fill[0], fill[1], fill[2]);
   doc.roundedRect(M + 14, y + 52, Math.max(4, (barW * a.score) / 100), 6, 3, 3, "F");
+  }
   y += 82;
 
   text(a.summary, 10, "normal", [70, 70, 70]);
@@ -92,7 +94,7 @@ export async function exportAuthorshipPdf(opts: {
     ["Final length", `${a.textLength.toLocaleString()} chars / ${opts.wordCount.toLocaleString()} words`],
     ["Typing speed", `${a.charsPerMinute.toLocaleString()} chars/min`],
     ["Edit time", `${a.minutes} min across ${a.sessions} session(s)`],
-    ["Activity window", a.firstEventAt ? `${new Date(a.firstEventAt).toLocaleString()} → ${a.lastEventAt ? new Date(a.lastEventAt).toLocaleString() : "—"} (${a.spanMinutes} min)` : "No events recorded"],
+    ["Activity window", a.firstEventAt ? `${new Date(a.firstEventAt).toLocaleString()} -> ${a.lastEventAt ? new Date(a.lastEventAt).toLocaleString() : "—"} (${a.spanMinutes} min)` : "No events recorded"],
   ];
   doc.setFontSize(10);
   for (const [k, v] of rows) {
