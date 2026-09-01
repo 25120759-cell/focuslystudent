@@ -47,6 +47,44 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_insights: {
+        Row: {
+          category: string
+          classroom_id: string
+          created_at: string
+          id: string
+          recommendation_text: string
+          severity_level: string
+          student_id: string
+        }
+        Insert: {
+          category?: string
+          classroom_id: string
+          created_at?: string
+          id?: string
+          recommendation_text: string
+          severity_level?: string
+          student_id: string
+        }
+        Update: {
+          category?: string
+          classroom_id?: string
+          created_at?: string
+          id?: string
+          recommendation_text?: string
+          severity_level?: string
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_insights_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: false
+            referencedRelation: "classrooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_thread_messages: {
         Row: {
           content: string
@@ -148,6 +186,89 @@ export type Database = {
         }
         Relationships: []
       }
+      announcement_comments: {
+        Row: {
+          announcement_id: string
+          author_id: string
+          classroom_id: string
+          content: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          announcement_id: string
+          author_id: string
+          classroom_id: string
+          content: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          announcement_id?: string
+          author_id?: string
+          classroom_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcement_comments_announcement_id_fkey"
+            columns: ["announcement_id"]
+            isOneToOne: false
+            referencedRelation: "announcements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "announcement_comments_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: false
+            referencedRelation: "classrooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      announcements: {
+        Row: {
+          attachments: Json
+          author_id: string
+          classroom_id: string
+          content: string
+          created_at: string
+          id: string
+          pinned: boolean
+          scheduled_for: string | null
+        }
+        Insert: {
+          attachments?: Json
+          author_id: string
+          classroom_id: string
+          content: string
+          created_at?: string
+          id?: string
+          pinned?: boolean
+          scheduled_for?: string | null
+        }
+        Update: {
+          attachments?: Json
+          author_id?: string
+          classroom_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          pinned?: boolean
+          scheduled_for?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcements_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: false
+            referencedRelation: "classrooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assignments: {
         Row: {
           created_at: string
@@ -236,6 +357,110 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      class_assignments: {
+        Row: {
+          classroom_id: string
+          created_at: string
+          description: string
+          due_date: string | null
+          id: string
+          kind: string
+          module: string
+          order: number
+          points: number
+          rubric_json: Json
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          classroom_id: string
+          created_at?: string
+          description?: string
+          due_date?: string | null
+          id?: string
+          kind?: string
+          module?: string
+          order?: number
+          points?: number
+          rubric_json?: Json
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          classroom_id?: string
+          created_at?: string
+          description?: string
+          due_date?: string | null
+          id?: string
+          kind?: string
+          module?: string
+          order?: number
+          points?: number
+          rubric_json?: Json
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_assignments_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: false
+            referencedRelation: "classrooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      classrooms: {
+        Row: {
+          ai_helper_enabled: boolean
+          ai_socratic_only: boolean
+          banner_color: string
+          created_at: string
+          grade_level: string
+          id: string
+          join_code: string
+          owner_id: string
+          period: string
+          room: string
+          subject: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          ai_helper_enabled?: boolean
+          ai_socratic_only?: boolean
+          banner_color?: string
+          created_at?: string
+          grade_level?: string
+          id?: string
+          join_code: string
+          owner_id: string
+          period?: string
+          room?: string
+          subject?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          ai_helper_enabled?: boolean
+          ai_socratic_only?: boolean
+          banner_color?: string
+          created_at?: string
+          grade_level?: string
+          id?: string
+          join_code?: string
+          owner_id?: string
+          period?: string
+          room?: string
+          subject?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       conversation_messages: {
         Row: {
@@ -440,6 +665,38 @@ export type Database = {
         }
         Relationships: []
       }
+      enrollments: {
+        Row: {
+          classroom_id: string
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          classroom_id: string
+          created_at?: string
+          id?: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          classroom_id?: string
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enrollments_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: false
+            referencedRelation: "classrooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       feed_post_likes: {
         Row: {
           created_at: string
@@ -605,48 +862,63 @@ export type Database = {
           accepted_content_policy_at: string | null
           accepted_privacy_at: string | null
           accepted_terms_at: string | null
+          avatar_color: string
           avatar_url: string | null
           coins: number
           created_at: string
           display_name: string | null
+          email: string | null
+          full_name: string | null
           id: string
           legal_version: string | null
           monthly_credit_override: number | null
           pack_opens_day: string | null
           pack_opens_today: number
           plan: string
+          role: string
+          status: string
           updated_at: string
         }
         Insert: {
           accepted_content_policy_at?: string | null
           accepted_privacy_at?: string | null
           accepted_terms_at?: string | null
+          avatar_color?: string
           avatar_url?: string | null
           coins?: number
           created_at?: string
           display_name?: string | null
+          email?: string | null
+          full_name?: string | null
           id: string
           legal_version?: string | null
           monthly_credit_override?: number | null
           pack_opens_day?: string | null
           pack_opens_today?: number
           plan?: string
+          role?: string
+          status?: string
           updated_at?: string
         }
         Update: {
           accepted_content_policy_at?: string | null
           accepted_privacy_at?: string | null
           accepted_terms_at?: string | null
+          avatar_color?: string
           avatar_url?: string | null
           coins?: number
           created_at?: string
           display_name?: string | null
+          email?: string | null
+          full_name?: string | null
           id?: string
           legal_version?: string | null
           monthly_credit_override?: number | null
           pack_opens_day?: string | null
           pack_opens_today?: number
           plan?: string
+          role?: string
+          status?: string
           updated_at?: string
         }
         Relationships: []
@@ -748,6 +1020,104 @@ export type Database = {
         }
         Relationships: []
       }
+      student_metrics: {
+        Row: {
+          ai_chats_week: number
+          created_at: string
+          focus_logs: Json
+          focus_score: number
+          goal_completion_pct: number
+          strengths: Json
+          student_id: string
+          study_minutes: number
+          trend: string
+          updated_at: string
+          weaknesses: Json
+        }
+        Insert: {
+          ai_chats_week?: number
+          created_at?: string
+          focus_logs?: Json
+          focus_score?: number
+          goal_completion_pct?: number
+          strengths?: Json
+          student_id: string
+          study_minutes?: number
+          trend?: string
+          updated_at?: string
+          weaknesses?: Json
+        }
+        Update: {
+          ai_chats_week?: number
+          created_at?: string
+          focus_logs?: Json
+          focus_score?: number
+          goal_completion_pct?: number
+          strengths?: Json
+          student_id?: string
+          study_minutes?: number
+          trend?: string
+          updated_at?: string
+          weaknesses?: Json
+        }
+        Relationships: []
+      }
+      submissions: {
+        Row: {
+          ai_feedback_draft: string | null
+          assignment_id: string
+          content: string
+          created_at: string
+          criteria_scores: Json
+          grade_status: string
+          id: string
+          returned_at: string | null
+          score: number | null
+          student_id: string
+          submitted_at: string | null
+          teacher_feedback: string | null
+          updated_at: string
+        }
+        Insert: {
+          ai_feedback_draft?: string | null
+          assignment_id: string
+          content?: string
+          created_at?: string
+          criteria_scores?: Json
+          grade_status?: string
+          id?: string
+          returned_at?: string | null
+          score?: number | null
+          student_id: string
+          submitted_at?: string | null
+          teacher_feedback?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ai_feedback_draft?: string | null
+          assignment_id?: string
+          content?: string
+          created_at?: string
+          criteria_scores?: Json
+          grade_status?: string
+          id?: string
+          returned_at?: string | null
+          score?: number | null
+          student_id?: string
+          submitted_at?: string | null
+          teacher_feedback?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submissions_assignment_id_fkey"
+            columns: ["assignment_id"]
+            isOneToOne: false
+            referencedRelation: "class_assignments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       support_usage: {
         Row: {
           created_at: string
@@ -843,6 +1213,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      assignment_classroom: {
+        Args: { _assignment_id: string }
+        Returns: string
+      }
       doc_role_for: {
         Args: { _doc_id: string; _user_id: string }
         Returns: string
@@ -854,14 +1228,27 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_enrolled: {
+        Args: { _classroom_id: string; _user_id: string }
+        Returns: boolean
+      }
       is_list_member: {
         Args: { _list_id: string; _user_id: string }
+        Returns: boolean
+      }
+      join_classroom: { Args: { _code: string }; Returns: string }
+      owns_classroom: {
+        Args: { _classroom_id: string; _user_id: string }
         Returns: boolean
       }
       redeem_plan_code: { Args: { _code: string }; Returns: Json }
       redeem_plan_code_for_user: {
         Args: { _code: string; _user_id: string }
         Returns: Json
+      }
+      teaches_student: {
+        Args: { _student_id: string; _teacher_id: string }
+        Returns: boolean
       }
     }
     Enums: {
