@@ -36,6 +36,7 @@ import { Route as AuthenticatedClassesIndexRouteImport } from './routes/_authent
 import { Route as DocsShareTokenRouteImport } from './routes/docs.share.$token'
 import { Route as ApiPublicExtensionVersionRouteImport } from './routes/api/public/extension-version'
 import { Route as AuthenticatedDocsIdRouteImport } from './routes/_authenticated/docs.$id'
+import { Route as AuthenticatedClassesIdRouteImport } from './routes/_authenticated/classes.$id'
 import { Route as AuthenticatedAssignmentsIdRouteImport } from './routes/_authenticated/assignments.$id'
 
 const UpdatesRoute = UpdatesRouteImport.update({
@@ -175,6 +176,11 @@ const AuthenticatedDocsIdRoute = AuthenticatedDocsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AuthenticatedDocsRoute,
 } as any)
+const AuthenticatedClassesIdRoute = AuthenticatedClassesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedClassesRoute,
+} as any)
 const AuthenticatedAssignmentsIdRoute =
   AuthenticatedAssignmentsIdRouteImport.update({
     id: '/$id',
@@ -205,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/usage': typeof AuthenticatedUsageRoute
   '/updates/$slug': typeof UpdatesSlugRoute
   '/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
+  '/classes/$id': typeof AuthenticatedClassesIdRoute
   '/docs/$id': typeof AuthenticatedDocsIdRoute
   '/api/public/extension-version': typeof ApiPublicExtensionVersionRoute
   '/docs/share/$token': typeof DocsShareTokenRoute
@@ -232,6 +239,7 @@ export interface FileRoutesByTo {
   '/usage': typeof AuthenticatedUsageRoute
   '/updates/$slug': typeof UpdatesSlugRoute
   '/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
+  '/classes/$id': typeof AuthenticatedClassesIdRoute
   '/docs/$id': typeof AuthenticatedDocsIdRoute
   '/api/public/extension-version': typeof ApiPublicExtensionVersionRoute
   '/docs/share/$token': typeof DocsShareTokenRoute
@@ -263,6 +271,7 @@ export interface FileRoutesById {
   '/_authenticated/usage': typeof AuthenticatedUsageRoute
   '/updates/$slug': typeof UpdatesSlugRoute
   '/_authenticated/assignments/$id': typeof AuthenticatedAssignmentsIdRoute
+  '/_authenticated/classes/$id': typeof AuthenticatedClassesIdRoute
   '/_authenticated/docs/$id': typeof AuthenticatedDocsIdRoute
   '/api/public/extension-version': typeof ApiPublicExtensionVersionRoute
   '/docs/share/$token': typeof DocsShareTokenRoute
@@ -294,6 +303,7 @@ export interface FileRouteTypes {
     | '/usage'
     | '/updates/$slug'
     | '/assignments/$id'
+    | '/classes/$id'
     | '/docs/$id'
     | '/api/public/extension-version'
     | '/docs/share/$token'
@@ -321,6 +331,7 @@ export interface FileRouteTypes {
     | '/usage'
     | '/updates/$slug'
     | '/assignments/$id'
+    | '/classes/$id'
     | '/docs/$id'
     | '/api/public/extension-version'
     | '/docs/share/$token'
@@ -351,6 +362,7 @@ export interface FileRouteTypes {
     | '/_authenticated/usage'
     | '/updates/$slug'
     | '/_authenticated/assignments/$id'
+    | '/_authenticated/classes/$id'
     | '/_authenticated/docs/$id'
     | '/api/public/extension-version'
     | '/docs/share/$token'
@@ -564,6 +576,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDocsIdRouteImport
       parentRoute: typeof AuthenticatedDocsRoute
     }
+    '/_authenticated/classes/$id': {
+      id: '/_authenticated/classes/$id'
+      path: '/$id'
+      fullPath: '/classes/$id'
+      preLoaderRoute: typeof AuthenticatedClassesIdRouteImport
+      parentRoute: typeof AuthenticatedClassesRoute
+    }
     '/_authenticated/assignments/$id': {
       id: '/_authenticated/assignments/$id'
       path: '/$id'
@@ -589,10 +608,12 @@ const AuthenticatedAssignmentsRouteWithChildren =
   )
 
 interface AuthenticatedClassesRouteChildren {
+  AuthenticatedClassesIdRoute: typeof AuthenticatedClassesIdRoute
   AuthenticatedClassesIndexRoute: typeof AuthenticatedClassesIndexRoute
 }
 
 const AuthenticatedClassesRouteChildren: AuthenticatedClassesRouteChildren = {
+  AuthenticatedClassesIdRoute: AuthenticatedClassesIdRoute,
   AuthenticatedClassesIndexRoute: AuthenticatedClassesIndexRoute,
 }
 
