@@ -38,7 +38,7 @@ export const listMyClasses = createServerFn({ method: "GET" })
       .from("profiles")
       .select("id, full_name, display_name, avatar_color")
       .in("id", ownerIds.length ? ownerIds : ["00000000-0000-0000-0000-000000000000"]);
-    const nameOf = new Map((teachers ?? []).map((t: any) => [t.id, t.full_name || t.display_name || "Your teacher"]));
+    const nameOf = new Map<string, string>((teachers ?? []).map((t: any) => [t.id, t.full_name || t.display_name || "Your teacher"]));
     return {
       classes: (classes ?? []).map((c: any) => ({
         ...c,
@@ -126,7 +126,7 @@ export const getClassroom = createServerFn({ method: "GET" })
           .in("assignment_id", assignmentIds)
       : { data: [] as any[] };
 
-    const nameOf = new Map(
+    const nameOf = new Map<string, { name: string; color: string }>(
       (people ?? []).map((p: any) => [p.id, { name: p.full_name || p.display_name || "Member", color: p.avatar_color }]),
     );
 
@@ -233,8 +233,8 @@ export const listGrades = createServerFn({ method: "GET" })
     const { data: classes } = classIds.length
       ? await supabase.from("classrooms").select("id, title, banner_color, subject").in("id", classIds)
       : { data: [] as any[] };
-    const aOf = new Map((assignments ?? []).map((a: any) => [a.id, a]));
-    const cOf = new Map((classes ?? []).map((c: any) => [c.id, c]));
+    const aOf = new Map<string, any>((assignments ?? []).map((a: any) => [a.id, a]));
+    const cOf = new Map<string, any>((classes ?? []).map((c: any) => [c.id, c]));
     return {
       grades: (submissions ?? []).map((s: any) => {
         const assignment = aOf.get(s.assignment_id) ?? null;
@@ -373,12 +373,12 @@ export const classNotifications = createServerFn({ method: "POST" })
     ]);
 
     const { data: classes } = await supabase.from("classrooms").select("id, title, banner_color").in("id", ids);
-    const cOf = new Map((classes ?? []).map((c: any) => [c.id, c]));
+    const cOf = new Map<string, any>((classes ?? []).map((c: any) => [c.id, c]));
     const gradedIds = (graded ?? []).map((g: any) => g.assignment_id);
     const { data: gradedAssignments } = gradedIds.length
       ? await supabase.from("class_assignments").select("id, title, classroom_id, points").in("id", gradedIds)
       : { data: [] as any[] };
-    const gaOf = new Map((gradedAssignments ?? []).map((a: any) => [a.id, a]));
+    const gaOf = new Map<string, any>((gradedAssignments ?? []).map((a: any) => [a.id, a]));
 
     const notifications = [
       ...(announcements ?? []).map((a: any) => ({
