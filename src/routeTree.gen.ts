@@ -25,6 +25,7 @@ import { Route as AuthenticatedSocialRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedNotesRouteImport } from './routes/_authenticated/notes'
 import { Route as AuthenticatedDocsRouteImport } from './routes/_authenticated/docs'
+import { Route as AuthenticatedClassesRouteImport } from './routes/_authenticated/classes'
 import { Route as AuthenticatedCardsRouteImport } from './routes/_authenticated/cards'
 import { Route as AuthenticatedCalenderRouteImport } from './routes/_authenticated/calender'
 import { Route as AuthenticatedAssignmentsRouteImport } from './routes/_authenticated/assignments'
@@ -115,6 +116,11 @@ const AuthenticatedDocsRoute = AuthenticatedDocsRouteImport.update({
   path: '/docs',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedClassesRoute = AuthenticatedClassesRouteImport.update({
+  id: '/classes',
+  path: '/classes',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedCardsRoute = AuthenticatedCardsRouteImport.update({
   id: '/cards',
   path: '/cards',
@@ -184,6 +190,7 @@ export interface FileRoutesByFullPath {
   '/assignments': typeof AuthenticatedAssignmentsRouteWithChildren
   '/calender': typeof AuthenticatedCalenderRoute
   '/cards': typeof AuthenticatedCardsRoute
+  '/classes': typeof AuthenticatedClassesRoute
   '/docs': typeof AuthenticatedDocsRouteWithChildren
   '/notes': typeof AuthenticatedNotesRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -211,6 +218,7 @@ export interface FileRoutesByTo {
   '/assignments': typeof AuthenticatedAssignmentsRouteWithChildren
   '/calender': typeof AuthenticatedCalenderRoute
   '/cards': typeof AuthenticatedCardsRoute
+  '/classes': typeof AuthenticatedClassesRoute
   '/notes': typeof AuthenticatedNotesRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/social': typeof AuthenticatedSocialRoute
@@ -239,6 +247,7 @@ export interface FileRoutesById {
   '/_authenticated/assignments': typeof AuthenticatedAssignmentsRouteWithChildren
   '/_authenticated/calender': typeof AuthenticatedCalenderRoute
   '/_authenticated/cards': typeof AuthenticatedCardsRoute
+  '/_authenticated/classes': typeof AuthenticatedClassesRoute
   '/_authenticated/docs': typeof AuthenticatedDocsRouteWithChildren
   '/_authenticated/notes': typeof AuthenticatedNotesRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
@@ -268,6 +277,7 @@ export interface FileRouteTypes {
     | '/assignments'
     | '/calender'
     | '/cards'
+    | '/classes'
     | '/docs'
     | '/notes'
     | '/settings'
@@ -295,6 +305,7 @@ export interface FileRouteTypes {
     | '/assignments'
     | '/calender'
     | '/cards'
+    | '/classes'
     | '/notes'
     | '/settings'
     | '/social'
@@ -322,6 +333,7 @@ export interface FileRouteTypes {
     | '/_authenticated/assignments'
     | '/_authenticated/calender'
     | '/_authenticated/cards'
+    | '/_authenticated/classes'
     | '/_authenticated/docs'
     | '/_authenticated/notes'
     | '/_authenticated/settings'
@@ -464,6 +476,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDocsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/classes': {
+      id: '/_authenticated/classes'
+      path: '/classes'
+      fullPath: '/classes'
+      preLoaderRoute: typeof AuthenticatedClassesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/cards': {
       id: '/_authenticated/cards'
       path: '/cards'
@@ -570,6 +589,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAssignmentsRoute: typeof AuthenticatedAssignmentsRouteWithChildren
   AuthenticatedCalenderRoute: typeof AuthenticatedCalenderRoute
   AuthenticatedCardsRoute: typeof AuthenticatedCardsRoute
+  AuthenticatedClassesRoute: typeof AuthenticatedClassesRoute
   AuthenticatedDocsRoute: typeof AuthenticatedDocsRouteWithChildren
   AuthenticatedNotesRoute: typeof AuthenticatedNotesRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
@@ -583,6 +603,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAssignmentsRoute: AuthenticatedAssignmentsRouteWithChildren,
   AuthenticatedCalenderRoute: AuthenticatedCalenderRoute,
   AuthenticatedCardsRoute: AuthenticatedCardsRoute,
+  AuthenticatedClassesRoute: AuthenticatedClassesRoute,
   AuthenticatedDocsRoute: AuthenticatedDocsRouteWithChildren,
   AuthenticatedNotesRoute: AuthenticatedNotesRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
