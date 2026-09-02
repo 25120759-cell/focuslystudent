@@ -32,6 +32,7 @@ import { Route as AuthenticatedAssignmentsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedDocsIndexRouteImport } from './routes/_authenticated/docs.index'
+import { Route as AuthenticatedClassesIndexRouteImport } from './routes/_authenticated/classes.index'
 import { Route as DocsShareTokenRouteImport } from './routes/docs.share.$token'
 import { Route as ApiPublicExtensionVersionRouteImport } from './routes/api/public/extension-version'
 import { Route as AuthenticatedDocsIdRouteImport } from './routes/_authenticated/docs.$id'
@@ -152,6 +153,12 @@ const AuthenticatedDocsIndexRoute = AuthenticatedDocsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedDocsRoute,
 } as any)
+const AuthenticatedClassesIndexRoute =
+  AuthenticatedClassesIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedClassesRoute,
+  } as any)
 const DocsShareTokenRoute = DocsShareTokenRouteImport.update({
   id: '/docs/share/$token',
   path: '/docs/share/$token',
@@ -190,7 +197,7 @@ export interface FileRoutesByFullPath {
   '/assignments': typeof AuthenticatedAssignmentsRouteWithChildren
   '/calender': typeof AuthenticatedCalenderRoute
   '/cards': typeof AuthenticatedCardsRoute
-  '/classes': typeof AuthenticatedClassesRoute
+  '/classes': typeof AuthenticatedClassesRouteWithChildren
   '/docs': typeof AuthenticatedDocsRouteWithChildren
   '/notes': typeof AuthenticatedNotesRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -201,6 +208,7 @@ export interface FileRoutesByFullPath {
   '/docs/$id': typeof AuthenticatedDocsIdRoute
   '/api/public/extension-version': typeof ApiPublicExtensionVersionRoute
   '/docs/share/$token': typeof DocsShareTokenRoute
+  '/classes/': typeof AuthenticatedClassesIndexRoute
   '/docs/': typeof AuthenticatedDocsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -218,7 +226,6 @@ export interface FileRoutesByTo {
   '/assignments': typeof AuthenticatedAssignmentsRouteWithChildren
   '/calender': typeof AuthenticatedCalenderRoute
   '/cards': typeof AuthenticatedCardsRoute
-  '/classes': typeof AuthenticatedClassesRoute
   '/notes': typeof AuthenticatedNotesRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/social': typeof AuthenticatedSocialRoute
@@ -228,6 +235,7 @@ export interface FileRoutesByTo {
   '/docs/$id': typeof AuthenticatedDocsIdRoute
   '/api/public/extension-version': typeof ApiPublicExtensionVersionRoute
   '/docs/share/$token': typeof DocsShareTokenRoute
+  '/classes': typeof AuthenticatedClassesIndexRoute
   '/docs': typeof AuthenticatedDocsIndexRoute
 }
 export interface FileRoutesById {
@@ -247,7 +255,7 @@ export interface FileRoutesById {
   '/_authenticated/assignments': typeof AuthenticatedAssignmentsRouteWithChildren
   '/_authenticated/calender': typeof AuthenticatedCalenderRoute
   '/_authenticated/cards': typeof AuthenticatedCardsRoute
-  '/_authenticated/classes': typeof AuthenticatedClassesRoute
+  '/_authenticated/classes': typeof AuthenticatedClassesRouteWithChildren
   '/_authenticated/docs': typeof AuthenticatedDocsRouteWithChildren
   '/_authenticated/notes': typeof AuthenticatedNotesRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
@@ -258,6 +266,7 @@ export interface FileRoutesById {
   '/_authenticated/docs/$id': typeof AuthenticatedDocsIdRoute
   '/api/public/extension-version': typeof ApiPublicExtensionVersionRoute
   '/docs/share/$token': typeof DocsShareTokenRoute
+  '/_authenticated/classes/': typeof AuthenticatedClassesIndexRoute
   '/_authenticated/docs/': typeof AuthenticatedDocsIndexRoute
 }
 export interface FileRouteTypes {
@@ -288,6 +297,7 @@ export interface FileRouteTypes {
     | '/docs/$id'
     | '/api/public/extension-version'
     | '/docs/share/$token'
+    | '/classes/'
     | '/docs/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -305,7 +315,6 @@ export interface FileRouteTypes {
     | '/assignments'
     | '/calender'
     | '/cards'
-    | '/classes'
     | '/notes'
     | '/settings'
     | '/social'
@@ -315,6 +324,7 @@ export interface FileRouteTypes {
     | '/docs/$id'
     | '/api/public/extension-version'
     | '/docs/share/$token'
+    | '/classes'
     | '/docs'
   id:
     | '__root__'
@@ -344,6 +354,7 @@ export interface FileRouteTypes {
     | '/_authenticated/docs/$id'
     | '/api/public/extension-version'
     | '/docs/share/$token'
+    | '/_authenticated/classes/'
     | '/_authenticated/docs/'
   fileRoutesById: FileRoutesById
 }
@@ -525,6 +536,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDocsIndexRouteImport
       parentRoute: typeof AuthenticatedDocsRoute
     }
+    '/_authenticated/classes/': {
+      id: '/_authenticated/classes/'
+      path: '/'
+      fullPath: '/classes/'
+      preLoaderRoute: typeof AuthenticatedClassesIndexRouteImport
+      parentRoute: typeof AuthenticatedClassesRoute
+    }
     '/docs/share/$token': {
       id: '/docs/share/$token'
       path: '/docs/share/$token'
@@ -570,6 +588,17 @@ const AuthenticatedAssignmentsRouteWithChildren =
     AuthenticatedAssignmentsRouteChildren,
   )
 
+interface AuthenticatedClassesRouteChildren {
+  AuthenticatedClassesIndexRoute: typeof AuthenticatedClassesIndexRoute
+}
+
+const AuthenticatedClassesRouteChildren: AuthenticatedClassesRouteChildren = {
+  AuthenticatedClassesIndexRoute: AuthenticatedClassesIndexRoute,
+}
+
+const AuthenticatedClassesRouteWithChildren =
+  AuthenticatedClassesRoute._addFileChildren(AuthenticatedClassesRouteChildren)
+
 interface AuthenticatedDocsRouteChildren {
   AuthenticatedDocsIdRoute: typeof AuthenticatedDocsIdRoute
   AuthenticatedDocsIndexRoute: typeof AuthenticatedDocsIndexRoute
@@ -589,7 +618,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAssignmentsRoute: typeof AuthenticatedAssignmentsRouteWithChildren
   AuthenticatedCalenderRoute: typeof AuthenticatedCalenderRoute
   AuthenticatedCardsRoute: typeof AuthenticatedCardsRoute
-  AuthenticatedClassesRoute: typeof AuthenticatedClassesRoute
+  AuthenticatedClassesRoute: typeof AuthenticatedClassesRouteWithChildren
   AuthenticatedDocsRoute: typeof AuthenticatedDocsRouteWithChildren
   AuthenticatedNotesRoute: typeof AuthenticatedNotesRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
@@ -603,7 +632,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAssignmentsRoute: AuthenticatedAssignmentsRouteWithChildren,
   AuthenticatedCalenderRoute: AuthenticatedCalenderRoute,
   AuthenticatedCardsRoute: AuthenticatedCardsRoute,
-  AuthenticatedClassesRoute: AuthenticatedClassesRoute,
+  AuthenticatedClassesRoute: AuthenticatedClassesRouteWithChildren,
   AuthenticatedDocsRoute: AuthenticatedDocsRouteWithChildren,
   AuthenticatedNotesRoute: AuthenticatedNotesRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
