@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Play, Pause, RotateCcw, Maximize2, Minimize2, X } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
 import { useStore } from "@/lib/store";
 import { alarm, chime } from "@/lib/audio";
+import { logFocusSession } from "@/lib/classroom.functions";
 
 function fmt(s: number) {
   const m = Math.floor(s / 60);
