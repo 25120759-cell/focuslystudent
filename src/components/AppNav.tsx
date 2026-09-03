@@ -53,6 +53,7 @@ export function AppNav() {
     { to: "/app", label: t("console"), icon: Clock, match: (p: string) => p === "/app" },
     { to: "/assignments", label: t("assignments"), icon: ClipboardList, match: (p: string) => p.startsWith("/assignments") },
     { to: "/calender", label: t("calender"), icon: CalendarDays, match: (p: string) => p === "/calender" },
+    { to: "/classes", label: "Classes", icon: GraduationCap, match: (p: string) => p.startsWith("/classes") },
     { to: "/notes", label: "AI Notes", icon: Brain, match: (p: string) => p === "/notes" },
     { to: "/docs", label: "Docs", icon: FileText, match: (p: string) => p.startsWith("/docs") && !p.startsWith("/docs/share") },
   ];
