@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Play, Pause, RotateCcw, Maximize2, Minimize2, X } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
 import { useStore } from "@/lib/store";
 import { alarm, chime } from "@/lib/audio";
+import { logFocusSession } from "@/lib/classroom.functions";
 
 function fmt(s: number) {
   const m = Math.floor(s / 60);
@@ -15,9 +17,24 @@ export function StudyClock() {
   const [editing, setEditing] = useState(false);
   const [mins, setMins] = useState(settings.studyDuration);
 
+  const logFocus = useServerFn(logFocusSession);
+  const loggedRef = useRef(false);
+
   useEffect(() => {
     if (timer.timeLeft === 0 && !timer.isRunning) alarm();
   }, [timer.timeLeft, timer.isRunning]);
+
+  // Report completed focus sessions so teacher-side insights receive study data.
+  useEffect(() => {
+    if (timer.timeLeft === 0) {
+      if (loggedRef.current) return;
+      loggedRef.current = true;
+      const minutes = Math.max(1, Math.round(mins));
+      logFocus({ data: { minutes, distractions: 0 } }).catch(() => {});
+    } else {
+      loggedRef.current = false;
+    }
+  }, [timer.timeLeft, mins, logFocus]);
 
   const start = () => {
     chime(880, 0.2);

@@ -133,6 +133,35 @@ export const aiUsageLog = createServerFn({ method: "GET" })
     return { entries: data ?? [] };
   });
 
+/** Live, privacy-safe context: only the caller's own rows, read through their RLS client. */
+async function buildLiveContext(supabase: any, userId: string, info: PlanInfo & { dayUsed: number; monthUsed: number }) {
+  try {
+    const today = new Date().toISOString().slice(0, 10);
+    const [profileRes, assignRes, classRes, metricsRes] = await Promise.all([
+      supabase.from("profiles").select("display_name, full_name").eq("id", userId).maybeSingle(),
+      supabase.from("assignments").select("id, title, due, status, priority").eq("user_id", userId).neq("status", "Completed").order("due", { ascending: true }).limit(8),
+      supabase.from("enrollments").select("classroom_id, classrooms(title, subject)").eq("user_id", userId).limit(10),
+      supabase.from("student_metrics").select("focus_score, study_minutes, goal_completion_pct, trend").eq("student_id", userId).maybeSingle(),
+    ]);
+    const name = profileRes?.data?.display_name || profileRes?.data?.full_name || null;
+    const tasks = (assignRes?.data ?? []).map((a: any) => `- ${a.title}${a.due ? ` (due ${String(a.due).slice(0, 16).replace("T", " ")})` : ""} [${a.status}${a.priority ? `, ${a.priority}` : ""}] id=${a.id}`);
+    const classes = (classRes?.data ?? []).map((e: any) => `- ${e.classrooms?.title ?? "Class"}${e.classrooms?.subject ? ` (${e.classrooms.subject})` : ""}`);
+    const m = metricsRes?.data;
+    const lines = [
+      `Today is ${today}.`,
+      name ? `The student's name is ${name}.` : null,
+      `AI credits used: ${info.dayUsed}/${info.day} today, ${info.monthUsed}/${info.month} this month.`,
+      tasks.length ? `Open assignments:\n${tasks.join("\n")}` : "They have no open assignments right now.",
+      classes.length ? `Enrolled classes:\n${classes.join("\n")}` : null,
+      m ? `Focus stats: focus score ${m.focus_score}, ${m.study_minutes} study minutes, goals ${m.goal_completion_pct}% complete, trend ${m.trend}.` : null,
+    ].filter(Boolean);
+    return `\n\nLive account context (the caller's own data only — never reveal other users' data):\n${lines.join("\n")}`;
+  } catch (e) {
+    console.error("[buildLiveContext]", e);
+    return "";
+  }
+}
+
 export const aiChat = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) =>
@@ -152,7 +181,8 @@ export const aiChat = createServerFn({ method: "POST" })
       throw new Error("Image understanding is a Max plan feature. Upgrade to attach photos.");
     }
     const planNote = `\n\nThe user is on the ${info.plan.toUpperCase()} plan. ${info.plan === "max" ? "You have access to deeper reasoning, image understanding, and long-context analysis." : info.plan === "pro" ? "Pro users get standard fast responses." : "Free plan — keep replies concise."}`;
-    const sys = PERSONAS[data.personality] + planNote + (data.context ? `\n\nCurrent app state:\n${data.context}` : "") + "\n\nWhen the user requests an action you can perform via a tool, call the tool. You can chain multiple tools in one reply.\n\nAGENTIC MODE: When the user asks you to *demonstrate*, *show me how*, *do it for me*, or otherwise wants to see actions happen live on screen, use the agent_* tools (agent_click, agent_type, agent_hover, agent_navigate, agent_say) to move a visible cursor and interact with the real UI. Common selectors: nav links like 'a[href=\"/assignments\"]', buttons like 'button[title=\"Bold\"]', or the shorthand 'text=Save' to match visible button/link text. Chain agent_say → agent_navigate → agent_click → agent_type sequences to guide the user visibly.";
+    const live = await buildLiveContext(supabase, userId, info);
+    const sys = PERSONAS[data.personality] + planNote + live + (data.context ? `\n\nClient view state:\n${data.context}` : "") + "\n\nWhen the user requests an action you can perform via a tool, call the tool. You can chain multiple tools in one reply.\n\nAGENTIC MODE: When the user asks you to *demonstrate*, *show me how*, *do it for me*, or otherwise wants to see actions happen live on screen, use the agent_* tools (agent_click, agent_type, agent_hover, agent_navigate, agent_say) to move a visible cursor and interact with the real UI. Common selectors: nav links like 'a[href=\"/assignments\"]', buttons like 'button[title=\"Bold\"]', or the shorthand 'text=Save' to match visible button/link text. Chain agent_say → agent_navigate → agent_click → agent_type sequences to guide the user visibly.";
     const userContent: any = data.image_url
       ? [
           { type: "text", text: data.message },

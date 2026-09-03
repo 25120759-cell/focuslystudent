@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogIn, LogOut, Shield, Users, Layers, LifeBuoy, FileText, Brain, Settings as SettingsIcon, Sparkles, Gift, Activity, CalendarDays, Clock, ClipboardList, Menu, X } from "lucide-react";
+import { LogIn, LogOut, Shield, Users, Layers, LifeBuoy, FileText, Brain, GraduationCap, Settings as SettingsIcon, Sparkles, Gift, Activity, CalendarDays, Clock, ClipboardList, Menu, X } from "lucide-react";
 import { useT } from "@/lib/store";
 import { useAuth } from "@/lib/auth";
 import { isPublicPath } from "@/lib/publicRoutes";
@@ -53,6 +53,7 @@ export function AppNav() {
     { to: "/app", label: t("console"), icon: Clock, match: (p: string) => p === "/app" },
     { to: "/assignments", label: t("assignments"), icon: ClipboardList, match: (p: string) => p.startsWith("/assignments") },
     { to: "/calender", label: t("calender"), icon: CalendarDays, match: (p: string) => p === "/calender" },
+    { to: "/classes", label: "Classes", icon: GraduationCap, match: (p: string) => p.startsWith("/classes") },
     { to: "/notes", label: "AI Notes", icon: Brain, match: (p: string) => p === "/notes" },
     { to: "/docs", label: "Docs", icon: FileText, match: (p: string) => p.startsWith("/docs") && !p.startsWith("/docs/share") },
   ];
