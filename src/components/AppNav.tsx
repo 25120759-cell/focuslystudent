@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogIn, LogOut, Shield, Users, Layers, LifeBuoy, FileText, Brain, Settings as SettingsIcon, Sparkles, Gift, Activity, CalendarDays, Clock, ClipboardList, Menu, X } from "lucide-react";
+import { LogIn, LogOut, Shield, Users, Layers, LifeBuoy, FileText, Brain, GraduationCap, Settings as SettingsIcon, Sparkles, Gift, Activity, CalendarDays, Clock, ClipboardList, Menu, X } from "lucide-react";
 import { useT } from "@/lib/store";
 import { useAuth } from "@/lib/auth";
 import { isPublicPath } from "@/lib/publicRoutes";
