@@ -14,6 +14,7 @@ import { Route as SupportRouteImport } from './routes/support'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as RedeemRouteImport } from './routes/redeem'
 import { Route as PlansRouteImport } from './routes/plans'
+import { Route as McpRouteImport } from './routes/mcp'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LandingRouteImport } from './routes/landing'
 import { Route as EngagementRouteImport } from './routes/engagement'
@@ -31,6 +32,7 @@ import { Route as AuthenticatedCalenderRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAssignmentsRouteImport } from './routes/_authenticated/assignments'
 import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedDocsIndexRouteImport } from './routes/_authenticated/docs.index'
 import { Route as AuthenticatedClassesIndexRouteImport } from './routes/_authenticated/classes.index'
 import { Route as DocsShareTokenRouteImport } from './routes/docs.share.$token'
@@ -62,6 +64,11 @@ const RedeemRoute = RedeemRouteImport.update({
 const PlansRoute = PlansRouteImport.update({
   id: '/plans',
   path: '/plans',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -149,6 +156,12 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedDocsIndexRoute = AuthenticatedDocsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -193,11 +206,13 @@ export interface FileRoutesByFullPath {
   '/engagement': typeof EngagementRoute
   '/landing': typeof LandingRoute
   '/login': typeof LoginRoute
+  '/mcp': typeof McpRoute
   '/plans': typeof PlansRoute
   '/redeem': typeof RedeemRoute
   '/signup': typeof SignupRoute
   '/support': typeof SupportRoute
   '/updates': typeof UpdatesRouteWithChildren
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/app': typeof AuthenticatedAppRoute
   '/assignments': typeof AuthenticatedAssignmentsRouteWithChildren
@@ -223,11 +238,13 @@ export interface FileRoutesByTo {
   '/engagement': typeof EngagementRoute
   '/landing': typeof LandingRoute
   '/login': typeof LoginRoute
+  '/mcp': typeof McpRoute
   '/plans': typeof PlansRoute
   '/redeem': typeof RedeemRoute
   '/signup': typeof SignupRoute
   '/support': typeof SupportRoute
   '/updates': typeof UpdatesRouteWithChildren
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/app': typeof AuthenticatedAppRoute
   '/assignments': typeof AuthenticatedAssignmentsRouteWithChildren
@@ -253,11 +270,13 @@ export interface FileRoutesById {
   '/engagement': typeof EngagementRoute
   '/landing': typeof LandingRoute
   '/login': typeof LoginRoute
+  '/mcp': typeof McpRoute
   '/plans': typeof PlansRoute
   '/redeem': typeof RedeemRoute
   '/signup': typeof SignupRoute
   '/support': typeof SupportRoute
   '/updates': typeof UpdatesRouteWithChildren
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/app': typeof AuthenticatedAppRoute
   '/_authenticated/assignments': typeof AuthenticatedAssignmentsRouteWithChildren
@@ -285,11 +304,13 @@ export interface FileRouteTypes {
     | '/engagement'
     | '/landing'
     | '/login'
+    | '/mcp'
     | '/plans'
     | '/redeem'
     | '/signup'
     | '/support'
     | '/updates'
+    | '/.well-known/oauth-protected-resource'
     | '/admin'
     | '/app'
     | '/assignments'
@@ -315,11 +336,13 @@ export interface FileRouteTypes {
     | '/engagement'
     | '/landing'
     | '/login'
+    | '/mcp'
     | '/plans'
     | '/redeem'
     | '/signup'
     | '/support'
     | '/updates'
+    | '/.well-known/oauth-protected-resource'
     | '/admin'
     | '/app'
     | '/assignments'
@@ -344,11 +367,13 @@ export interface FileRouteTypes {
     | '/engagement'
     | '/landing'
     | '/login'
+    | '/mcp'
     | '/plans'
     | '/redeem'
     | '/signup'
     | '/support'
     | '/updates'
+    | '/.well-known/oauth-protected-resource'
     | '/_authenticated/admin'
     | '/_authenticated/app'
     | '/_authenticated/assignments'
@@ -376,11 +401,13 @@ export interface RootRouteChildren {
   EngagementRoute: typeof EngagementRoute
   LandingRoute: typeof LandingRoute
   LoginRoute: typeof LoginRoute
+  McpRoute: typeof McpRoute
   PlansRoute: typeof PlansRoute
   RedeemRoute: typeof RedeemRoute
   SignupRoute: typeof SignupRoute
   SupportRoute: typeof SupportRoute
   UpdatesRoute: typeof UpdatesRouteWithChildren
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   ApiPublicExtensionVersionRoute: typeof ApiPublicExtensionVersionRoute
   DocsShareTokenRoute: typeof DocsShareTokenRoute
 }
@@ -420,6 +447,13 @@ declare module '@tanstack/react-router' {
       path: '/plans'
       fullPath: '/plans'
       preLoaderRoute: typeof PlansRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -540,6 +574,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/docs/': {
       id: '/_authenticated/docs/'
@@ -681,11 +722,14 @@ const rootRouteChildren: RootRouteChildren = {
   EngagementRoute: EngagementRoute,
   LandingRoute: LandingRoute,
   LoginRoute: LoginRoute,
+  McpRoute: McpRoute,
   PlansRoute: PlansRoute,
   RedeemRoute: RedeemRoute,
   SignupRoute: SignupRoute,
   SupportRoute: SupportRoute,
   UpdatesRoute: UpdatesRouteWithChildren,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
   ApiPublicExtensionVersionRoute: ApiPublicExtensionVersionRoute,
   DocsShareTokenRoute: DocsShareTokenRoute,
 }
