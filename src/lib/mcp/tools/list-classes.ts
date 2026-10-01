@@ -12,10 +12,27 @@ export default defineTool({
     const supabase = supabaseForUser(ctx);
     const { data, error } = await supabase
       .from("enrollments")
-      .select("classroom_id, classrooms(id, name, subject, room, period, teacher_name)")
+      .select("classroom_id, classrooms(id, title, subject, room, period)")
       .limit(50);
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
-    const classes = (data ?? []).map((r: Record<string, unknown>) => r['classrooms'] ?? { id: r['classroom_id'] });
+    const classes = (data ?? []).map((row) => {
+      const classroom = Array.isArray(row.classrooms) ? row.classrooms[0] : row.classrooms;
+      return classroom
+        ? {
+            id: classroom.id,
+            title: classroom.title,
+            subject: classroom.subject,
+            room: classroom.room,
+            period: classroom.period,
+          }
+        : {
+            id: row.classroom_id,
+            title: null,
+            subject: null,
+            room: null,
+            period: null,
+          };
+    });
     return { content: [{ type: "text", text: JSON.stringify(classes) }], structuredContent: { classes } };
   },
 });
