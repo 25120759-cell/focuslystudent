@@ -143,7 +143,7 @@
       {
         "name": "list_docs",
         "title": "List documents",
-        "description": "List the signed-in student's Focusly Docs, most recently updated first.",
+        "description": "List the signed-in student's Cogni Docs, most recently updated first.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -166,7 +166,7 @@
       {
         "name": "get_doc",
         "title": "Read a document",
-        "description": "Read the contents of one of the signed-in student's Focusly Docs.",
+        "description": "Read the contents of one of the signed-in student's Cogni Docs.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
