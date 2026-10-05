@@ -14,15 +14,15 @@ export const Route = createFileRoute("/updates")({
   component: UpdatesPage,
   head: () => ({
     meta: [
-      { title: "Updates — Focusly" },
-      { name: "description", content: "Release notes and product updates for Focusly." },
-      { property: "og:title", content: "Updates — Focusly" },
-      { property: "og:description", content: "Release notes and product updates for Focusly." },
+      { title: "Updates — Cogni" },
+      { name: "description", content: "Release notes and product updates for Cogni." },
+      { property: "og:title", content: "Updates — Cogni" },
+      { property: "og:description", content: "Release notes and product updates for Cogni." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://focuslystudent.lovable.app/updates" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Updates — Focusly" },
-      { name: "twitter:description", content: "Release notes and product updates for Focusly." },
+      { name: "twitter:title", content: "Updates — Cogni" },
+      { name: "twitter:description", content: "Release notes and product updates for Cogni." },
     ],
     links: [{ rel: "canonical", href: "https://focuslystudent.lovable.app/updates" }],
   }),
@@ -261,7 +261,7 @@ function UpdatesPage() {
 
       <footer className="border-t border-border/50 px-6 py-10">
         <div className="mx-auto max-w-3xl text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} Focusly · A Lura app
+          © {new Date().getFullYear()} Cogni · Part of the Cogni Suite
         </div>
       </footer>
     </div>

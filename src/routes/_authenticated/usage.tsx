@@ -11,7 +11,7 @@ import { PageHeader } from "@/components/app/PageHeader";
 export const Route = createFileRoute("/_authenticated/usage")({
   errorComponent: RouteError,
   component: UsagePage,
-  head: () => ({ meta: [{ title: "AI Usage — Focusly" }] }),
+  head: () => ({ meta: [{ title: "AI Usage — Cogni" }] }),
 });
 
 type Credits = {

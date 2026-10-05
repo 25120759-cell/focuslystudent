@@ -155,7 +155,7 @@ export function ErrorState({
  * Route-level error boundary UI. Re-runs the route loader before clearing the
  * boundary so retrying actually refetches.
  */
-export function RouteError({ error, reset }: { error: Error; reset?: () => void }) {
+export function RouteError({ error, reset }: { error: unknown; reset?: () => void } & Record<string, any>) {
   return (
     <div className="mx-auto max-w-2xl py-10">
       <ErrorState

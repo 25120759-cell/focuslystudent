@@ -15,7 +15,7 @@ import {
 export const Route = createFileRoute("/_authenticated/social")({
   errorComponent: RouteError,
   component: SocialPage,
-  head: () => ({ meta: [{ title: "Social — Focusly" }] }),
+  head: () => ({ meta: [{ title: "Social — Cogni" }] }),
 });
 
 interface FeedPost { id: string; user_id: string; body: string; like_count: number; created_at: string; author: string }

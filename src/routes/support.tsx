@@ -13,14 +13,14 @@ export const Route = createFileRoute("/support")({
   component: SupportPage,
   head: () => ({
     meta: [
-      { title: "Support — Focusly" },
-      { name: "description", content: "Help & docs for Focusly: study clock, assignments, AI assistant, rewards, cards, social, and settings." },
-      { property: "og:title", content: "Support — Focusly" },
+      { title: "Support — Cogni" },
+      { name: "description", content: "Help & docs for Cogni: study clock, assignments, AI assistant, rewards, cards, social, and settings." },
+      { property: "og:title", content: "Support — Cogni" },
       { property: "og:description", content: "Guides for the study clock, assignments, AI assistant, cards, social, and settings — plus a bug report link." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://focuslystudent.lovable.app/support" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Support — Focusly" },
+      { name: "twitter:title", content: "Support — Cogni" },
       { name: "twitter:description", content: "Guides for the study clock, assignments, AI assistant, cards, social, and settings." },
     ],
     links: [{ rel: "canonical", href: "https://focuslystudent.lovable.app/support" }],
@@ -31,7 +31,7 @@ const SECTIONS = [
   { icon: Clock, title: "Getting started", body: "Sign in with Google or email. The dashboard is the Study Clock by default — open the bottom pill to switch to Timetable or Files." },
   { icon: Clock, title: "Study Clock", body: "A Pomodoro timer with offline chimes and a fullscreen distraction-free mode. Customize study/break minutes in Settings." },
   { icon: Brain, title: "AI assistant & credits", body: "Open the floating ✦ button or press ⌘K. Free plan: 10 credits/day, 100/month. Pro: 100/day, 1000/month. Max: 500/day, 10000/month. The assistant can create, update, complete, and delete tasks for you." },
-  { icon: BookOpen, title: "Assignments", body: "Type a task naturally — 'read Hatchet ch 8 by Tue 9pm' — and Focusly parses the date. Click any assignment for its detail page with subtasks, notes, and edit/delete." },
+  { icon: BookOpen, title: "Assignments", body: "Type a task naturally — 'read Hatchet ch 8 by Tue 9pm' — and Cogni parses the date. Click any assignment for its detail page with subtasks, notes, and edit/delete." },
   { icon: MessageCircle, title: "Social & Cards", body: "Post on the Social feed, message classmates, earn coins, open card packs, and trade with other users." },
   { icon: Trophy, title: "Rewards", body: "Complete assignments to earn points (+3 each). Spend them on real vouchers (Starbucks, McDonald's, Amazon). Late submissions cost -5." },
   { icon: Settings, title: "Settings", body: "Theme (light/dark), font size, language (English/Mandarin), and AI personality. All settings persist across refresh." },
@@ -90,7 +90,7 @@ function SupportPage() {
             How can we <em className="not-italic text-primary">help</em>?
           </h1>
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground">
-            Browse the guides below, or ask the Support assistant — bottom-right. It only answers questions about Focusly.
+            Browse the guides below, or ask the Support assistant — bottom-right. It only answers questions about Cogni.
           </p>
 
           <motion.a
@@ -148,11 +148,11 @@ function SupportPage() {
             className="fixed bottom-24 right-6 z-50 w-[360px] max-w-[calc(100vw-3rem)] rounded-3xl glass border border-border shadow-2xl flex flex-col max-h-[70vh]"
           >
             <div className="flex items-center justify-between border-b border-border px-4 py-3">
-              <span className="font-display font-semibold text-sm flex items-center gap-2"><LifeBuoy className="h-4 w-4 text-primary" /> Focusly Support</span>
+              <span className="font-display font-semibold text-sm flex items-center gap-2"><LifeBuoy className="h-4 w-4 text-primary" /> Cogni Support</span>
               <button onClick={() => setOpen(false)} className="rounded-full p-1 hover:bg-accent"><X className="h-4 w-4" /></button>
             </div>
             <div className="flex-1 overflow-y-auto p-3 space-y-2 text-sm">
-              {messages.length === 0 && <p className="text-muted-foreground text-xs">Ask anything about how Focusly works. Off-topic questions will be redirected.</p>}
+              {messages.length === 0 && <p className="text-muted-foreground text-xs">Ask anything about how Cogni works. Off-topic questions will be redirected.</p>}
               {messages.map((m, i) => (
                 <motion.div
                   key={i}
@@ -169,7 +169,7 @@ function SupportPage() {
             </div>
             <div className="border-t border-border p-2 flex gap-2">
               <input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()}
-                placeholder={outOfCredits ? "AI credits are out" : user ? "Ask about Focusly..." : "Sign in to chat"} disabled={!user || loading || outOfCredits}
+                placeholder={outOfCredits ? "AI credits are out" : user ? "Ask about Cogni..." : "Sign in to chat"} disabled={!user || loading || outOfCredits}
                 className="flex-1 rounded-full border border-input bg-background px-3 py-1.5 text-sm disabled:opacity-50" />
               <button onClick={send} disabled={!user || loading || outOfCredits}
                 className="rounded-full bg-primary p-2 text-primary-foreground disabled:opacity-50">

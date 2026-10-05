@@ -11,7 +11,7 @@ import { PageHeader } from "@/components/app/PageHeader";
 export const Route = createFileRoute("/_authenticated/docs/")({
   errorComponent: RouteError,
   component: DocsList,
-  head: () => ({ meta: [{ title: "Focusly Docs — Focusly" }] }),
+  head: () => ({ meta: [{ title: "Cogni Docs — Cogni" }] }),
 });
 
 interface DocRow { id: string; title: string; word_count: number; paste_count: number; edit_seconds: number; share_token: string | null; updated_at: string; created_at: string }
@@ -58,7 +58,7 @@ function DocsList() {
       <PageHeader
         eyebrow="Write & prove it"
         icon={FileText}
-        title="Focusly"
+        title="Cogni"
         accent="Docs"
         description="A calm writing surface with built-in authorship verification, sharing, and live collaboration."
         actions={
@@ -77,7 +77,7 @@ function DocsList() {
         <EmptyState
           icon={FileText}
           title="No docs yet"
-          description="Start a doc and Focusly tracks your writing so you can prove the work is yours."
+          description="Start a doc and Cogni tracks your writing so you can prove the work is yours."
           action={
             <button onClick={makeNew} disabled={creating}
               className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50">

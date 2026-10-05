@@ -5,7 +5,7 @@ import { supabaseForUser } from "../supabase";
 export default defineTool({
   name: "get_doc",
   title: "Read a document",
-  description: "Read the contents of one of the signed-in student's Focusly Docs.",
+  description: "Read the contents of one of the signed-in student's Cogni Docs.",
   inputSchema: { id: z.string().uuid().describe("Document id from list_docs.") },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ id }, ctx) => {

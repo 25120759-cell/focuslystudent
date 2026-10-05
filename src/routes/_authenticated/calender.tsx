@@ -11,7 +11,7 @@ import { PageHeader } from "@/components/app/PageHeader";
 export const Route = createFileRoute("/_authenticated/calender")({
   errorComponent: RouteError,
   component: CalendarPage,
-  head: () => ({ meta: [{ title: "Calendar — Focusly" }] }),
+  head: () => ({ meta: [{ title: "Calendar — Cogni" }] }),
 });
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];

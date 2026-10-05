@@ -21,7 +21,7 @@ export function FocuslyAIWordmark({ className = "" }: { className?: string }) {
     <span className={`inline-flex items-center gap-1.5 font-display font-semibold tracking-tight ${className}`}>
       <FocuslyAILogo className="h-4 w-4" />
       <span>
-        Focusly<span className="bg-gradient-to-r from-primary to-[color:var(--gold)] bg-clip-text text-transparent">·AI</span>
+        Cogni<span className="bg-gradient-to-r from-primary to-[color:var(--gold)] bg-clip-text text-transparent">·AI</span>
       </span>
     </span>
   );

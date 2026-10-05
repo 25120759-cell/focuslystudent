@@ -42,7 +42,7 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: { error: any; reset: () => void }) {
   console.error(error);
   const router = useRouter();
   return (
@@ -64,18 +64,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Focusly Student" },
-      { name: "description", content: "Focusly is a study app with a clock, timetable, files, AI assistant, assignments, calendar, social features, cards, and gamified rewards." },
-      { property: "og:title", content: "Focusly Student" },
-      { name: "twitter:title", content: "Focusly Student" },
-      { property: "og:description", content: "Focusly is a study app with a clock, timetable, files, AI assistant, assignments, calendar, social features, cards, and gamified rewards." },
-      { name: "twitter:description", content: "Focusly is a study app with a clock, timetable, files, AI assistant, assignments, calendar, social features, cards, and gamified rewards." },
+      { title: "Cogni For Students" },
+      { name: "description", content: "Cogni is a study app with a clock, timetable, files, AI assistant, assignments, calendar, social features, cards, and gamified rewards." },
+      { property: "og:title", content: "Cogni For Students" },
+      { name: "twitter:title", content: "Cogni For Students" },
+      { property: "og:description", content: "Cogni is a study app with a clock, timetable, files, AI assistant, assignments, calendar, social features, cards, and gamified rewards." },
+      { name: "twitter:description", content: "Cogni is a study app with a clock, timetable, files, AI assistant, assignments, calendar, social features, cards, and gamified rewards." },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/9d42b122-f10b-4113-92b9-5133ac34ac46" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/9d42b122-f10b-4113-92b9-5133ac34ac46" },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:type", content: "website" },
     ],
     links: [
+      { rel: "icon", type: "image/png", href: "/favicon.png" },
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },

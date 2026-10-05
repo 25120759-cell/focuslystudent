@@ -12,14 +12,14 @@ export const Route = createFileRoute("/landing")({
   component: LandingPage,
   head: () => ({
     meta: [
-      { title: "Focusly — A calmer way to get schoolwork done" },
+      { title: "Cogni — A calmer way to get schoolwork done" },
       { name: "description", content: "Plan, focus, and finish your schoolwork with an offline-first AI study app. Calm by design, powerful when you need it." },
-      { property: "og:title", content: "Focusly — A calmer way to get schoolwork done" },
+      { property: "og:title", content: "Cogni — A calmer way to get schoolwork done" },
       { property: "og:description", content: "Offline-first AI study app: natural-language tasks, smart scheduling, focus timer, deep AI study aids, and a study-themed card game." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://focuslystudent.lovable.app/landing" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Focusly — A calmer way to get schoolwork done" },
+      { name: "twitter:title", content: "Cogni — A calmer way to get schoolwork done" },
       { name: "twitter:description", content: "Offline-first AI study app: natural-language tasks, smart scheduling, focus timer, deep AI study aids, and a study-themed card game." },
     ],
     links: [{ rel: "canonical", href: "https://focuslystudent.lovable.app/landing" }],
@@ -55,7 +55,7 @@ function LandingPage() {
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.15 }}
               className="mt-6 max-w-xl text-base md:text-lg leading-relaxed text-muted-foreground"
             >
-              Focusly is the study app that turns "essay due next Tuesday" into a real plan — broken into
+              Cogni is the study app that turns "essay due next Tuesday" into a real plan — broken into
               steps, scheduled around your day, and waiting for you offline.
             </motion.p>
             <motion.div
@@ -133,7 +133,7 @@ function LandingPage() {
           </div>
           <div className="mt-12 grid gap-8 md:grid-cols-3">
             {[
-              { icon: MessageCircle, t: "Type, don't form-fill", b: "Drop a sentence in. Focusly parses dates, times, and categories. No dropdowns." },
+              { icon: MessageCircle, t: "Type, don't form-fill", b: "Drop a sentence in. Cogni parses dates, times, and categories. No dropdowns." },
               { icon: Brain, t: "Plan stays adapted", b: "Plans reshuffle when your schedule changes. You always know what to do next." },
               { icon: WifiOff, t: "Always with you, even offline", b: "Tasks, notes, flashcards, and quizzes are cached locally and synced when you reconnect." },
             ].map((p) => (
@@ -158,7 +158,7 @@ function LandingPage() {
               Notes in. Study aids out.
             </h2>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-              Paste your lecture notes or textbook excerpt. Focusly returns a summary, flashcards, and a quiz
+              Paste your lecture notes or textbook excerpt. Cogni returns a summary, flashcards, and a quiz
               you can edit and regenerate by section.
             </p>
           </div>
@@ -284,7 +284,7 @@ function LandingPage() {
 
       {/* CTA */}
       <section className="mx-auto max-w-4xl px-6 pb-28 text-center">
-        <h2 className="font-display text-4xl md:text-5xl font-semibold">Close the tabs. Open Focusly.</h2>
+        <h2 className="font-display text-4xl md:text-5xl font-semibold">Close the tabs. Open Cogni.</h2>
         <p className="mt-4 text-base text-muted-foreground">Free to start. Three minutes to set up. Quieter studying from today.</p>
         <Link
           to="/signup"
@@ -296,7 +296,7 @@ function LandingPage() {
 
       <footer className="border-t border-border/60">
         <div className="mx-auto max-w-6xl px-6 py-10 flex flex-wrap items-center justify-between gap-4 text-sm text-muted-foreground">
-          <span>© {new Date().getFullYear()} Focusly · A Lura app</span>
+          <span>© {new Date().getFullYear()} Cogni · Part of the Cogni Suite</span>
           <div className="flex gap-4">
             <Link to="/engagement" className="hover:text-foreground">Community</Link>
             <Link to="/plans" className="hover:text-foreground">Plans</Link>

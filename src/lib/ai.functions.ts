@@ -15,9 +15,9 @@ const PLAN_LIMITS: Record<string, { day: number; month: number; max_chars: numbe
 const SUPPORT_DAY_LIMIT = 30;
 
 const PERSONAS = {
-  tutor: "You are Focusly, a friendly Socratic tutor. Explain step-by-step, ask guiding questions, keep replies concise.",
-  coach: "You are Focusly, an encouraging study coach. Be motivating, concise, and action-oriented.",
-  zen: "You are Focusly, a calm zen guide. Speak gently and help reduce study anxiety.",
+  tutor: "You are Cogni, a friendly Socratic tutor. Explain step-by-step, ask guiding questions, keep replies concise.",
+  coach: "You are Cogni, an encouraging study coach. Be motivating, concise, and action-oriented.",
+  zen: "You are Cogni, a calm zen guide. Speak gently and help reduce study anxiety.",
 };
 
 type PlanInfo = { plan: "free" | "pro" | "max"; day: number; month: number; max_chars: number; allow_vision: boolean; pro_model: boolean; monthly_credit_override: number | null };
@@ -234,7 +234,7 @@ export const parseTask = createServerFn({ method: "POST" })
 
 // ---- Support chatbot ----
 
-const SUPPORT_PROMPT = `You are the Focusly Support assistant. You ONLY answer questions about how to use the Focusly app:
+const SUPPORT_PROMPT = `You are the Cogni Support assistant. You ONLY answer questions about how to use the Cogni app:
 - The Study Clock (Pomodoro timer with chimes)
 - Timetable and Files
 - Assignments (creating, editing, deleting, subtasks, AI quick-add)
@@ -242,7 +242,7 @@ const SUPPORT_PROMPT = `You are the Focusly Support assistant. You ONLY answer q
 - AI assistant (credits, plan codes), Settings (theme, font size, language)
 - Account / sign-in / privacy
 
-If the user asks anything unrelated, politely refuse in one sentence and steer them back to Focusly support. Be concise. Use bullets for steps.`;
+If the user asks anything unrelated, politely refuse in one sentence and steer them back to Cogni support. Be concise. Use bullets for steps.`;
 
 export const aiSupport = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -295,7 +295,7 @@ export const adminGeneratePost = createServerFn({ method: "POST" })
     const json = await callGateway({
       model,
       messages: [
-        { role: "system", content: 'You are the Focusly changelog writer. Generate a release note. Return ONLY JSON: {"title":string (under 80 chars),"summary":string (under 160 chars, plain),"body":string (markdown, 2-4 short paragraphs)}' },
+        { role: "system", content: 'You are the Cogni changelog writer. Generate a release note. Return ONLY JSON: {"title":string (under 80 chars),"summary":string (under 160 chars, plain),"body":string (markdown, 2-4 short paragraphs)}' },
         { role: "user", content: data.prompt },
       ],
       response_format: { type: "json_object" },
@@ -369,7 +369,7 @@ export const adminGeneratePostImage = createServerFn({ method: "POST" })
       body: JSON.stringify({
         model: "google/gemini-2.5-flash-image",
         messages: [
-          { role: "user", content: `Editorial cover image for a Focusly product update titled "${data.title}". Concept: ${data.prompt}. Modern minimal illustration, soft gradient palette, no embedded text.` },
+          { role: "user", content: `Editorial cover image for a Cogni product update titled "${data.title}". Concept: ${data.prompt}. Modern minimal illustration, soft gradient palette, no embedded text.` },
         ],
         modalities: ["image", "text"],
       }),
@@ -456,7 +456,7 @@ export const aiBreakdownAssignment = createServerFn({ method: "POST" })
       ? "PRO plan: produce 4-7 subtasks, a concise schedule, and 2-3 tips."
       : "FREE plan: produce 3-5 short subtasks, a brief schedule, and 2 tips.";
 
-    const sys = `You are a study planner for the Focusly app. Today is ${today}. ${planNote}
+    const sys = `You are a study planner for the Cogni app. Today is ${today}. ${planNote}
 Return ONLY JSON matching this shape: ${targetSchema}
 Schedule sessions before the due date, prefer 25-50 min blocks afternoon/evening, leave a buffer day.`;
 

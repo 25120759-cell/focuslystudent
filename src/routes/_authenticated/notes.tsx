@@ -14,7 +14,7 @@ import { PageHeader } from "@/components/app/PageHeader";
 export const Route = createFileRoute("/_authenticated/notes")({
   errorComponent: RouteError,
   component: NotesPage,
-  head: () => ({ meta: [{ title: "AI Notes — Focusly" }] }),
+  head: () => ({ meta: [{ title: "AI Notes — Cogni" }] }),
 });
 
 type Flashcard = { front: string; back: string };

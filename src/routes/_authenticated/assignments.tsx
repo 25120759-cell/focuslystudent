@@ -15,7 +15,7 @@ import { PageHeader } from "@/components/app/PageHeader";
 export const Route = createFileRoute("/_authenticated/assignments")({
   errorComponent: RouteError,
   component: AssignmentsPage,
-  head: () => ({ meta: [{ title: "Assignments — Focusly" }] }),
+  head: () => ({ meta: [{ title: "Assignments — Cogni" }] }),
 });
 
 function AssignmentsPage() {
@@ -95,7 +95,7 @@ function AssignmentsPage() {
         eyebrow="Your workload"
         icon={ClipboardList}
         title={t("assignments")}
-        description="Everything due, in one calm list. Type a sentence and Focusly turns it into a scheduled task."
+        description="Everything due, in one calm list. Type a sentence and Cogni turns it into a scheduled task."
       />
 
       <div className="paper p-5">
@@ -167,7 +167,7 @@ function AssignmentsPage() {
           <EmptyState
             icon={ClipboardList}
             title="Nothing due — yet"
-            description="Type something like “Read Hatchet ch 8 by Tuesday 9pm” in the quick add box and Focusly will schedule it for you."
+            description="Type something like “Read Hatchet ch 8 by Tuesday 9pm” in the quick add box and Cogni will schedule it for you."
           />
         )}
         {loaded && !loadErr && assignments.length > 0 && openList.length === 0 && (

@@ -8,15 +8,16 @@ import { Timetable } from "@/components/console/Timetable";
 import { FilesView } from "@/components/console/FilesView";
 import { AIChat } from "@/components/AIChat";
 import { PageHeader } from "@/components/app/PageHeader";
+import { ClassSummary } from "@/components/console/ClassSummary";
 
 export const Route = createFileRoute("/_authenticated/app")({
   errorComponent: RouteError,
   component: Console,
   head: () => ({
     meta: [
-      { title: "Console — Focusly" },
+      { title: "Console — Cogni" },
       { name: "description", content: "Your study console: focus clock, timetable, and files in one calm place." },
-      { property: "og:title", content: "Console — Focusly" },
+      { property: "og:title", content: "Console — Cogni" },
       { property: "og:description", content: "Your study console: focus clock, timetable, and files in one calm place." },
     ],
   }),
@@ -63,6 +64,8 @@ function Console() {
         accent={meta.accent}
         description={meta.blurb}
       />
+
+      <ClassSummary />
 
       <AnimatePresence mode="wait">
         <motion.div

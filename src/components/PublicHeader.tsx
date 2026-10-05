@@ -1,3 +1,4 @@
+import cogniMark from "@/assets/cogni-mark.png";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Sparkles } from "lucide-react";
 import { useAuth } from "@/lib/auth";
@@ -19,10 +20,8 @@ export function PublicHeader() {
       <div className="mx-auto max-w-6xl px-4 py-3 sm:px-6">
         <div className="flex items-center justify-between gap-3">
           <Link to="/landing" className="group inline-flex shrink-0 items-center gap-2 font-display text-lg font-semibold tracking-tight sm:text-xl">
-            <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary transition group-hover:bg-primary/15">
-              <Sparkles className="h-3.5 w-3.5" />
-            </span>
-            Focusly
+            <img src={cogniMark} alt="" className="h-7 w-7 shrink-0 rounded-full object-cover" />
+            Cogni <span className="text-muted-foreground font-normal">for Students</span>
           </Link>
 
           <nav className="hidden items-center justify-end gap-0.5 text-sm md:flex">

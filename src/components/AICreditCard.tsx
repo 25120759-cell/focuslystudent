@@ -56,7 +56,7 @@ export function AICreditCard({ dayUsed, monthUsed, dayLimit, monthLimit, plan }:
             <FocuslyAILogo className="h-4 w-4" />
           </motion.div>
           <div className="leading-tight">
-            <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Focusly AI</div>
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Cogni AI</div>
             <div className={`text-xs font-medium ${out ? "text-destructive" : "text-foreground"}`}>
               {out ? "Out of credits" : `${plan.toUpperCase()} plan`}
             </div>
