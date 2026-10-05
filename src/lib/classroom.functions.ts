@@ -412,3 +412,29 @@ export const classNotifications = createServerFn({ method: "POST" })
 
     return { notifications };
   });
+
+/** Console summary: upcoming due classwork + latest announcements across joined classes. */
+export const consoleSummary = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { userId } = context as any;
+    const supabase: any = (context as any).supabase;
+    const { data: enrollments } = await supabase.from("enrollments").select("classroom_id").eq("user_id", userId);
+    const ids = (enrollments ?? []).map((e: any) => e.classroom_id);
+    if (!ids.length) return { due: [], announcements: [] };
+    const [{ data: classes }, { data: due }, { data: anns }, { data: subs }] = await Promise.all([
+      supabase.from("classrooms").select("id, title").in("id", ids),
+      supabase.from("class_assignments").select("id, classroom_id, title, due_date, points")
+        .in("classroom_id", ids).eq("status", "published").gte("due_date", new Date().toISOString())
+        .order("due_date", { ascending: true }).limit(6),
+      supabase.from("announcements").select("id, classroom_id, content, created_at")
+        .in("classroom_id", ids).order("created_at", { ascending: false }).limit(4),
+      supabase.from("submissions").select("assignment_id, submitted_at").eq("student_id", userId),
+    ]);
+    const title = new Map<string, string>((classes ?? []).map((c: any) => [c.id, c.title]));
+    const done = new Set((subs ?? []).filter((s: any) => s.submitted_at).map((s: any) => s.assignment_id));
+    return {
+      due: (due ?? []).map((a: any) => ({ ...a, classroom_title: title.get(a.classroom_id) ?? "Class", submitted: done.has(a.id) })),
+      announcements: (anns ?? []).map((a: any) => ({ ...a, content: String(a.content).slice(0, 160), classroom_title: title.get(a.classroom_id) ?? "Class" })),
+    };
+  });

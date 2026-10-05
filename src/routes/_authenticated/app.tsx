@@ -8,6 +8,7 @@ import { Timetable } from "@/components/console/Timetable";
 import { FilesView } from "@/components/console/FilesView";
 import { AIChat } from "@/components/AIChat";
 import { PageHeader } from "@/components/app/PageHeader";
+import { ClassSummary } from "@/components/console/ClassSummary";
 
 export const Route = createFileRoute("/_authenticated/app")({
   errorComponent: RouteError,
@@ -63,6 +64,8 @@ function Console() {
         accent={meta.accent}
         description={meta.blurb}
       />
+
+      <ClassSummary />
 
       <AnimatePresence mode="wait">
         <motion.div
