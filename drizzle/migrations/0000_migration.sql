@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Auth users read others cards" ON public.user_cards;
