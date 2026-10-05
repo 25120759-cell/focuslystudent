@@ -6,6 +6,8 @@ import {
   Eye, FileText, ImageIcon,
 } from "lucide-react";
 import { PublicHeader } from "@/components/PublicHeader";
+import { CogniIntro } from "@/components/CogniIntro";
+import cogniMark from "@/assets/cogni-mark.png";
 
 export const Route = createFileRoute("/landing")({
   ssr: false,
@@ -29,6 +31,7 @@ export const Route = createFileRoute("/landing")({
 function LandingPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <CogniIntro />
       <PublicHeader />
 
       {/* HERO */}
@@ -43,13 +46,13 @@ function LandingPage() {
               initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
               className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
             >
-              <Sparkles className="h-3 w-3" /> Calmly engineered for students
+              <img src={cogniMark} alt="" className="h-3.5 w-3.5 object-contain" /> Cogni For Students · part of the Cogni Suite
             </motion.div>
             <motion.h1
               initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.05 }}
               className="mt-6 font-display text-5xl md:text-7xl font-semibold tracking-tight leading-[1.05]"
             >
-              School, <em className="not-italic text-primary">without</em> the chaos.
+              Think clearly. <em className="not-italic text-primary">Study calmly.</em>
             </motion.h1>
             <motion.p
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.15 }}
