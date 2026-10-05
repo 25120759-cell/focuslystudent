@@ -17,6 +17,7 @@ import { PageHeader } from "@/components/app/PageHeader";
 import { AsyncSection, EmptyState, ErrorState, RouteError, SkeletonList } from "@/components/app/States";
 import { getClassroom, addAnnouncementComment, submitWork, unsubmitWork } from "@/lib/classroom.functions";
 import { celebrate } from "@/components/app/Celebration";
+import { listDocs } from "@/lib/docs.functions";
 
 export const Route = createFileRoute("/_authenticated/classes/$id")({
   errorComponent: RouteError,
@@ -467,5 +468,34 @@ function Grades({ assignments, submissions }: { assignments: any[]; submissions:
         );
       })}
     </div>
+  );
+}
+
+function AttachDoc({ onPick }: { onPick: (line: string) => void }) {
+  const listFn = useServerFn(listDocs);
+  const [docs, setDocs] = useState<any[] | null>(null);
+  useEffect(() => {
+    listFn().then((r: any) => setDocs(r.docs ?? [])).catch(() => setDocs([]));
+  }, []);
+  if (!docs || docs.length === 0) return null;
+  return (
+    <select
+      defaultValue=""
+      onChange={(e) => {
+        const d = docs.find((x) => x.id === e.target.value);
+        if (!d) return;
+        const url = d.share_token
+          ? `${window.location.origin}/docs/share/${d.share_token}`
+          : `${window.location.origin}/docs/${d.id}`;
+        onPick(`Cogni Doc: ${d.title || "Untitled"} — ${url}`);
+        e.target.value = "";
+      }}
+      className="mt-3 w-full rounded-xl border border-border/70 bg-background px-3 py-2 text-sm"
+    >
+      <option value="">Attach one of your Cogni Docs…</option>
+      {docs.map((d) => (
+        <option key={d.id} value={d.id}>{d.title || "Untitled"}</option>
+      ))}
+    </select>
   );
 }
