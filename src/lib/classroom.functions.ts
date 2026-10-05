@@ -3,7 +3,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 /**
- * Shared data model with Focusly Teacher.
+ * Shared data model with Cogni Teacher.
  * Field names match the teacher app exactly (classrooms, enrollments, announcements,
  * class_assignments, submissions, student_metrics, ai_insights).
  */

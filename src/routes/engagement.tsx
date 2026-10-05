@@ -9,14 +9,14 @@ export const Route = createFileRoute("/engagement")({
   component: EngagementPage,
   head: () => ({
     meta: [
-      { title: "Community & Cards — Focusly" },
-      { name: "description", content: "Focusly is more than tasks. Chat with other students, post wins to the feed, and collect 500 study-themed trading cards." },
-      { property: "og:title", content: "Community & Cards — Focusly" },
+      { title: "Community & Cards — Cogni" },
+      { name: "description", content: "Cogni is more than tasks. Chat with other students, post wins to the feed, and collect 500 study-themed trading cards." },
+      { property: "og:title", content: "Community & Cards — Cogni" },
       { property: "og:description", content: "Post wins, DM classmates, and open packs of a 500-card study-themed TCG." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://focuslystudent.lovable.app/engagement" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Community & Cards — Focusly" },
+      { name: "twitter:title", content: "Community & Cards — Cogni" },
       { name: "twitter:description", content: "Post wins, DM classmates, and open packs of a 500-card study-themed TCG." },
     ],
     links: [{ rel: "canonical", href: "https://focuslystudent.lovable.app/engagement" }],
@@ -51,11 +51,11 @@ function EngagementPage() {
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}
             className="mx-auto mt-6 max-w-2xl text-base md:text-lg text-muted-foreground"
           >
-            Focusly isn't just a planner. Post wins, chat with classmates, and collect 500 study-themed trading cards — including one you'll almost never see.
+            Cogni isn't just a planner. Post wins, chat with classmates, and collect 500 study-themed trading cards — including one you'll almost never see.
           </motion.p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link to="/signup" className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-sm hover:opacity-90">
-              Join Focusly <ArrowRight className="h-4 w-4" />
+              Join Cogni <ArrowRight className="h-4 w-4" />
             </Link>
             <Link to="/landing" className="inline-flex items-center rounded-full border border-border px-6 py-3 text-sm font-medium hover:bg-accent/40">
               See the study tools
@@ -139,7 +139,7 @@ function EngagementPage() {
 
       <footer className="border-t border-border/60">
         <div className="mx-auto max-w-6xl px-6 py-10 flex flex-wrap items-center justify-between gap-4 text-sm text-muted-foreground">
-          <span>© {new Date().getFullYear()} Focusly · A Lura app</span>
+          <span>© {new Date().getFullYear()} Cogni · Part of the Cogni Suite</span>
           <div className="flex gap-4">
             <Link to="/landing" className="hover:text-foreground">Home</Link>
             <Link to="/plans" className="hover:text-foreground">Plans</Link>

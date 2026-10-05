@@ -20,7 +20,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
     if (!data) throw redirect({ to: "/app" });
   },
   component: AdminPage,
-  head: () => ({ meta: [{ title: "Admin — Focusly" }] }),
+  head: () => ({ meta: [{ title: "Admin — Cogni" }] }),
 });
 
 interface UserRow { id: string; display_name: string | null; plan: string; monthly_credit_override: number | null; created_at: string }

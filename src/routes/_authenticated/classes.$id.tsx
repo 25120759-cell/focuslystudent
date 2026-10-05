@@ -23,9 +23,9 @@ export const Route = createFileRoute("/_authenticated/classes/$id")({
   component: ClassDetail,
   head: () => ({
     meta: [
-      { title: "Class — Focusly" },
+      { title: "Class — Cogni" },
       { name: "description", content: "Class stream, classwork, and grades from your teacher." },
-      { property: "og:title", content: "Class — Focusly" },
+      { property: "og:title", content: "Class — Cogni" },
       { property: "og:description", content: "Class stream, classwork, and grades from your teacher." },
     ],
   }),

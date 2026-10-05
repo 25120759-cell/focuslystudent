@@ -16,14 +16,14 @@ export const Route = createFileRoute("/docs/share/$token")({
   component: SharedDoc,
   head: ({ params }) => ({
     meta: [
-      { title: "Authorship report — Focusly Docs" },
-      { name: "description", content: "A verified Focusly Docs authorship report showing writing time, edits, and paste activity for this document." },
-      { property: "og:title", content: "Authorship report — Focusly Docs" },
+      { title: "Authorship report — Cogni Docs" },
+      { name: "description", content: "A verified Cogni Docs authorship report showing writing time, edits, and paste activity for this document." },
+      { property: "og:title", content: "Authorship report — Cogni Docs" },
       { property: "og:description", content: "Verified proof of how this document was written: writing time, edit history, and paste activity." },
       { property: "og:type", content: "article" },
       { property: "og:url", content: `https://focuslystudent.lovable.app/docs/share/${params.token}` },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Authorship report — Focusly Docs" },
+      { name: "twitter:title", content: "Authorship report — Cogni Docs" },
       { name: "twitter:description", content: "Verified proof of how this document was written." },
       { name: "robots", content: "noindex" },
     ],
@@ -119,7 +119,7 @@ function SharedDoc() {
           <div className="flex flex-wrap items-center gap-3">
             <div className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 ${style.color}`}><Icon className="h-6 w-6" /></div>
             <div className="min-w-0 flex-1">
-              <p className="text-[11px] uppercase tracking-widest text-muted-foreground flex items-center gap-1"><Sparkles className="h-3 w-3" /> Focusly Authorship Report</p>
+              <p className="text-[11px] uppercase tracking-widest text-muted-foreground flex items-center gap-1"><Sparkles className="h-3 w-3" /> Cogni Authorship Report</p>
               <h2 className={`font-display text-xl font-semibold ${style.color}`}>{unsure ? "Unsure — marked for review" : a.label}</h2>
             </div>
             <Button variant="outline" size="sm" className="rounded-full" onClick={onExport} disabled={exporting}>
@@ -210,7 +210,7 @@ function SharedDoc() {
           )}
 
           <p className="mt-6 text-[11px] text-muted-foreground">
-            This report is generated from edit telemetry captured by Focusly Docs while the author was writing. A high score means the recorded keystrokes account for the finished text; it cannot prove the wording was not dictated or copied by hand. Where telemetry confidence is low, or a reviewer has marked the report unsure, treat the result as indicative rather than conclusive.
+            This report is generated from edit telemetry captured by Cogni Docs while the author was writing. A high score means the recorded keystrokes account for the finished text; it cannot prove the wording was not dictated or copied by hand. Where telemetry confidence is low, or a reviewer has marked the report unsure, treat the result as indicative rather than conclusive.
           </p>
         </div>
 
@@ -226,7 +226,7 @@ function SharedDoc() {
         </article>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          Created with <Link to="/landing" className="underline">Focusly Docs</Link>
+          Created with <Link to="/landing" className="underline">Cogni Docs</Link>
         </p>
       </motion.div>
     </div>

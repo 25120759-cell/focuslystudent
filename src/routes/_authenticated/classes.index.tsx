@@ -12,9 +12,9 @@ export const Route = createFileRoute("/_authenticated/classes/")({
   component: ClassesPage,
   head: () => ({
     meta: [
-      { title: "Classes — Focusly" },
+      { title: "Classes — Cogni" },
       { name: "description", content: "Join your teacher's classes, read the stream, and track classwork and grades." },
-      { property: "og:title", content: "Classes — Focusly" },
+      { property: "og:title", content: "Classes — Cogni" },
       { property: "og:description", content: "Join your teacher's classes, read the stream, and track classwork and grades." },
     ],
   }),
@@ -88,7 +88,7 @@ function ClassesPage() {
   return (
     <div className="space-y-8 rise-in">
       <PageHeader
-        eyebrow="Focusly Teacher"
+        eyebrow="Cogni Teacher"
         icon={GraduationCap}
         title="Your"
         accent="Classes"
@@ -165,7 +165,7 @@ function ClassesPage() {
           <EmptyState
             icon={DoorOpen}
             title="No classes yet"
-            description="Ask your teacher for the class code from Focusly Teacher, then enter it above to join."
+            description="Ask your teacher for the class code from Cogni Teacher, then enter it above to join."
           />
         }
       >

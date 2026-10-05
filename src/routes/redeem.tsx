@@ -40,15 +40,15 @@ export const Route = createFileRoute("/redeem")({
   component: RedeemPage,
   head: () => ({
     meta: [
-      { title: "Redeem your plan code — Focusly" },
-      { name: "description", content: "Enter a Focusly redemption code to activate Pro or Max on your account." },
-      { property: "og:title", content: "Redeem your plan code — Focusly" },
-      { property: "og:description", content: "Enter a Focusly redemption code to activate Pro or Max on your account." },
+      { title: "Redeem your plan code — Cogni" },
+      { name: "description", content: "Enter a Cogni redemption code to activate Pro or Max on your account." },
+      { property: "og:title", content: "Redeem your plan code — Cogni" },
+      { property: "og:description", content: "Enter a Cogni redemption code to activate Pro or Max on your account." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://focuslystudent.lovable.app/redeem" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Redeem your plan code — Focusly" },
-      { name: "twitter:description", content: "Enter a Focusly redemption code to activate Pro or Max on your account." },
+      { name: "twitter:title", content: "Redeem your plan code — Cogni" },
+      { name: "twitter:description", content: "Enter a Cogni redemption code to activate Pro or Max on your account." },
       { name: "robots", content: "noindex" },
     ],
     links: [{ rel: "canonical", href: "https://focuslystudent.lovable.app/redeem" }],
@@ -107,7 +107,7 @@ function RedeemPage() {
               <Icon className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-xs uppercase tracking-widest opacity-80">Focusly</p>
+              <p className="text-xs uppercase tracking-widest opacity-80">Cogni</p>
               <h1 className="font-display text-3xl font-semibold">{details.name}</h1>
             </div>
             <span className="ml-auto rounded-full bg-white/20 px-3 py-1 text-sm font-medium backdrop-blur">{details.price}</span>

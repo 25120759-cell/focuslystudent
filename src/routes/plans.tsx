@@ -9,14 +9,14 @@ export const Route = createFileRoute("/plans")({
   component: PlansPage,
   head: () => ({
     meta: [
-      { title: "Plans & Pricing — Focusly" },
+      { title: "Plans & Pricing — Cogni" },
       { name: "description", content: "Free is a real full-featured plan. Pro and Max just give you more AI, more packs, and smarter models." },
-      { property: "og:title", content: "Plans & Pricing — Focusly" },
+      { property: "og:title", content: "Plans & Pricing — Cogni" },
       { property: "og:description", content: "Free is fully-featured. Pro and Max only scale AI credits, daily limits, and model power." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://focuslystudent.lovable.app/plans" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Plans & Pricing — Focusly" },
+      { name: "twitter:title", content: "Plans & Pricing — Cogni" },
       { name: "twitter:description", content: "Free is fully-featured. Pro and Max only scale AI credits, daily limits, and model power." },
     ],
     links: [{ rel: "canonical", href: "https://focuslystudent.lovable.app/plans" }],
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/plans")({
 });
 
 const FREE_INCLUDES = [
-  "Every study tool: assignments, calendar, timetable, focus clock, Focusly Docs, files",
+  "Every study tool: assignments, calendar, timetable, focus clock, Cogni Docs, files",
   "Social feed, direct messages, and the full 500-card collectible game",
   "AI chat, AI study notes, AI assignment breakdown — all included",
   "Offline-first — everything you make is saved on your device too",
@@ -46,7 +46,7 @@ const PLANS = [
       "All features unlocked",
     ],
     limits: "AI stops responding once you hit your daily or monthly limit. Everything else keeps working.",
-    cta: "Open Focusly",
+    cta: "Open Cogni",
     href: "/app",
     icon: Zap,
   },
@@ -242,7 +242,7 @@ function PlansPage() {
           <Faq q="Does Free ever expire or turn into a trial?" a="No. Free is a permanent plan. You never lose features — only AI credits refill monthly." />
           <Faq q="What counts as one AI credit?" a="One reply from the AI chat, one generated study note pack, one assignment breakdown, or one AI-generated image on Docs." />
           <Faq q="How do I actually upgrade?" a="Payments aren't in the app yet — Pro and Max are activated with a redemption code from an admin. Click Go Pro or Go Max and paste the code on the /redeem page." />
-          <Faq q="What happens when I run out of credits?" a="AI features pause with a red banner. Every other part of Focusly keeps working — timetable, docs, cards, social, files. AI resets each day and each month." />
+          <Faq q="What happens when I run out of credits?" a="AI features pause with a red banner. Every other part of Cogni keeps working — timetable, docs, cards, social, files. AI resets each day and each month." />
         </div>
       </section>
 

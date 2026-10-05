@@ -35,7 +35,7 @@ export async function exportAuthorshipPdf(opts: {
     y += lines.length * (size + 3);
   };
 
-  text("Focusly Authorship Report", 20, "bold");
+  text("Cogni Authorship Report", 20, "bold");
   y += 4;
   text(opts.title || "Untitled document", 13, "bold", [90, 90, 90]);
   text(`Author: ${opts.author}   ·   Last edited: ${new Date(opts.updatedAt).toLocaleString()}`, 9, "normal", [120, 120, 120]);
@@ -132,7 +132,7 @@ export async function exportAuthorshipPdf(opts: {
 
   y += 8;
   text(
-    "This report is generated from edit telemetry captured by Focusly Docs while the author was writing. A high score means recorded keystrokes account for the finished text; it cannot prove the wording was not dictated or copied by hand. Where confidence is low or the reviewer has marked the report unsure, the result should be treated as indicative only.",
+    "This report is generated from edit telemetry captured by Cogni Docs while the author was writing. A high score means recorded keystrokes account for the finished text; it cannot prove the wording was not dictated or copied by hand. Where confidence is low or the reviewer has marked the report unsure, the result should be treated as indicative only.",
     8,
     "normal",
     [140, 140, 140],

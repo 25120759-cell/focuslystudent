@@ -111,7 +111,7 @@ export function FilesView() {
             <div>
               <FileText className="mx-auto mb-2 h-8 w-8 opacity-40" />
               Select or create a file to get started.
-              <p className="mt-2 text-xs">For long-form writing with formatting, try <strong>Focusly Docs</strong>.</p>
+              <p className="mt-2 text-xs">For long-form writing with formatting, try <strong>Cogni Docs</strong>.</p>
             </div>
           </div>
         )}

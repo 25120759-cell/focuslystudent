@@ -11,7 +11,7 @@ import { rarityGradient, rarityRing, rarityLabel, getCatalog, CARD_SELL_VALUE, C
 export const Route = createFileRoute("/_authenticated/cards")({
   errorComponent: RouteError,
   component: CardsPage,
-  head: () => ({ meta: [{ title: "Cards — Focusly" }] }),
+  head: () => ({ meta: [{ title: "Cards — Cogni" }] }),
 });
 
 interface Wallet { coins: number; plan: string; packsOpened: number; packLimit: number; packCost: number }
@@ -176,7 +176,7 @@ function CardsPage() {
       <PageHeader
         eyebrow="Collect · trade · flex"
         icon={Sparkles}
-        title="Focusly"
+        title="Cogni"
         accent="Cards"
         description="Earn coins by studying, open packs, and hunt the one-of-a-million Eclipse card."
         actions={wallet ? (

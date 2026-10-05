@@ -9,7 +9,7 @@ import { useAuth } from "@/lib/auth";
 export const Route = createFileRoute("/_authenticated/settings")({
   errorComponent: RouteError,
   component: SettingsPage,
-  head: () => ({ meta: [{ title: "Settings — Focusly" }] }),
+  head: () => ({ meta: [{ title: "Settings — Cogni" }] }),
 });
 
 const SECTIONS = [
@@ -132,7 +132,7 @@ function SettingsPage() {
           </div>
         </Section>
 
-        <Section id="ai" title="AI assistant" desc="How Focusly AI talks to you.">
+        <Section id="ai" title="AI assistant" desc="How Cogni AI talks to you.">
           <Row label="Personality">
             <Seg<"tutor" | "coach" | "zen"> value={s.assistantPersonality} options={[{ v: "tutor", label: "Tutor" }, { v: "coach", label: "Coach" }, { v: "zen", label: "Zen" }]} onChange={(v) => patch({ assistantPersonality: v })} />
           </Row>

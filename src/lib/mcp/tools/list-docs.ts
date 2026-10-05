@@ -5,7 +5,7 @@ import { supabaseForUser } from "../supabase";
 export default defineTool({
   name: "list_docs",
   title: "List documents",
-  description: "List the signed-in student's Focusly Docs, most recently updated first.",
+  description: "List the signed-in student's Cogni Docs, most recently updated first.",
   inputSchema: {
     limit: z.number().int().min(1).max(100).optional().describe("Maximum rows to return (default 25)."),
   },

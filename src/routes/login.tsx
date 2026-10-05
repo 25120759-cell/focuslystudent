@@ -13,14 +13,14 @@ export const Route = createFileRoute("/login")({
   component: LoginPage,
   head: () => ({
     meta: [
-      { title: "Sign in — Focusly" },
-      { name: "description", content: "Sign in to Focusly to sync your study plan, notes, cards, and AI credits across your devices." },
-      { property: "og:title", content: "Sign in — Focusly" },
+      { title: "Sign in — Cogni" },
+      { name: "description", content: "Sign in to Cogni to sync your study plan, notes, cards, and AI credits across your devices." },
+      { property: "og:title", content: "Sign in — Cogni" },
       { property: "og:description", content: "Pick up your plan on any device. Google or email, up to you." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://focuslystudent.lovable.app/login" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Sign in — Focusly" },
+      { name: "twitter:title", content: "Sign in — Cogni" },
       { name: "twitter:description", content: "Pick up your plan on any device. Google or email, up to you." },
       { name: "robots", content: "noindex" },
     ],
@@ -139,7 +139,7 @@ function LoginPage() {
               </form>
 
               <p className="mt-6 text-center text-xs text-muted-foreground">
-                New to Focusly? <Link to="/signup" className="text-primary underline underline-offset-2">Create an account</Link>
+                New to Cogni? <Link to="/signup" className="text-primary underline underline-offset-2">Create an account</Link>
               </p>
               <p className="mt-2 text-center text-xs text-muted-foreground">
                 <Link to="/landing" className="hover:text-foreground">← Back to site</Link>

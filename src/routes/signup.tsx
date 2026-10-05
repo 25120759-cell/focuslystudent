@@ -11,14 +11,14 @@ export const Route = createFileRoute("/signup")({
   component: SignupPage,
   head: () => ({
     meta: [
-      { title: "Create your Focusly account" },
+      { title: "Create your Cogni account" },
       { name: "description", content: "Free forever. 100 AI credits every month. Sign up in under a minute." },
-      { property: "og:title", content: "Create your Focusly account" },
+      { property: "og:title", content: "Create your Cogni account" },
       { property: "og:description", content: "Free forever. 100 AI credits every month. All study tools included." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://focuslystudent.lovable.app/signup" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Create your Focusly account" },
+      { name: "twitter:title", content: "Create your Cogni account" },
       { name: "twitter:description", content: "Free forever. 100 AI credits every month. All study tools included." },
     ],
     links: [{ rel: "canonical", href: "https://focuslystudent.lovable.app/signup" }],

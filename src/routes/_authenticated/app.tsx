@@ -14,9 +14,9 @@ export const Route = createFileRoute("/_authenticated/app")({
   component: Console,
   head: () => ({
     meta: [
-      { title: "Console — Focusly" },
+      { title: "Console — Cogni" },
       { name: "description", content: "Your study console: focus clock, timetable, and files in one calm place." },
-      { property: "og:title", content: "Console — Focusly" },
+      { property: "og:title", content: "Console — Cogni" },
       { property: "og:description", content: "Your study console: focus clock, timetable, and files in one calm place." },
     ],
   }),

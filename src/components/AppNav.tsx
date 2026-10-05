@@ -80,7 +80,7 @@ export function AppNav() {
       <div ref={ref} className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-5">
         {/* Wordmark */}
         <Link to="/app" className="group flex shrink-0 items-baseline gap-2">
-          <span className="font-display text-lg font-semibold tracking-tight">Focusly</span>
+          <span className="font-display text-lg font-semibold tracking-tight">Cogni</span>
           <Sparkles className="h-3.5 w-3.5 text-[color:var(--gold)] transition-transform duration-500 group-hover:rotate-180" />
         </Link>
 

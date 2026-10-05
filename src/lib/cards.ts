@@ -1,4 +1,4 @@
-// 500-card procedural catalog for the Focusly TCG.
+// 500-card procedural catalog for the Cogni TCG.
 // Cards are referenced by integer id (0-499). Id 0 is the unique Eclipse card.
 
 import eclipseArt from "@/assets/eclipse-card.jpg";

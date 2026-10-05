@@ -11,8 +11,8 @@ export const Route = createFileRoute("/updates/$slug")({
   component: PostPage,
   head: ({ params }) => {
     const url = `https://focuslystudent.lovable.app/updates/${params.slug}`;
-    const title = `${params.slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())} — Focusly Updates`;
-    const description = "Read the latest Focusly release note: what changed, what's new, and what's next for the study app.";
+    const title = `${params.slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())} — Cogni Updates`;
+    const description = "Read the latest Cogni release note: what changed, what's new, and what's next for the study app.";
     return {
       meta: [
         { title },
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/updates/$slug")({
             "@type": "Article",
             headline: title,
             url,
-            publisher: { "@type": "Organization", name: "Focusly" },
+            publisher: { "@type": "Organization", name: "Cogni" },
           }),
         },
       ],

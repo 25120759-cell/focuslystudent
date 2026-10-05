@@ -69,7 +69,7 @@ function pct(n: number) {
 }
 
 /**
- * Calibration notes (tuned against real Focusly Docs samples):
+ * Calibration notes (tuned against real Cogni Docs samples):
  * - Keystroke counts include corrections/deletions, so a genuinely hand-written
  *   document usually records MORE keystrokes than final characters. Coverage of
  *   ~75% or above is therefore treated as fully accounted for, and short docs
@@ -137,7 +137,7 @@ export function analyseAuthorship(
         : "No typing or paste activity was recorded at all, so nothing can be measured.",
       summary: tooShort
         ? "This document is too short for a meaningful authorship analysis."
-        : "No editing activity was recorded for this document, so its origin cannot be verified. The text may have been added outside Focusly Docs.",
+        : "No editing activity was recorded for this document, so its origin cannot be verified. The text may have been added outside Cogni Docs.",
       evidence: [
         {
           id: "text-length",
@@ -342,7 +342,7 @@ export function analyseAuthorship(
   } else {
     level = "pasted";
     label = "Largely pasted or externally written";
-    summary = `Recorded typing explains only ${typedCoverage}% of the final text. The bulk of this document appears to have been pasted in or written outside Focusly Docs, which is consistent with AI-generated or copied material.`;
+    summary = `Recorded typing explains only ${typedCoverage}% of the final text. The bulk of this document appears to have been pasted in or written outside Cogni Docs, which is consistent with AI-generated or copied material.`;
   }
 
   return { ...inputs, score, level, label, summary, confidence, confidenceReason, evidence, flags };
