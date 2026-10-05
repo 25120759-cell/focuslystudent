@@ -333,10 +333,29 @@ function Classwork({
         </div>
       )}
 
-      {submission?.teacher_feedback && (
-        <div className="mt-4 rounded-xl bg-accent/40 p-3">
-          <div className="eyebrow">Teacher feedback</div>
-          <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed">{submission.teacher_feedback}</p>
+      {(submission?.grade_status === "graded" || submission?.teacher_feedback) && (
+        <div className="mt-4 rounded-xl border border-primary/30 bg-primary/5 p-4">
+          <div className="flex items-center justify-between gap-3">
+            <div className="eyebrow">Teacher feedback &amp; grade</div>
+            {submission?.score != null && (
+              <span className="font-display text-xl font-semibold text-primary">
+                {submission.score}/{a.points}
+              </span>
+            )}
+          </div>
+          {submission?.criteria_scores && typeof submission.criteria_scores === "object" && (
+            <ul className="mt-2 space-y-1 text-sm">
+              {Object.entries(submission.criteria_scores as Record<string, any>).map(([k, v]) => (
+                <li key={k} className="flex justify-between gap-3">
+                  <span className="min-w-0 truncate">{k}</span>
+                  <span className="shrink-0 text-muted-foreground">{typeof v === "object" ? (v?.score ?? JSON.stringify(v)) : String(v)}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          {submission?.teacher_feedback && (
+            <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed">{submission.teacher_feedback}</p>
+          )}
         </div>
       )}
 
@@ -367,11 +386,12 @@ function Classwork({
       <AnimatePresence>
         {open && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+            <AttachDoc onPick={(line) => setContent((c: string) => (c ? c + "\n" : "") + line)} />
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
               rows={6}
-              placeholder="Type or paste your work here…"
+              placeholder="Type or paste your work here, or attach a Cogni Doc…"
               className="mt-3 w-full rounded-xl border border-border/70 bg-background p-3 text-sm outline-none focus:border-primary"
             />
             <motion.button
