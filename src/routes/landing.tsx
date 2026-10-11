@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { PublicHeader } from "@/components/PublicHeader";
 import { CogniIntro } from "@/components/CogniIntro";
-import cogniMark from "@/assets/cogni-mark.png";
+import { CogniScrollStory } from "@/components/CogniScrollStory";
 
 export const Route = createFileRoute("/landing")({
   ssr: false,
@@ -19,12 +19,12 @@ export const Route = createFileRoute("/landing")({
       { property: "og:title", content: "Cogni — A calmer way to get schoolwork done" },
       { property: "og:description", content: "Offline-first AI study app: natural-language tasks, smart scheduling, focus timer, deep AI study aids, and a study-themed card game." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://focuslystudent.lovable.app/landing" },
+      { property: "og:url", content: "https://cognistudent.lovable.app/landing" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Cogni — A calmer way to get schoolwork done" },
       { name: "twitter:description", content: "Offline-first AI study app: natural-language tasks, smart scheduling, focus timer, deep AI study aids, and a study-themed card game." },
     ],
-    links: [{ rel: "canonical", href: "https://focuslystudent.lovable.app/landing" }],
+    links: [{ rel: "canonical", href: "https://cognistudent.lovable.app/landing" }],
   }),
 });
 
@@ -34,96 +34,7 @@ function LandingPage() {
       <CogniIntro />
       <PublicHeader />
 
-      {/* HERO */}
-      <section className="relative overflow-hidden">
-        <div
-          aria-hidden
-          className="absolute inset-0 -z-10 bg-[radial-gradient(1200px_600px_at_10%_-10%,color-mix(in_oklab,var(--primary)_10%,transparent),transparent_60%),radial-gradient(800px_400px_at_110%_30%,color-mix(in_oklab,var(--gold)_25%,transparent),transparent_60%)]"
-        />
-        <div className="mx-auto max-w-6xl px-6 pt-20 pb-28 md:pt-28 md:pb-36 grid md:grid-cols-[1.1fr_0.9fr] gap-12 items-center">
-          <div>
-            <motion.div
-              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
-            >
-              <img src={cogniMark} alt="" className="h-3.5 w-3.5 object-contain" /> Cogni For Students · part of the Cogni Suite
-            </motion.div>
-            <motion.h1
-              initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.05 }}
-              className="mt-6 font-display text-5xl md:text-7xl font-semibold tracking-tight leading-[1.05]"
-            >
-              Think clearly. <em className="not-italic text-primary">Study calmly.</em>
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.15 }}
-              className="mt-6 max-w-xl text-base md:text-lg leading-relaxed text-muted-foreground"
-            >
-              Cogni is the study app that turns "essay due next Tuesday" into a real plan — broken into
-              steps, scheduled around your day, and waiting for you offline.
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.25 }}
-              className="mt-8 flex flex-wrap gap-3"
-            >
-              <Link
-                to="/signup"
-                className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-sm hover:opacity-90"
-              >
-                Start free <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                to="/login"
-                className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 text-sm font-medium hover:bg-accent/40"
-              >
-                Sign in
-              </Link>
-            </motion.div>
-            <p className="mt-4 text-xs text-muted-foreground/80">
-              Free forever · 100 AI credits / month included
-            </p>
-          </div>
-
-          {/* Editorial hero card */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.2 }}
-            className="relative"
-          >
-            <div aria-hidden className="absolute -inset-4 -z-10 rounded-[2.5rem] bg-gradient-to-br from-[color:var(--gold)]/30 to-primary/5" />
-            <div className="rounded-[2rem] border border-border/60 bg-card p-7 shadow-xl">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-[10px] uppercase tracking-widest font-semibold text-primary">Today's plan</span>
-                <span className="text-xs text-muted-foreground">Tue · Mar 4</span>
-              </div>
-              <div className="space-y-2.5">
-                {[
-                  { time: "16:00", title: "Essay outline", dur: "45m", done: true },
-                  { time: "17:00", title: "Calculus practice set", dur: "30m", done: true },
-                  { time: "19:30", title: "History flashcards review", dur: "20m", done: false },
-                  { time: "20:00", title: "Read Ch. 4 — Macbeth", dur: "40m", done: false },
-                ].map((t, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 + i * 0.08 }}
-                    className={`flex items-center gap-3 rounded-xl px-3 py-2.5 ${t.done ? "bg-primary/5" : "bg-background"}`}
-                  >
-                    <div className={`h-5 w-5 rounded-md flex items-center justify-center flex-shrink-0 ${t.done ? "bg-primary" : "border-[1.5px] border-foreground/30"}`}>
-                      {t.done && <Check className="h-3 w-3 text-primary-foreground" />}
-                    </div>
-                    <span className="text-xs font-mono w-10 text-muted-foreground">{t.time}</span>
-                    <span className={`flex-1 text-sm ${t.done ? "line-through text-muted-foreground" : ""}`}>{t.title}</span>
-                    <span className="text-[10px] text-muted-foreground/70">{t.dur}</span>
-                  </motion.div>
-                ))}
-              </div>
-              <div className="mt-5 pt-4 border-t border-border/60">
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Sparkles className="h-3 w-3 text-[color:var(--gold)]" /> AI scheduled this around your timetable
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      <CogniScrollStory />
 
       {/* PILLARS */}
       <section className="border-y border-border/60 bg-card">
@@ -258,7 +169,7 @@ function LandingPage() {
 
       {/* COMMUNITY */}
       <section className="mx-auto max-w-6xl px-6 py-24">
-        <div className="rounded-[2rem] border border-border/60 bg-card p-10 md:p-14">
+        <div className="border-y border-border/60 py-10 md:py-14">
           <div className="grid md:grid-cols-3 gap-8">
             <div className="md:col-span-2">
               <span className="text-xs font-semibold uppercase tracking-widest text-primary">Stay in the loop</span>

@@ -36,11 +36,16 @@
   --color-tt-peach: var(--tt-peach);
   --color-tt-break: var(--tt-break);
   --color-gold: var(--gold);
+  --color-brand-night: var(--brand-night);
+  --color-brand-ink: var(--brand-ink);
   --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
+  --brand-night: oklch(0.21 0.039 258);
+  --brand-ink: oklch(0.965 0.011 85);
+  --shadow-product: 0 30px 80px -35px color-mix(in oklab, var(--foreground) 30%, transparent);
   --base-font-size: 16px;
   --radius: 1rem;
   /* Light: warm sand — bone paper, deep-navy ink, muted gold accent */
@@ -111,7 +116,7 @@ html { font-size: var(--base-font-size); }
     font-family: var(--font-sans);
     font-feature-settings: "cv11", "ss01";
   }
-  h1,h2,h3,h4,h5 { font-family: var(--font-display); letter-spacing: -0.02em; }
+  h1,h2,h3,h4,h5 { font-family: var(--font-display); letter-spacing: 0; }
 }
 
 /* Glassy nav pill */
@@ -247,4 +252,56 @@ html { font-size: var(--base-font-size); }
 }
 @media (prefers-reduced-motion: reduce) {
   .skeleton { animation: none; }
+}
+
+/* Cogni: native-scroll, pinned product storytelling. */
+.cogni-brand-track { height: 210svh; background: var(--brand-night); color: var(--brand-ink); }
+.cogni-brand-stage { position: sticky; top: 0; height: 100svh; min-height: 550px; overflow: hidden; display: grid; place-items: center; }
+.cogni-brand-copy { position: relative; z-index: 2; text-align: center; padding: 0 24px 100px; }
+.cogni-brand-title { font-size: 88px; line-height: 1.03; font-weight: 600; letter-spacing: 0; }
+.cogni-hero-mark { position: absolute; right: 5%; bottom: 13%; width: min(38%, 480px); aspect-ratio: 1; object-fit: contain; filter: brightness(0) invert(1); }
+.cogni-brand-next { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 24px; }
+.cogni-study-track { height: 420svh; }
+.cogni-study-stage { position: sticky; top: 0; height: 100svh; min-height: 670px; overflow: hidden; perspective: 1400px; }
+.cogni-study-chapter { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 30px; padding: 100px 24px 55px; }
+.cogni-chapter-copy { text-align: center; }
+.cogni-demo-wrap { width: min(100%, 640px); transform-origin: center; }
+.cogni-product-window { background: var(--background); border: 1px solid var(--border); border-radius: 8px; box-shadow: var(--shadow-product); overflow: hidden; }
+.cogni-window-bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 22px; border-bottom: 1px solid var(--border); background: var(--card); }
+.cogni-preview-content { padding: 22px 30px; min-height: 320px; }
+.cogni-focus-content { min-height: 320px; padding: 22px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; }
+.cogni-timer-ring { width: 220px; height: 220px; border: 3px solid var(--primary); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.cogni-chapter-progress { position: absolute; bottom: 20px; inset-inline: 0; display: flex; justify-content: center; gap: 6px; }
+.cogni-static { height: auto; }
+.cogni-static .cogni-brand-stage { position: relative; height: 80svh; }
+.cogni-static-chapter { display: flex; flex-direction: column; align-items: center; gap: 30px; padding: 80px 24px; }
+.nav-pill { transition: box-shadow 350ms ease, border-color 350ms ease; }
+.nav-pill:hover { border-color: color-mix(in oklab, var(--primary) 35%, var(--border)); box-shadow: 0 8px 28px -16px color-mix(in oklab, var(--foreground) 25%, transparent); }
+@media (min-width: 1100px) and (min-height: 780px) {
+  .cogni-study-chapter { gap: 38px; }
+  .cogni-demo-wrap { width: 700px; }
+  .cogni-preview-content { padding: 28px 36px; }
+}
+@media (max-width: 640px) {
+  .cogni-brand-title { font-size: 52px; }
+  .cogni-hero-mark { width: 65%; right: -10%; bottom: 12%; opacity: 0.4; }
+  .cogni-brand-copy { padding-bottom: 80px; }
+  .cogni-brand-stage { min-height: 540px; }
+  .cogni-study-stage { min-height: 640px; }
+  .cogni-study-chapter { gap: 22px; padding: 112px 20px 50px; }
+  .cogni-preview-content { padding: 18px; min-height: 300px; }
+  .cogni-focus-content { min-height: 300px; }
+  .cogni-window-bar { padding: 12px 18px; }
+  .cogni-timer-ring { width: 200px; height: 200px; }
+}
+@media (max-height: 760px) and (min-width: 641px) {
+  .cogni-study-stage { min-height: 590px; }
+  .cogni-study-chapter { gap: 16px; padding-top: 75px; }
+  .cogni-chapter-copy h2 { font-size: 36px; }
+  .cogni-preview-content, .cogni-focus-content { min-height: 280px; padding: 16px 24px; }
+  .cogni-timer-ring { width: 180px; height: 180px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rise-in { animation: none; }
+  .nav-pill { transition: none; }
 }
