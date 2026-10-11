@@ -1,0 +1,2 @@
+# Project rules
+- Keep landing scroll storytelling in a dedicated browser-safe component using Framer Motion motion values, native scrolling, and a static reduced-motion fallback; this keeps motion independent of app workflows and avoids scroll hijacking.
