@@ -70,8 +70,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:title", content: "Cogni For Students" },
       { property: "og:description", content: "Cogni is a study app with a clock, timetable, files, AI assistant, assignments, calendar, social features, cards, and gamified rewards." },
       { name: "twitter:description", content: "Cogni is a study app with a clock, timetable, files, AI assistant, assignments, calendar, social features, cards, and gamified rewards." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/9d42b122-f10b-4113-92b9-5133ac34ac46" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/9d42b122-f10b-4113-92b9-5133ac34ac46" },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:type", content: "website" },
     ],

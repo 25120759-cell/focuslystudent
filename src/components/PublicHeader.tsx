@@ -20,8 +20,8 @@ export function PublicHeader() {
       <div className="mx-auto max-w-6xl px-4 py-3 sm:px-6">
         <div className="flex items-center justify-between gap-3">
           <Link to="/landing" className="group inline-flex shrink-0 items-center gap-2 font-display text-lg font-semibold tracking-tight sm:text-xl">
-            <img src={cogniMark} alt="" className="h-7 w-7 shrink-0 object-contain" />
-            Cogni <span className="text-muted-foreground font-normal">for Students</span>
+            <img src={cogniMark} alt="" className="h-7 w-7 shrink-0 object-contain transition-transform duration-500 group-hover:scale-110 dark:brightness-0 dark:invert" />
+            Cogni <span className="hidden text-muted-foreground font-normal sm:inline">for Students</span>
           </Link>
 
           <nav className="hidden items-center justify-end gap-0.5 text-sm md:flex">
