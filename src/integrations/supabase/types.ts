@@ -56,6 +56,7 @@ export type Database = {
           recommendation_text: string
           severity_level: string
           student_id: string
+          visible_to_student: boolean
         }
         Insert: {
           category?: string
@@ -65,6 +66,7 @@ export type Database = {
           recommendation_text: string
           severity_level?: string
           student_id: string
+          visible_to_student?: boolean
         }
         Update: {
           category?: string
@@ -74,6 +76,7 @@ export type Database = {
           recommendation_text?: string
           severity_level?: string
           student_id?: string
+          visible_to_student?: boolean
         }
         Relationships: [
           {
@@ -1245,6 +1248,10 @@ export type Database = {
       redeem_plan_code_for_user: {
         Args: { _code: string; _user_id: string }
         Returns: Json
+      }
+      teacher_submission_draft: {
+        Args: { _submission_id: string }
+        Returns: string
       }
       teaches_student: {
         Args: { _student_id: string; _teacher_id: string }
