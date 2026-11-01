@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { RouteError } from "@/components/app/States";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -183,7 +184,7 @@ function DocEditor() {
   const wordCount = editor?.getText().trim().split(/\s+/).filter(Boolean).length ?? doc.word_count;
 
   return (
-    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="max-w-5xl mx-auto space-y-3 pb-24">
+    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="workspace max-w-6xl mx-auto space-y-4 pb-24">
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <Link to="/docs" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4" /> All docs
@@ -195,15 +196,27 @@ function DocEditor() {
         </div>
       </div>
 
+      <div className="workspace-overview !block space-y-4">
+      <p className="workspace-kicker">Cogni Docs / Writing workspace</p>
       <input
+        aria-label="Document title"
         value={title}
         onChange={(e) => { setTitle(e.target.value); scheduleSave(editor?.getHTML() ?? "", editor?.getText() ?? ""); }}
         className="w-full bg-transparent font-display text-3xl md:text-5xl font-semibold tracking-tight focus:outline-none"
         placeholder="Untitled"
       />
 
+      <div className="flex items-center gap-2 overflow-x-auto pb-2">
+        <PBtn onClick={() => setPanel("ai")} label="AI writing"><Wand2 /></PBtn>
+        <PBtn onClick={() => setPanel("grade")} label="Rubric grader"><GraduationCap /></PBtn>
+        <PBtn onClick={() => setPanel("comments")} label="Comments"><MessageSquare /></PBtn>
+        <PBtn onClick={() => setPanel("share")} label="Share"><Users /></PBtn>
+        <Button variant="outline" size="sm" onClick={togglePublicShare}><ShieldCheck />{doc.share_token ? "Authorship on" : "Authorship link"}</Button>
+      </div>
+      </div>
+
       {/* Toolbar */}
-      <div className="sticky top-16 z-20 flex flex-wrap items-center gap-1 rounded-2xl border border-border bg-card/90 backdrop-blur p-2 shadow-sm">
+      <div className="sticky top-[72px] z-20 flex items-center gap-1 overflow-x-auto rounded-md border border-border bg-card/95 backdrop-blur p-2">
         <TBtn active={editor?.isActive("heading", { level: 1 })} onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()} title="H1"><Heading1 className="h-4 w-4" /></TBtn>
         <TBtn active={editor?.isActive("heading", { level: 2 })} onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()} title="H2"><Heading2 className="h-4 w-4" /></TBtn>
         <TBtn active={editor?.isActive("heading", { level: 3 })} onClick={() => editor?.chain().focus().toggleHeading({ level: 3 }).run()} title="H3"><Heading3 className="h-4 w-4" /></TBtn>
@@ -236,29 +249,21 @@ function DocEditor() {
         }} title="Insert image"><ImageIcon className="h-4 w-4" /></TBtn>
         <TBtn onClick={() => editor?.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()} title="Insert table"><TableIcon className="h-4 w-4" /></TBtn>
 
-        <span className="ml-auto flex items-center gap-1 flex-wrap">
-          <PBtn onClick={() => setPanel("ai")} label="AI"><Wand2 className="h-3.5 w-3.5" /></PBtn>
-          <PBtn onClick={() => setPanel("grade")} label="Grade"><GraduationCap className="h-3.5 w-3.5" /></PBtn>
-          <PBtn onClick={() => setPanel("comments")} label="Comments"><MessageSquare className="h-3.5 w-3.5" /></PBtn>
-          <PBtn onClick={() => setPanel("share")} label="Share"><Users className="h-3.5 w-3.5" /></PBtn>
-          <button onClick={togglePublicShare} className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium ${doc.share_token ? "bg-primary/10 text-primary" : "border border-border hover:bg-accent"}`}>
-            <ShieldCheck className="h-3.5 w-3.5" /> {doc.share_token ? "Authorship on" : "Authorship link"}
-          </button>
-        </span>
+
       </div>
 
       {doc.share_token && publicUrl && (
         <div className="rounded-2xl border border-primary/30 bg-primary/5 p-3 text-xs flex items-center gap-2">
           <LinkIcon className="h-3.5 w-3.5 text-primary shrink-0" />
           <input readOnly value={publicUrl} className="flex-1 bg-transparent text-xs font-mono truncate" onClick={(e) => (e.target as HTMLInputElement).select()} />
-          <button onClick={() => { navigator.clipboard.writeText(publicUrl); setCopied(true); setTimeout(() => setCopied(false), 1500); }}
+          <Button onClick={() => { navigator.clipboard.writeText(publicUrl); setCopied(true); setTimeout(() => setCopied(false), 1500); }}
             className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-[10px] text-primary-foreground">
             {copied ? <><Check className="h-3 w-3" /> Copied</> : <><Copy className="h-3 w-3" /> Copy</>}
-          </button>
+          </Button>
         </div>
       )}
 
-      <div className="rounded-3xl border border-border bg-card p-8 md:p-12 shadow-sm">
+      <div className="doc-sheet max-w-4xl mx-auto">
         <EditorContent editor={editor} />
       </div>
 
@@ -283,16 +288,16 @@ function DocEditor() {
 function Sep() { return <span className="mx-0.5 h-5 w-px bg-border" />; }
 function TBtn({ children, onClick, active, title }: { children: React.ReactNode; onClick?: () => void; active?: boolean; title?: string }) {
   return (
-    <button onClick={onClick} title={title} className={`rounded-lg p-1.5 transition ${active ? "bg-primary/15 text-primary" : "text-foreground/70 hover:bg-accent"}`}>
+    <Button variant="ghost" size="icon" aria-label={title} onClick={onClick} title={title} className={`rounded-lg p-1.5 transition ${active ? "bg-primary/15 text-primary" : "text-foreground/70 hover:bg-accent"}`}>
       {children}
-    </button>
+    </Button>
   );
 }
 function PBtn({ children, onClick, label }: { children: React.ReactNode; onClick?: () => void; label: string }) {
   return (
-    <button onClick={onClick} className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-xs font-medium hover:bg-accent">
+    <Button variant="outline" size="sm" onClick={onClick} className="shrink-0 inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-xs font-medium hover:bg-accent">
       {children} {label}
-    </button>
+    </Button>
   );
 }
 
@@ -300,14 +305,14 @@ function SidePanel({ children, onClose, title }: { children: React.ReactNode; on
   return (
     <>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-        onClick={onClose} className="fixed inset-0 bg-black/20 z-40" />
+        onClick={onClose} aria-label="Close panel" className="fixed inset-0 bg-foreground/20 z-40" />
       <motion.aside
         initial={{ x: 480 }} animate={{ x: 0 }} exit={{ x: 480 }}
         transition={{ type: "spring", stiffness: 260, damping: 30 }}
         className="fixed right-0 top-0 h-full w-full max-w-md bg-card border-l border-border z-50 flex flex-col shadow-2xl">
         <div className="flex items-center justify-between p-4 border-b border-border">
           <h3 className="font-display text-lg font-semibold">{title}</h3>
-          <button onClick={onClose} className="rounded-full p-1.5 hover:bg-accent"><X className="h-4 w-4" /></button>
+          <Button onClick={onClose} aria-label="Close panel" className="rounded-full p-1.5 hover:bg-accent"><X className="h-4 w-4" /></Button>
         </div>
         <div className="flex-1 overflow-y-auto p-4">{children}</div>
       </motion.aside>
@@ -351,10 +356,10 @@ function SharePanel({ docId }: { docId: string }) {
             <option value="commenter">Commenter — read + comment</option>
             <option value="editor">Editor — full edit access</option>
           </select>
-          <button onClick={invite} disabled={busy || !email}
+          <Button onClick={invite} disabled={busy || !email}
             className="rounded-xl bg-primary px-4 py-2 text-xs font-medium text-primary-foreground disabled:opacity-50">
             {busy ? <Loader2 className="h-3 w-3 animate-spin" /> : "Invite"}
-          </button>
+          </Button>
         </div>
       </div>
       <div className="space-y-1.5">
@@ -365,7 +370,7 @@ function SharePanel({ docId }: { docId: string }) {
               <div className="text-xs font-medium">{s.shared_with_email}</div>
               <div className="text-[10px] text-muted-foreground capitalize">{s.role}</div>
             </div>
-            <button onClick={() => remove(s.id)} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-3.5 w-3.5" /></button>
+            <Button onClick={() => remove(s.id)} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-3.5 w-3.5" /></Button>
           </div>
         ))}
       </div>
@@ -388,8 +393,8 @@ function CommentsPanel({ docId }: { docId: string }) {
       <div className="space-y-2">
         <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Leave a comment…" rows={3}
           className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm" />
-        <button onClick={async () => { if (!body.trim()) return; await addFn({ data: { doc_id: docId, body } }); setBody(""); reload(); }}
-          className="rounded-full bg-primary px-4 py-1.5 text-xs font-medium text-primary-foreground">Add comment</button>
+        <Button onClick={async () => { if (!body.trim()) return; await addFn({ data: { doc_id: docId, body } }); setBody(""); reload(); }}
+          className="rounded-full bg-primary px-4 py-1.5 text-xs font-medium text-primary-foreground">Add comment</Button>
       </div>
       <div className="space-y-2">
         {items.length === 0 && <p className="text-xs text-muted-foreground italic">No comments yet.</p>}
@@ -398,10 +403,10 @@ function CommentsPanel({ docId }: { docId: string }) {
             <div className="flex items-center justify-between text-[10px] text-muted-foreground">
               <span>{c.author_name} · {new Date(c.created_at).toLocaleString()}</span>
               <div className="flex gap-1">
-                <button onClick={async () => { await resolveFn({ data: { id: c.id, resolved: !c.resolved } }); reload(); }}
-                  className="rounded-full px-2 py-0.5 hover:bg-accent">{c.resolved ? "Unresolve" : "Resolve"}</button>
-                <button onClick={async () => { await delFn({ data: { id: c.id } }); reload(); }}
-                  className="rounded-full px-2 py-0.5 hover:bg-accent text-destructive">Delete</button>
+                <Button onClick={async () => { await resolveFn({ data: { id: c.id, resolved: !c.resolved } }); reload(); }}
+                  className="rounded-full px-2 py-0.5 hover:bg-accent">{c.resolved ? "Unresolve" : "Resolve"}</Button>
+                <Button onClick={async () => { await delFn({ data: { id: c.id } }); reload(); }}
+                  className="rounded-full px-2 py-0.5 hover:bg-accent text-destructive">Delete</Button>
               </div>
             </div>
             <p className="mt-1 text-sm whitespace-pre-wrap">{c.body}</p>
@@ -461,10 +466,10 @@ function AIPanel({ editor }: { editor: any }) {
         <p className="text-xs text-muted-foreground mb-2">Select text in the doc, then pick an action.</p>
         <div className="grid grid-cols-2 gap-2">
           {actions.map((a) => (
-            <button key={a.key} onClick={() => runRewrite(a.key as any)} disabled={!!busy}
+            <Button key={a.key} onClick={() => runRewrite(a.key as any)} disabled={!!busy}
               className="rounded-xl border border-border bg-background px-3 py-2 text-xs hover:bg-accent disabled:opacity-50 text-left">
               {busy === a.key ? <Loader2 className="inline h-3 w-3 animate-spin mr-1" /> : null}{a.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -473,10 +478,10 @@ function AIPanel({ editor }: { editor: any }) {
         <p className="text-xs text-muted-foreground mb-2">Multi-step research on any topic; results inserted at cursor.</p>
         <input value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="e.g. Causes of the French Revolution"
           className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm mb-2" />
-        <button onClick={runResearch} disabled={!!busy || !topic.trim()}
+        <Button onClick={runResearch} disabled={!!busy || !topic.trim()}
           className="w-full rounded-xl bg-primary px-3 py-2 text-xs font-medium text-primary-foreground disabled:opacity-50">
           {busy === "research" ? <Loader2 className="inline h-3 w-3 animate-spin mr-1" /> : null}Run research
-        </button>
+        </Button>
       </div>
       {msg && <div className="rounded-xl bg-muted p-2 text-xs">{msg}</div>}
     </div>
@@ -510,9 +515,9 @@ function GradePanel({ editor }: { editor: any }) {
       <textarea value={rubric} onChange={(e) => setRubric(e.target.value)} rows={5}
         placeholder="Paste rubric here — e.g.&#10;- Thesis clarity (20 pts)&#10;- Evidence (30 pts)&#10;- Analysis (30 pts)&#10;- Style & mechanics (20 pts)"
         className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-mono" />
-      <button onClick={run} disabled={busy} className="w-full rounded-xl bg-primary px-3 py-2 text-xs font-medium text-primary-foreground disabled:opacity-50">
+      <Button onClick={run} disabled={busy} className="w-full rounded-xl bg-primary px-3 py-2 text-xs font-medium text-primary-foreground disabled:opacity-50">
         {busy ? <><Loader2 className="inline h-3 w-3 animate-spin mr-1" />Grading…</> : "Grade my doc"}
-      </button>
+      </Button>
       {err && <div className="rounded-xl border border-destructive/40 bg-destructive/5 p-2 text-xs text-destructive">{err}</div>}
       {result && (
         <div className="space-y-3 rounded-2xl border border-border bg-background p-3">

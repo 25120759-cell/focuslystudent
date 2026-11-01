@@ -150,7 +150,7 @@ function AssignmentsPage() {
             description="Type something like “Read Hatchet ch 8 by Tuesday 9pm” in the quick add box and Cogni will schedule it for you."
           />
         )}
-        {loaded && !loadErr && assignments.length > 0 && openList.length === 0 && (
+        {loaded && !loadErr && assignments.length > 0 && assignments.every(a => a.status === "Completed") && (
           <EmptyState
             icon={PartyPopper}
             title="All caught up 🎉"
@@ -175,7 +175,7 @@ function AssignmentsPage() {
           <Button
             onClick={quickAdd}
             disabled={parsing || !nlInput.trim()}
-            className="flex items-center gap-1 rounded-full bg-primary px-4 py-2 text-xs font-medium text-primary-foreground disabled:opacity-50"
+            className="flex items-center gap-1 rounded-md bg-primary px-4 py-2 text-xs font-medium text-primary-foreground disabled:opacity-50"
           >
             <Plus className="h-3 w-3" /> {parsing ? "Parsing…" : "Add"}
           </Button>

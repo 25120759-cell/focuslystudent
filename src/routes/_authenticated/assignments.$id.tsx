@@ -1,4 +1,5 @@
-import { RouteError } from "@/components/app/States";
+import { Button } from "@/components/ui/button";
+import { RouteError, SkeletonList } from "@/components/app/States";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -89,7 +90,7 @@ function AssignmentDetail() {
 
 
   if (!loaded) {
-    return <div className="py-16 text-center text-sm text-muted-foreground">Loading…</div>;
+    return <div className="workspace py-8"><SkeletonList rows={3} lines={3} /></div>;
   }
   if (!a) {
     return (
@@ -102,7 +103,7 @@ function AssignmentDetail() {
   }
 
   const assignment = a;
-  const current = edit ? draft! : assignment;
+  const current = edit && draft ? draft : assignment;
   const subtasks = assignment.subtasks ?? [];
   const openSubs = subtasks.filter((s) => !s.done);
   const doneSubs = subtasks.filter((s) => s.done);
@@ -199,7 +200,7 @@ function AssignmentDetail() {
 
 
   return (
-    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 max-w-3xl mx-auto">
+    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="workspace space-y-6 max-w-6xl mx-auto">
       <div className="flex items-center justify-between">
         <Link to="/assignments" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4" /> Back
@@ -207,35 +208,35 @@ function AssignmentDetail() {
         <div className="flex gap-2">
           {!edit ? (
             <>
-              <button onClick={() => { setDraft(assignment); setEdit(true); }} className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs hover:bg-accent">
+              <Button onClick={() => { setDraft(assignment); setEdit(true); }} className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs hover:bg-accent">
                 <Edit2 className="h-3 w-3" /> Edit
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={async () => { if (confirm("Delete this assignment?")) { await deleteFn({ data: { id: assignment.id } }); navigate({ to: "/assignments" }); } }}
                 className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs hover:bg-destructive hover:text-destructive-foreground"
               >
                 <Trash2 className="h-3 w-3" /> Delete
-              </button>
+              </Button>
             </>
           ) : (
             <>
-              <button onClick={save} className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground">
+              <Button onClick={save} className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground">
                 <Save className="h-3 w-3" /> Save
-              </button>
-              <button onClick={() => setEdit(false)} className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs">
+              </Button>
+              <Button onClick={() => setEdit(false)} className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs">
                 <X className="h-3 w-3" /> Cancel
-              </button>
+              </Button>
             </>
           )}
         </div>
       </div>
 
-      <div className="paper-raised p-6 space-y-4">
+      <div className="workspace-overview !block space-y-4">
         {edit ? (
           <>
             <input
-              value={draft!.title}
-              onChange={(e) => setDraft({ ...draft!, title: e.target.value })}
+              value={current.title}
+              onChange={(e) => setDraft({ ...current, title: e.target.value })}
               className="w-full rounded-xl border border-input bg-background px-3 py-2 font-display text-2xl font-semibold"
             />
             <div className="flex flex-wrap gap-3">
@@ -243,16 +244,16 @@ function AssignmentDetail() {
                 <span className="block text-muted-foreground mb-1">Due</span>
                 <input
                   type="datetime-local"
-                  value={draft!.due ? new Date(draft!.due).toISOString().slice(0, 16) : ""}
-                  onChange={(e) => setDraft({ ...draft!, due: e.target.value ? new Date(e.target.value).toISOString() : null })}
+                  value={current.due ? new Date(current.due).toISOString().slice(0, 16) : ""}
+                  onChange={(e) => setDraft({ ...current, due: e.target.value ? new Date(e.target.value).toISOString() : null })}
                   className="rounded-md border border-input bg-background px-2 py-1 text-sm"
                 />
               </label>
               <label className="text-xs">
                 <span className="block text-muted-foreground mb-1">Status</span>
                 <select
-                  value={draft!.status}
-                  onChange={(e) => setDraft({ ...draft!, status: e.target.value as AssignmentDetailRow["status"] })}
+                  value={current.status}
+                  onChange={(e) => setDraft({ ...current, status: e.target.value as AssignmentDetailRow["status"] })}
                   className="rounded-md border border-input bg-background px-2 py-1 text-sm"
                 >
                   <option>Opened</option><option>Completed</option><option>Late</option>
@@ -260,8 +261,8 @@ function AssignmentDetail() {
               </label>
             </div>
             <textarea
-              value={draft!.description}
-              onChange={(e) => setDraft({ ...draft!, description: e.target.value })}
+              value={current.description}
+              onChange={(e) => setDraft({ ...current, description: e.target.value })}
               rows={6}
               placeholder="Description / notes"
               className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm"
@@ -272,7 +273,7 @@ function AssignmentDetail() {
             <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${current.status === "Completed" ? "bg-tt-break" : current.status === "Late" ? "bg-destructive text-destructive-foreground" : "bg-tt-peach"}`}>
               {current.status}
             </span>
-            <h1 className="font-display text-3xl font-semibold">{current.title}</h1>
+            <h1 className="workspace-heading">{current.title}</h1>
             <p className="text-sm text-muted-foreground flex items-center gap-1">
               <Calendar className="h-3.5 w-3.5" /> {current.due ? `Due ${new Date(current.due).toLocaleString()}` : "No due date"}
             </p>
@@ -281,7 +282,8 @@ function AssignmentDetail() {
         )}
       </div>
 
-      <div className="paper-raised p-6">
+      <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)]">
+      <section className="min-w-0 py-4">
         <h2 className="font-display text-lg font-semibold mb-3">Subtasks</h2>
         <div className="space-y-2">
           <AnimatePresence initial={false}>
@@ -297,7 +299,7 @@ function AssignmentDetail() {
         </div>
         {doneSubs.length > 0 && (
           <div className="mt-4 rounded-xl border border-border bg-muted/30">
-            <button
+            <Button
               onClick={() => setShowDoneSubs((v) => !v)}
               className="flex w-full items-center gap-2 px-3 py-2 text-xs font-medium text-muted-foreground hover:text-foreground"
             >
@@ -306,7 +308,7 @@ function AssignmentDetail() {
               </motion.span>
               {showDoneSubs ? <FolderOpen className="h-3.5 w-3.5" /> : <Folder className="h-3.5 w-3.5" />}
               Completed ({doneSubs.length})
-            </button>
+            </Button>
             <AnimatePresence initial={false}>
               {showDoneSubs && (
                 <motion.div
@@ -334,15 +336,15 @@ function AssignmentDetail() {
             placeholder="Add a subtask"
             className="flex-1 rounded-full border border-input bg-background px-4 py-1.5 text-sm"
           />
-          <button onClick={addSub} className="rounded-full bg-primary p-1.5 text-primary-foreground"><Plus className="h-4 w-4" /></button>
+          <Button onClick={addSub} aria-label="Add subtask" title="Add subtask" className="rounded-full bg-primary p-1.5 text-primary-foreground"><Plus className="h-4 w-4" /></Button>
         </div>
-      </div>
+      </section>
 
-      <div className="paper-raised p-6">
+      <section className="workspace-surface min-w-0 p-5">
         <div className="flex items-center justify-between mb-3 gap-3 flex-wrap">
           <h2 className="font-display text-lg font-semibold flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" /> AI Breakdown
-            {creds?.plan === "max" && <span className="text-[10px] inline-flex items-center gap-1 text-amber-600"><Crown className="h-3 w-3" /> MAX</span>}
+            {creds?.plan === "max" && <span className="text-[10px] inline-flex items-center gap-1 text-gold"><Crown className="h-3 w-3" /> MAX</span>}
           </h2>
           <div className="flex items-center gap-2 flex-wrap">
             {breakdown && (
@@ -353,14 +355,14 @@ function AssignmentDetail() {
                 className="rounded-full border border-input bg-background px-3 py-1 text-xs w-48"
               />
             )}
-            <button
+            <Button
               onClick={() => runBreakdown("all")}
               disabled={aiLoading !== null || reachedLimit()}
               className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground disabled:opacity-50"
             >
               {aiLoading === "all" ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
               {breakdown ? "Regenerate all" : "Generate plan"}
-            </button>
+            </Button>
           </div>
         </div>
         {aiErr && <p className="text-xs text-destructive mb-2">{aiErr}</p>}
@@ -376,7 +378,7 @@ function AssignmentDetail() {
                 loading={aiLoading === "subtasks"}
                 onEdit={() => setEditingSection(editingSection === "subtasks" ? null : "subtasks")}
                 editing={editingSection === "subtasks"}
-                extra={<button onClick={applyBreakdownSubtasks} className="text-xs text-primary hover:underline">Add all to subtasks</button>}
+                extra={<Button onClick={applyBreakdownSubtasks} className="text-xs text-primary hover:underline">Add all to subtasks</Button>}
               >
                 {editingSection === "subtasks" ? (
                   <textarea
@@ -413,7 +415,7 @@ function AssignmentDetail() {
                       return (
                         <li key={i} className="rounded-lg bg-card border border-border px-3 py-2 flex items-center justify-between gap-2">
                           <span><span className="font-medium">{label} · {h}:00</span> · {p.duration_minutes}m — {p.focus}</span>
-                          <button onClick={() => patchBreakdown({ study_plan: breakdown.study_plan.filter((_, ix) => ix !== i) })} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-3 w-3" /></button>
+                          <Button onClick={() => patchBreakdown({ study_plan: breakdown.study_plan.filter((_, ix) => ix !== i) })} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-3 w-3" /></Button>
                         </li>
                       );
                     })}
@@ -444,11 +446,11 @@ function AssignmentDetail() {
             </motion.div>
           )}
         </AnimatePresence>
+      </section>
       </div>
 
-
       {current.resources.length > 0 && (
-        <div className="paper-raised p-6">
+        <div className="border-t border-border py-6">
           <h2 className="font-display text-lg font-semibold mb-3">Resources</h2>
           <div className="flex flex-wrap gap-2">
             {current.resources.map((r) => (
@@ -474,13 +476,13 @@ function BreakdownSection({ title, onRegen, loading, onEdit, editing, extra, chi
         <div className="flex items-center gap-2">
           {extra}
           {onEdit && (
-            <button onClick={onEdit} className="inline-flex items-center gap-1 text-[10px] rounded-full border border-border bg-card px-2 py-0.5 hover:bg-accent">
+            <Button onClick={onEdit} className="inline-flex items-center gap-1 text-[10px] rounded-full border border-border bg-card px-2 py-0.5 hover:bg-accent">
               {editing ? <><Save className="h-3 w-3" /> Done</> : <><Pencil className="h-3 w-3" /> Edit</>}
-            </button>
+            </Button>
           )}
-          <button onClick={onRegen} disabled={loading} className="inline-flex items-center gap-1 text-[10px] rounded-full bg-secondary px-2 py-0.5 disabled:opacity-50">
+          <Button onClick={onRegen} disabled={loading} className="inline-flex items-center gap-1 text-[10px] rounded-full bg-secondary px-2 py-0.5 disabled:opacity-50">
             {loading ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />} Regen
-          </button>
+          </Button>
         </div>
       </div>
       {children}
@@ -498,8 +500,9 @@ function SubtaskRow({ s, onToggle, onDelete }: { s: { id: string; title: string;
       transition={{ type: "spring", stiffness: 320, damping: 26 }}
       className="flex items-center gap-3 rounded-xl border border-border bg-card px-3 py-2"
     >
-      <motion.button
-        whileTap={{ scale: 0.85 }}
+      <Button
+        variant="outline"
+        aria-label={s.done ? "Reopen subtask" : "Complete subtask"}
         onClick={onToggle}
         className={`flex h-5 w-5 items-center justify-center rounded-md border transition-colors ${s.done ? "bg-primary border-primary text-primary-foreground" : "border-input"}`}
       >
@@ -508,9 +511,9 @@ function SubtaskRow({ s, onToggle, onDelete }: { s: { id: string; title: string;
             <Check className="h-3 w-3" />
           </motion.span>
         )}
-      </motion.button>
+      </Button>
       <span className={`flex-1 text-sm ${s.done ? "line-through text-muted-foreground" : ""}`}>{s.title}</span>
-      <button onClick={onDelete} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-3 w-3" /></button>
+      <Button onClick={onDelete} aria-label="Delete subtask" title="Delete subtask" className="text-muted-foreground hover:text-destructive"><Trash2 className="h-3 w-3" /></Button>
     </motion.div>
   );
 }
