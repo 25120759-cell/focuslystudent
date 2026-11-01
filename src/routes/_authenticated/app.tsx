@@ -7,7 +7,10 @@ import { StudyClock } from "@/components/console/StudyClock";
 import { Timetable } from "@/components/console/Timetable";
 import { FilesView } from "@/components/console/FilesView";
 import { AIChat } from "@/components/AIChat";
-import { PageHeader } from "@/components/app/PageHeader";
+import { Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import { useReducedMotion } from "framer-motion";
+import cogniMark from "@/assets/cogni-mark.png";
 import { ClassSummary } from "@/components/console/ClassSummary";
 
 export const Route = createFileRoute("/_authenticated/app")({
@@ -53,26 +56,29 @@ function Console() {
   const [view, setView] = useState<View>("clock");
   const [aiOpen, setAiOpen] = useState(false);
   const meta = VIEW_META[view];
+  const reduceMotion = useReducedMotion();
 
   return (
-    <div className="space-y-8 rise-in">
-      <PageHeader
-        key={view}
-        eyebrow={meta.eyebrow}
-        icon={meta.icon}
-        title={meta.label}
-        accent={meta.accent}
-        description={meta.blurb}
-      />
-
-      <ClassSummary />
+    <div className="workspace space-y-8 pb-12">
+      <header className="workspace-overview">
+        <div>
+          <p className="workspace-kicker mb-3">Your personal study space</p>
+          <h1 className="workspace-heading">{view === "clock" ? "Room to focus." : meta.accent + "."}</h1>
+          <p className="mt-3 text-sm text-muted-foreground">Cogni For Students, part of the Cogni Suite</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <Button variant="outline" asChild><Link to="/assignments">Assignments</Link></Button>
+          <Button variant="outline" asChild><Link to="/docs">Open Docs</Link></Button>
+          <img src={cogniMark} alt="" className="ml-2 hidden h-12 w-12 object-contain opacity-70 sm:block dark:brightness-0 dark:invert" />
+        </div>
+      </header>
 
       <AnimatePresence mode="wait">
         <motion.div
           key={view}
-          initial={{ opacity: 0, y: 12 }}
+          initial={reduceMotion ? false : { opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
+          exit={reduceMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
           transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
         >
           {view === "clock" && <StudyClock />}
@@ -80,6 +86,8 @@ function Console() {
           {view === "files" && <FilesView />}
         </motion.div>
       </AnimatePresence>
+
+      <ClassSummary />
 
       {/* Always pinned to the bottom centre of the viewport */}
       <div className="pointer-events-none fixed inset-x-0 bottom-5 z-40 flex justify-center px-3 sm:bottom-6">
@@ -106,9 +114,11 @@ function Console() {
 
 function UBtn({ icon, label, onClick, active }: { icon: React.ReactNode; label: string; onClick: () => void; active?: boolean }) {
   return (
-    <motion.button
-      whileTap={{ scale: 0.94 }}
-      whileHover={{ y: -2 }}
+    <Button
+      variant="ghost"
+      aria-label={label}
+      aria-pressed={active}
+      title={label}
       onClick={onClick}
       className={`relative flex shrink-0 items-center gap-2 rounded-full px-3 py-2 text-xs font-medium transition-colors ${
         active ? "text-primary-foreground" : "text-foreground/80 hover:bg-accent/50"
@@ -124,7 +134,7 @@ function UBtn({ icon, label, onClick, active }: { icon: React.ReactNode; label: 
       <span className="relative flex items-center gap-2">
         {icon} <span className="hidden sm:inline">{label}</span>
       </span>
-    </motion.button>
+    </Button>
   );
 }
 
