@@ -1,8 +1,10 @@
+import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import cogniMark from "@/assets/cogni-mark.png";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogIn, LogOut, Shield, Users, Layers, LifeBuoy, FileText, Brain, GraduationCap, Settings as SettingsIcon, Sparkles, Gift, Activity, CalendarDays, Clock, ClipboardList, Menu, X } from "lucide-react";
+import { LogIn, LogOut, Shield, Users, Layers, LifeBuoy, FileText, Brain, GraduationCap, Settings as SettingsIcon, Sparkles, Gift, Activity, CalendarDays, Clock, ClipboardList, Menu, X, Ellipsis } from "lucide-react";
 import { useT } from "@/lib/store";
 import { useAuth } from "@/lib/auth";
 import { isPublicPath } from "@/lib/publicRoutes";
@@ -83,7 +85,7 @@ export function AppNav() {
         <Link to="/app" className="group flex shrink-0 items-baseline gap-2">
           <img src={cogniMark} alt="" className="h-7 w-7 self-center object-contain transition-transform duration-500 group-hover:scale-110" />
           <span className="font-display text-lg font-semibold tracking-tight">Cogni</span>
-          <Sparkles className="h-3.5 w-3.5 text-[color:var(--gold)] transition-transform duration-500 group-hover:rotate-180" />
+          <Sparkles className="h-3.5 w-3.5 text-gold transition-transform duration-500 group-hover:rotate-180" />
         </Link>
 
         {/* Sticky pill bar — every destination in one animated rail */}
@@ -97,28 +99,25 @@ export function AppNav() {
             <PillLink key={item.to} {...item} active={item.match(path)} emphasis />
           ))}
           <span className="mx-1 h-5 w-px bg-border/70" />
-          {communityItems.map((item) => (
-            <PillLink key={item.to} {...item} active={item.match(path)} />
-          ))}
-          <span className="mx-1 h-5 w-px bg-border/70" />
-          {accountItems.map((item) => (
-            <PillLink key={item.to} {...item} active={item.match(path)} iconOnly />
-          ))}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" aria-label="More destinations" title="More destinations" className="rounded-full"><Ellipsis /></Button></DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {[...communityItems, ...accountItems].map(item => <DropdownMenuItem key={item.to} asChild><Link to={item.to}><item.icon className="h-4 w-4" />{item.label}</Link></DropdownMenuItem>)}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </motion.nav>
 
         <div className="flex-1 lg:hidden" />
 
         <div className="hidden lg:flex shrink-0 items-center">
           {user ? (
-            <motion.button
-              whileHover={{ y: -1 }}
-              whileTap={{ scale: 0.94 }}
+            <Button variant="ghost" aria-label="Sign out"
               onClick={signOut}
               title={user.email ?? "Sign out"}
               className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border/70 text-muted-foreground transition-colors hover:bg-accent/40 hover:text-foreground"
             >
               <LogOut className="h-3.5 w-3.5" />
-            </motion.button>
+            </Button>
           ) : (
             <Link
               to="/login"
@@ -131,8 +130,7 @@ export function AppNav() {
         </div>
 
         {/* Mobile trigger */}
-        <motion.button
-          whileTap={{ scale: 0.92 }}
+        <Button variant="ghost"
           onClick={() => setMobileOpen((o) => !o)}
           aria-label="Menu"
           aria-expanded={mobileOpen}
@@ -150,7 +148,7 @@ export function AppNav() {
               {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </motion.span>
           </AnimatePresence>
-        </motion.button>
+        </Button>
       </div>
 
       <AnimatePresence>
@@ -178,9 +176,9 @@ export function AppNav() {
                 </motion.div>
               ))}
               {user && (
-                <button onClick={signOut} className="mt-2 flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-muted-foreground hover:bg-accent/40">
+                <Button variant="ghost" onClick={signOut} className="mt-2 flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-muted-foreground hover:bg-accent/40">
                   <LogOut className="h-4 w-4" /> Sign out
-                </button>
+                </Button>
               )}
             </motion.div>
           </motion.div>
@@ -208,8 +206,9 @@ function PillLink({
   return (
     <Link
       to={to}
+      aria-label={label}
       title={label}
-      className={`relative inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm transition-colors ${
+      className={`relative inline-flex items-center gap-1.5 rounded-full px-2 xl:px-3 py-1.5 text-xs xl:text-sm transition-colors ${
         emphasis ? "font-semibold" : "font-medium"
       } ${active ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
     >

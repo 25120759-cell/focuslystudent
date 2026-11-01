@@ -10,7 +10,8 @@ import { createAssignment, deleteAssignment, listAssignments, updateAssignment }
 import { FileText, Check, AlertTriangle, Sparkles, Plus, Trash2, ClipboardList, ChevronRight, Folder, FolderOpen, PartyPopper } from "lucide-react";
 import { celebrate } from "@/components/app/Celebration";
 
-import { PageHeader } from "@/components/app/PageHeader";
+import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/assignments")({
   errorComponent: RouteError,
@@ -34,6 +35,7 @@ function AssignmentsPage() {
   const [parsing, setParsing] = useState(false);
   const [parseErr, setParseErr] = useState<string | null>(null);
   const [showDone, setShowDone] = useState(false);
+  const [search, setSearch] = useState("");
 
 
   async function load() {
@@ -70,7 +72,7 @@ function AssignmentsPage() {
     }
   }
 
-  const openList = assignments.filter((a) => a.status !== "Completed");
+  const openList = assignments.filter((a) => a.status !== "Completed" && a.title.toLowerCase().includes(search.toLowerCase())).sort((a,b) => (a.due ? new Date(a.due).getTime() : Infinity) - (b.due ? new Date(b.due).getTime() : Infinity));
   const doneList = assignments.filter((a) => a.status === "Completed");
 
   async function complete(id: string) {
@@ -90,57 +92,35 @@ function AssignmentsPage() {
 
 
   return (
-    <div className="space-y-6 rise-in">
-      <PageHeader
-        eyebrow="Your workload"
-        icon={ClipboardList}
-        title={t("assignments")}
-        description="Everything due, in one calm list. Type a sentence and Cogni turns it into a scheduled task."
-      />
-
-      <div className="paper p-5">
-        <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
-          <Sparkles className="h-3 w-3 text-primary" /> Quick add — type naturally
-        </label>
-        <div className="flex items-center gap-2">
-          <input
-            value={nlInput}
-            onChange={(e) => setNlInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && quickAdd()}
-            placeholder="e.g. Read Hatchet ch 8 by Tuesday 9pm"
-            className="flex-1 rounded-full border border-input bg-background px-4 py-2 text-sm"
-          />
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={quickAdd}
-            disabled={parsing || !nlInput.trim()}
-            className="flex items-center gap-1 rounded-full bg-primary px-4 py-2 text-xs font-medium text-primary-foreground disabled:opacity-50"
-          >
-            <Plus className="h-3 w-3" /> {parsing ? "Parsing…" : "Add"}
-          </motion.button>
+    <div className="workspace space-y-8">
+      <header className="workspace-overview">
+        <div><p className="workspace-kicker mb-3">Plan your next step</p><h1 className="workspace-heading">{t("assignments")}</h1></div>
+        <div className="flex gap-8 text-sm"><div><span className="block font-display text-3xl">{assignments.filter(a => a.status !== "Completed").length}</span><span className="text-muted-foreground">In progress</span></div><div><span className="block font-display text-3xl">{doneList.length}</span><span className="text-muted-foreground">Completed</span></div></div>
+      </header>
+      <section className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px]">
+      <div className="min-w-0 order-2 lg:order-1">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="font-display text-xl">Up next</h2>
+          <label className="flex items-center gap-2 rounded-md border border-input bg-card px-3 py-2"><Search className="h-4 w-4 text-muted-foreground" /><input aria-label="Search assignments" placeholder="Search assignments" value={search} onChange={e => setSearch(e.target.value)} className="w-40 min-w-0 bg-transparent text-sm outline-none" /></label>
         </div>
-        {parseErr && <p className="mt-2 text-xs text-destructive">{parseErr}</p>}
-      </div>
-
+        <div className="divide-y divide-border">
+          <AnimatePresence initial={false}>{openList.map(a => <AssignmentCard key={a.id} a={a} t={t} onComplete={complete} onLate={markLate} onDelete={remove} />)}</AnimatePresence>
+        </div>
+        {loaded && !loadErr && search && openList.length === 0 && <p className="py-8 text-sm text-muted-foreground">No matching assignments.</p>}
       <div className="grid gap-4">
-        <AnimatePresence initial={false}>
-          {openList.map((a) => (
-            <AssignmentCard key={a.id} a={a} t={t} onComplete={complete} onLate={markLate} onDelete={remove} />
-          ))}
-        </AnimatePresence>
 
         {doneList.length > 0 && (
-          <div className="rounded-2xl border border-border bg-muted/30">
-            <button
+          <div className="border-t border-border">
+            <Button
               onClick={() => setShowDone((v) => !v)}
-              className="flex w-full items-center gap-2 px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground"
+              variant="ghost" className="justify-start flex w-full h-auto items-center gap-2 px-0 py-3 text-sm font-medium text-muted-foreground hover:text-foreground"
             >
               <motion.span animate={{ rotate: showDone ? 90 : 0 }} className="inline-flex">
                 <ChevronRight className="h-4 w-4" />
               </motion.span>
               {showDone ? <FolderOpen className="h-4 w-4" /> : <Folder className="h-4 w-4" />}
               Completed ({doneList.length})
-            </button>
+            </Button>
             <AnimatePresence initial={false}>
               {showDone && (
                 <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
@@ -170,7 +150,7 @@ function AssignmentsPage() {
             description="Type something like “Read Hatchet ch 8 by Tuesday 9pm” in the quick add box and Cogni will schedule it for you."
           />
         )}
-        {loaded && !loadErr && assignments.length > 0 && openList.length === 0 && (
+        {loaded && !loadErr && assignments.length > 0 && assignments.every(a => a.status === "Completed") && (
           <EmptyState
             icon={PartyPopper}
             title="All caught up 🎉"
@@ -178,6 +158,33 @@ function AssignmentsPage() {
           />
         )}
       </div>
+      </div>
+      <aside className="order-1 lg:order-2 space-y-6">      <div className="workspace-surface p-5">
+        <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-2">
+          <Sparkles className="h-3 w-3 text-primary" /> Quick add
+        </label>
+        <div className="flex flex-col items-stretch gap-3">
+          <input
+            value={nlInput}
+            onChange={(e) => setNlInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && quickAdd()}
+            placeholder="e.g. Read Hatchet ch 8 by Tuesday 9pm"
+            aria-label="New assignment"
+            className="min-w-0 w-full rounded-md border border-input bg-background px-4 py-2 text-sm"
+          />
+          <Button
+            onClick={quickAdd}
+            disabled={parsing || !nlInput.trim()}
+            className="flex items-center gap-1 rounded-md bg-primary px-4 py-2 text-xs font-medium text-primary-foreground disabled:opacity-50"
+          >
+            <Plus className="h-3 w-3" /> {parsing ? "Parsing…" : "Add"}
+          </Button>
+        </div>
+        {parseErr && <p className="mt-2 text-xs text-destructive">{parseErr}</p>}
+      </div>
+
+<div className="px-1"><p className="workspace-kicker mb-3">Your study tools</p><Button variant="ghost" asChild className="justify-between w-full"><Link to="/docs">Cogni Docs <ChevronRight /></Link></Button><Button variant="ghost" asChild className="justify-between w-full"><Link to="/classes">Classwork <ChevronRight /></Link></Button></div></aside>
+      </section>
     </div>
   );
 }
@@ -202,35 +209,35 @@ function AssignmentCard({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: -20, scale: 0.95 }}
       transition={{ type: "spring", stiffness: 300, damping: 28 }}
-      className="paper-raised p-6 group"
+      className="workspace-row group"
     >
       <div className="flex items-start justify-between gap-4 mb-3 flex-wrap">
-        <Link to="/assignments/$id" params={{ id: a.id }} className="flex-1 block min-w-[200px]">
+        <Link to="/assignments/$id" params={{ id: a.id }} className="flex-1 block min-w-0">
           <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${a.status === "Completed" ? "bg-tt-break" : a.status === "Late" ? "bg-destructive text-destructive-foreground" : "bg-tt-peach"}`}>
             {a.status}
           </span>
-          <h2 className={`font-display text-xl font-semibold mt-2 hover:underline ${a.status === "Completed" ? "text-muted-foreground line-through" : ""}`}>{a.title}</h2>
+          <h2 className={`font-display text-xl font-medium mt-2 break-words hover:underline ${a.status === "Completed" ? "text-muted-foreground line-through" : ""}`}>{a.title}</h2>
           {a.due && <p className="text-xs text-muted-foreground mt-1">{t("dueDate")}: {new Date(a.due).toLocaleString()}</p>}
         </Link>
         <div className="flex gap-2 opacity-80 group-hover:opacity-100">
           {a.status !== "Completed" && (
-            <motion.button whileTap={{ scale: 0.94 }} onClick={() => onComplete(a.id)} className="flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90">
+            <Button size="sm" onClick={() => onComplete(a.id)} className="flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90">
               <Check className="h-3 w-3" /> {t("markComplete")}
-            </motion.button>
+            </Button>
           )}
           {a.status !== "Late" && a.status !== "Completed" && (
-            <button onClick={() => onLate(a.id)} className="flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-accent">
+            <Button onClick={() => onLate(a.id)} className="flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-accent">
               <AlertTriangle className="h-3 w-3" /> {t("markLate")}
-            </button>
+            </Button>
           )}
           {a.status === "Completed" && (
-            <button onClick={() => onLate(a.id)} className="flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-accent">
+            <Button onClick={() => onLate(a.id)} className="flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-accent">
               Reopen
-            </button>
+            </Button>
           )}
-          <button onClick={() => onDelete(a.id)} className="flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-destructive hover:text-destructive-foreground" title="Delete">
+          <Button onClick={() => onDelete(a.id)} className="flex items-center gap-1 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-destructive hover:text-destructive-foreground" title="Delete" aria-label={`Delete ${a.title}`}>
             <Trash2 className="h-3 w-3" />
-          </button>
+          </Button>
         </div>
       </div>
       {a.description && <p className="text-sm text-foreground/80 leading-relaxed line-clamp-2">{a.description}</p>}
