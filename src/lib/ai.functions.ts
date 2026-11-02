@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { assertAllowed } from "./app-controls";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
@@ -40,7 +41,9 @@ async function getPlanInfo(supabase: any, userId: string): Promise<PlanInfo> {
 async function checkCredits(supabase: any, userId: string): Promise<PlanInfo & { dayUsed: number; monthUsed: number }> {
   const today = new Date().toISOString().slice(0, 10);
   const month = today.slice(0, 7);
+  const settings = await assertAllowed(supabase, userId, "ai_enabled");
   const info = await getPlanInfo(supabase, userId);
+  if (info.plan === "free" && settings.free_daily_ai_limit != null) info.day = settings.free_daily_ai_limit;
   const { count: dayCount } = await supabase.from("ai_usage").select("id", { count: "exact", head: true }).eq("user_id", userId).eq("day", today);
   const { count: monthCount } = await supabase.from("ai_usage").select("id", { count: "exact", head: true }).eq("user_id", userId).eq("month", month);
   const dayUsed = dayCount ?? 0;
