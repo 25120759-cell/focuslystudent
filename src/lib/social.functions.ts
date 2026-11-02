@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { assertAllowed } from "./app-controls";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
@@ -28,6 +29,7 @@ export const createFeedPost = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ body: z.string().min(1).max(2000) }).parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context as any;
+    await assertAllowed(supabase, userId, "social_posting_enabled");
     const { error } = await supabase.from("feed_posts").insert({ user_id: userId, body: data.body });
     if (error) throw new Error(error.message);
     return { ok: true };

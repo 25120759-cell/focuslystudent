@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { assertAllowed } from "./app-controls";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
@@ -79,6 +80,7 @@ export const setShare = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { userId } = context as any;
     const supabase: any = (context as any).supabase;
+    await assertAllowed(supabase, userId, "doc_sharing_enabled");
     const token = data.enabled ? makeToken() : null;
     const { data: doc, error } = await supabase
       .from("docs").update({ share_token: token }).eq("id", data.id).eq("user_id", userId).select("*").single();

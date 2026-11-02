@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertAllowed } from "./app-controls";
 import { rollPack, getCard, CARD_SELL_VALUE, PACK_COST, PACK_DAILY_LIMIT } from "./cards";
 
 async function getProfile(supabase: any, userId: string) {
@@ -28,6 +29,7 @@ export const openPack = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase, userId } = context as any;
+    await assertAllowed(supabase, userId, "packs_enabled");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const p = await getProfile(supabase, userId);
     const today = new Date().toISOString().slice(0, 10);
@@ -72,6 +74,7 @@ export const sellCard = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ instance_id: z.string().uuid() }).parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context as any;
+    await assertAllowed(supabase, userId, undefined);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: row, error } = await supabase
       .from("user_cards").select("id, card_id, user_id").eq("id", data.instance_id).maybeSingle();
@@ -95,6 +98,7 @@ export const proposeTrade = createServerFn({ method: "POST" })
   }).parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context as any;
+    await assertAllowed(supabase, userId, "trading_enabled");
     if (data.to_user === userId) throw new Error("Cannot trade with yourself.");
     const { data: row } = await supabase
       .from("user_cards").select("id, user_id").eq("id", data.offer_user_card_id).maybeSingle();
@@ -137,6 +141,7 @@ export const respondTrade = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ trade_id: z.string().uuid(), accept: z.boolean() }).parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context as any;
+    await assertAllowed(supabase, userId, "trading_enabled");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: t } = await supabase
       .from("card_trades").select("*").eq("id", data.trade_id).maybeSingle();

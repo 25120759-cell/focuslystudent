@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { assertAllowed } from "./app-controls";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
@@ -25,6 +26,7 @@ async function callGateway(body: any) {
 }
 
 async function getPlanAndCredits(supabase: any, userId: string) {
+  await assertAllowed(supabase, userId, "ai_enabled");
   const { data } = await supabase.from("profiles").select("plan, monthly_credit_override").eq("id", userId).maybeSingle();
   const plan = (data?.plan as string) || "free";
   const limits: Record<string, { day: number; month: number }> = {
