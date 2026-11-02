@@ -79,8 +79,8 @@ export const setShare = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ id: z.string().uuid(), enabled: z.boolean() }).parse(input))
   .handler(async ({ data, context }) => {
     const { userId } = context as any;
-    await assertAllowed(supabase, userId, "doc_sharing_enabled");
     const supabase: any = (context as any).supabase;
+    await assertAllowed(supabase, userId, "doc_sharing_enabled");
     const token = data.enabled ? makeToken() : null;
     const { data: doc, error } = await supabase
       .from("docs").update({ share_token: token }).eq("id", data.id).eq("user_id", userId).select("*").single();
