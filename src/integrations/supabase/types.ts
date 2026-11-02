@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_suspensions: {
+        Row: {
+          created_at: string
+          created_by: string
+          reason: string
+          suspended_until: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          reason?: string
+          suspended_until: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          reason?: string
+          suspended_until?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      admin_audit_log: {
+        Row: {
+          action: string
+          admin_id: string
+          created_at: string
+          details: Json
+          id: string
+          target_user: string | null
+        }
+        Insert: {
+          action: string
+          admin_id: string
+          created_at?: string
+          details?: Json
+          id?: string
+          target_user?: string | null
+        }
+        Update: {
+          action?: string
+          admin_id?: string
+          created_at?: string
+          details?: Json
+          id?: string
+          target_user?: string | null
+        }
+        Relationships: []
+      }
       ai_artifacts: {
         Row: {
           created_at: string
@@ -271,6 +322,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      app_settings: {
+        Row: {
+          ai_enabled: boolean
+          banner_message: string
+          banner_tone: string
+          doc_sharing_enabled: boolean
+          free_daily_ai_limit: number | null
+          id: number
+          maintenance_message: string
+          maintenance_mode: boolean
+          packs_enabled: boolean
+          social_posting_enabled: boolean
+          trading_enabled: boolean
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          ai_enabled?: boolean
+          banner_message?: string
+          banner_tone?: string
+          doc_sharing_enabled?: boolean
+          free_daily_ai_limit?: number | null
+          id?: number
+          maintenance_message?: string
+          maintenance_mode?: boolean
+          packs_enabled?: boolean
+          social_posting_enabled?: boolean
+          trading_enabled?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          ai_enabled?: boolean
+          banner_message?: string
+          banner_tone?: string
+          doc_sharing_enabled?: boolean
+          free_daily_ai_limit?: number | null
+          id?: number
+          maintenance_message?: string
+          maintenance_mode?: boolean
+          packs_enabled?: boolean
+          social_posting_enabled?: boolean
+          trading_enabled?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
       }
       assignments: {
         Row: {
@@ -1216,6 +1315,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_stats: { Args: never; Returns: Json }
+      app_blocked: { Args: { _user_id: string }; Returns: boolean }
       assignment_classroom: {
         Args: { _assignment_id: string }
         Returns: string
@@ -1231,6 +1332,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_app_admin: { Args: { _user_id: string }; Returns: boolean }
       is_enrolled: {
         Args: { _classroom_id: string; _user_id: string }
         Returns: boolean
