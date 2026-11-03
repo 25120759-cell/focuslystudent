@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { adminListUsers, adminSetPlan } from "@/lib/ai.functions";
 import { adminCreatePlanCode, adminListPlanCodes, adminTogglePlanCode } from "@/lib/plans.functions";
 import { PageHeader } from "@/components/app/PageHeader";
+import { AdminControls } from "@/components/app/AdminControls";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   errorComponent: RouteError,
@@ -90,6 +91,8 @@ function AdminPage() {
       />
 
       {err && <p className="text-sm text-destructive">{err}</p>}
+
+      <AdminControls users={users} />
 
       <div className="paper-raised overflow-hidden">
         <table className="w-full text-sm">

@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import appCss from "../styles.css?url";
 import { StoreProvider } from "@/lib/store";
 import { AuthProvider } from "@/lib/auth";
+import { AppGate } from "@/components/AppGate";
 import { supabase } from "@/integrations/supabase/client";
 import { AppNav } from "@/components/AppNav";
 import { FloatingAI } from "@/components/FloatingAI";
@@ -106,6 +107,7 @@ function RootComponent() {
       <AuthProvider>
         <StoreProvider>
           <AuthSync />
+          <AppGate>
           <div className={`min-h-screen ${publicPage ? "" : "app-canvas"}`}>
             {!publicPage && <AppNav />}
             <main className={publicPage ? "" : "px-5 pb-24 pt-8 max-w-7xl mx-auto"}>
@@ -115,8 +117,8 @@ function RootComponent() {
             <NewPostToast />
             <AgentCursorOverlay />
             <CelebrationLayer />
-
           </div>
+          </AppGate>
         </StoreProvider>
       </AuthProvider>
     </QueryClientProvider>
