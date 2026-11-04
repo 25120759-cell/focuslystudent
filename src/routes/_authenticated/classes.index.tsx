@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GraduationCap, Plus, Bell, ArrowRight, DoorOpen } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
-import { PageHeader } from "@/components/app/PageHeader";
 import { AsyncSection, EmptyState, RouteError, SkeletonGrid } from "@/components/app/States";
 import { listMyClasses, joinClass, classNotifications } from "@/lib/classroom.functions";
 
@@ -86,75 +85,40 @@ function ClassesPage() {
   }
 
   return (
-    <div className="space-y-8 rise-in">
-      <PageHeader
-        eyebrow="Cogni Teacher"
-        icon={GraduationCap}
-        title="Your"
-        accent="Classes"
-        description="Everything your teachers post — announcements, classwork, and returned grades — lands here."
-      />
-
-      <form onSubmit={join} className="paper-raised flex flex-wrap items-end gap-3 p-5">
-        <div className="min-w-[12rem] flex-1">
-          <label htmlFor="join-code" className="eyebrow">
-            Class code
-          </label>
-          <input
-            id="join-code"
-            value={code}
-            onChange={(e) => setCode(e.target.value.toUpperCase())}
-            placeholder="e.g. 7KQ2XM"
-            className="mt-2 w-full rounded-xl border border-border/70 bg-background px-3 py-2 font-mono text-sm tracking-[0.2em] outline-none focus:border-primary"
-          />
+    <div className="workspace mx-auto max-w-6xl space-y-10 rise-in">
+      <header className="workspace-overview">
+        <div>
+          <p className="workspace-kicker mb-3">Connected to Cogni Teacher</p>
+          <h1 className="workspace-heading font-display">Your classes.</h1>
+          <p className="mt-3 max-w-xl text-muted-foreground">Announcements, classwork and returned grades from your teachers, in one calm place.</p>
         </div>
-        <motion.button
-          whileTap={{ scale: 0.96 }}
-          disabled={joining}
-          className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60"
-        >
-          <Plus className="h-4 w-4" /> {joining ? "Joining…" : "Join class"}
-        </motion.button>
-        <AnimatePresence>
-          {(joinError || joined) && (
-            <motion.p
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              className={`w-full text-sm ${joinError ? "text-destructive" : "text-primary"}`}
-            >
-              {joinError ?? joined}
-            </motion.p>
-          )}
-        </AnimatePresence>
-      </form>
-
-      {notifs.length > 0 && (
-        <section className="paper p-5">
-          <div className="eyebrow flex items-center gap-2">
-            <Bell className="h-3.5 w-3.5" /> This week
+        <form onSubmit={join} className="w-full max-w-sm space-y-2">
+          <label htmlFor="join-code" className="workspace-kicker">Join with a class code</label>
+          <div className="flex gap-2">
+            <input
+              id="join-code"
+              value={code}
+              maxLength={6}
+              onChange={(e) => setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""))}
+              placeholder="7KQ2XM"
+              className="w-full rounded-md border border-border bg-card px-3 py-2 font-mono text-base tracking-[0.3em] outline-none focus:border-primary"
+            />
+            <motion.button whileTap={{ scale: 0.96 }} disabled={joining || code.length !== 6} className="inline-flex shrink-0 items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50">
+              <Plus className="h-4 w-4" /> {joining ? "Joining…" : "Join"}
+            </motion.button>
           </div>
-          <ul className="mt-3 space-y-2">
-            {notifs.slice(0, 6).map((n, i) => (
-              <motion.li
-                key={n.id}
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.04 }}
-                className="flex items-start gap-3 text-sm"
-              >
-                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-                <span className="min-w-0">
-                  <span className="font-medium">{n.title}</span>{" "}
-                  <span className="text-muted-foreground">· {n.classroom_title}</span>
-                  <span className="block truncate text-muted-foreground">{n.body}</span>
-                </span>
-              </motion.li>
-            ))}
-          </ul>
-        </section>
-      )}
+          <AnimatePresence>
+            {(joinError || joined) && (
+              <motion.p initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className={`text-sm ${joinError ? "text-destructive" : "text-primary"}`}>
+                {joinError ?? joined}
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </form>
+      </header>
 
+      <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
+      <div className="order-2 lg:order-1">
       <AsyncSection
         loading={loading}
         error={error}
@@ -169,7 +133,7 @@ function ClassesPage() {
           />
         }
       >
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           {classes.map((c, i) => (
             <motion.div
               key={c.id}
@@ -178,7 +142,7 @@ function ClassesPage() {
               transition={{ delay: i * 0.05, duration: 0.35 }}
               whileHover={{ y: -3 }}
             >
-              <Link to="/classes/$id" params={{ id: c.id }} className="paper-raised block overflow-hidden">
+              <Link to="/classes/$id" params={{ id: c.id }} className="workspace-surface block overflow-hidden transition-shadow hover:shadow-lg">
                 <div className="h-2 w-full" style={{ background: c.banner_color || "var(--primary)" }} />
                 <div className="p-5">
                   <h2 className="font-display text-xl font-semibold tracking-tight">{c.title}</h2>
@@ -199,6 +163,22 @@ function ClassesPage() {
           ))}
         </div>
       </AsyncSection>
+      </div>
+      <aside className="order-1 lg:order-2">
+        <p className="workspace-kicker mb-3 flex items-center gap-2"><Bell className="h-3.5 w-3.5" /> This week</p>
+        {notifs.length === 0 ? <p className="text-sm text-muted-foreground">Nothing new from your teachers.</p> : (
+          <ul className="divide-y divide-border">
+            {notifs.slice(0, 6).map((n) => (
+              <li key={n.id} className="py-3 text-sm">
+                <span className="font-medium">{n.title}</span>
+                <span className="block text-xs text-muted-foreground">{n.classroom_title}</span>
+                <span className="mt-1 block line-clamp-2 text-muted-foreground">{n.body}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </aside>
+      </div>
     </div>
   );
 }

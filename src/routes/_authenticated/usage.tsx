@@ -6,12 +6,11 @@ import { useServerFn } from "@tanstack/react-start";
 import { Activity, Zap, Crown, Calendar, Sparkles, AlertTriangle, RefreshCw } from "lucide-react";
 import { aiCredits, aiUsageLog } from "@/lib/ai.functions";
 import { Link } from "@tanstack/react-router";
-import { PageHeader } from "@/components/app/PageHeader";
 
 export const Route = createFileRoute("/_authenticated/usage")({
   errorComponent: RouteError,
   component: UsagePage,
-  head: () => ({ meta: [{ title: "AI Usage — Cogni" }] }),
+  head: () => ({ meta: [{ title: "AI Usage — Cogni For Students" }, { name: "description", content: "See your AI credits, plan limits and generation history." }, { property: "og:title", content: "AI Usage — Cogni For Students" }, { property: "og:description", content: "See your AI credits, plan limits and generation history." }] }),
 });
 
 type Credits = {
@@ -61,19 +60,17 @@ function UsagePage() {
   const exhaustedMonth = credits ? credits.monthUsed >= credits.monthLimit : false;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 rise-in">
-      <PageHeader
-        eyebrow="Credits & history"
-        icon={Activity}
-        title="AI"
-        accent="Usage"
-        description="Track every AI generation and exactly what's left in your quota."
-        actions={
-          <button onClick={load} className="inline-flex items-center gap-1.5 rounded-full border border-border/70 px-3.5 py-1.5 text-xs font-medium transition-colors hover:bg-accent/40">
-            <RefreshCw className="h-3 w-3" /> Refresh
-          </button>
-        }
-      />
+    <div className="workspace mx-auto max-w-5xl space-y-10 rise-in">
+      <header className="workspace-overview">
+        <div>
+          <p className="workspace-kicker mb-3">Credits & history</p>
+          <h1 className="workspace-heading font-display">AI usage.</h1>
+          <p className="mt-3 max-w-xl text-muted-foreground">What you've used, what's left, and every generation you've run.</p>
+        </div>
+        <button onClick={load} className="inline-flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-sm font-medium transition-colors hover:bg-accent/40">
+          <RefreshCw className="h-3.5 w-3.5" /> Refresh
+        </button>
+      </header>
 
       {loading && !credits && (
         <div className="grid gap-4 md:grid-cols-2">
@@ -108,7 +105,7 @@ function UsagePage() {
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <Crown className={`h-4 w-4 ${credits.plan === "max" ? "text-amber-500" : credits.plan === "pro" ? "text-primary" : "text-muted-foreground"}`} />
+                <Crown className={`h-4 w-4 ${credits.plan === "max" ? "text-gold" : credits.plan === "pro" ? "text-primary" : "text-muted-foreground"}`} />
                 <span className="font-display text-lg font-semibold capitalize">{credits.plan} plan</span>
               </div>
               <p className="text-xs text-muted-foreground mt-1">
@@ -138,16 +135,17 @@ function UsagePage() {
         </motion.div>
       )}
 
-      <div className="paper-raised p-5">
-        <h2 className="font-display text-lg font-semibold mb-3">Recent generations</h2>
+      <section>
+        <p className="workspace-kicker mb-3">Recent generations</p>
+        <h2 hidden className="font-display text-lg font-semibold mb-3">Recent generations</h2>
         {loading ? (
           <SkeletonList rows={3} lines={1} />
         ) : log.length === 0 ? (
           <EmptyState icon={Activity} title="No AI usage yet" description="Every generation you run will be logged here with its model and token count." />
         ) : (
-          <div className="space-y-1">
+          <div className="divide-y divide-border border-y border-border">
             {log.map((e) => (
-              <div key={e.id} className="flex items-center justify-between gap-3 rounded-xl bg-card border border-border px-3 py-2 text-xs">
+              <div key={e.id} className="flex items-center justify-between gap-3 py-3 text-sm">
                 <div className="min-w-0 flex-1">
                   <div className="font-medium truncate">{KIND_LABEL[e.kind] ?? e.kind}</div>
                   <div className="text-muted-foreground truncate">{e.model} · {e.plan ?? "—"}</div>
@@ -160,24 +158,24 @@ function UsagePage() {
             ))}
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }
 
 function Meter({ icon, label, used, limit, pct, exhausted }: { icon: React.ReactNode; label: string; used: number; limit: number; pct: number; exhausted: boolean }) {
   return (
-    <div className="paper-raised p-5">
-      <div className="flex items-center justify-between mb-2">
+    <div className="workspace-surface p-6">
+      <div className="flex items-center justify-between mb-4">
         <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground flex items-center gap-1">{icon} {label}</span>
-        <span className={`text-xs ${exhausted ? "text-destructive font-semibold" : "text-muted-foreground"}`}>{used} / {limit}</span>
+        <span className={`font-display text-2xl tabular-nums ${exhausted ? "text-destructive font-semibold" : "text-muted-foreground"}`}>{used} / {limit}</span>
       </div>
       <div className="h-2 rounded-full bg-muted overflow-hidden">
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${pct}%` }}
           transition={{ duration: 0.4 }}
-          className={`h-full ${exhausted ? "bg-destructive" : pct > 80 ? "bg-amber-500" : "bg-primary"}`}
+          className={`h-full ${exhausted ? "bg-destructive" : pct > 80 ? "bg-gold" : "bg-primary"}`}
         />
       </div>
       <p className="text-[11px] text-muted-foreground mt-2">{Math.max(0, limit - used)} requests remaining</p>
