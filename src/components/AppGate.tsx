@@ -29,10 +29,10 @@ export function AppGate({ children }: { children: ReactNode }) {
     return () => { alive = false; clearInterval(t); };
   }, [user?.id]);
 
-  const loginPage = path === "/login";
+  const loginPage = path === "/login" || path.startsWith("/auth");
   if (!loading && !isAdmin && !loginPage) {
     if (settings.maintenance_mode) {
-      return <Notice icon={Wrench} title="Back soon." body={settings.maintenance_message || "Cogni is getting a quick tune-up."} action={user ? { label: "Sign out", onClick: signOut } : undefined} />;
+      return <Notice icon={Wrench} title="Back soon." body={settings.maintenance_message || "Cogni is getting a quick tune-up."} action={user ? { label: "Sign out", onClick: signOut } : { label: "Admin sign in", onClick: () => { window.location.href = "/login"; } }} />;
     }
     if (suspension) {
       return <Notice icon={ShieldOff} title="Account paused." body={`${suspension.reason ? suspension.reason + " " : ""}Your access returns on ${new Date(suspension.suspended_until).toLocaleString()}.`} action={{ label: "Sign out", onClick: signOut }} />;
