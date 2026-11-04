@@ -3,8 +3,9 @@ import { useEffect, useState, type FormEvent } from "react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
-import { Sparkles, ArrowRight, Check } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { PublicHeader } from "@/components/PublicHeader";
+import { AuthStage } from "@/components/AuthStage";
 
 export const Route = createFileRoute("/signup")({
   ssr: false,
@@ -81,57 +82,21 @@ function SignupPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <PublicHeader />
-      <div className="relative overflow-hidden">
-        <div
-          aria-hidden
-          className="absolute inset-0 -z-10 bg-[radial-gradient(900px_500px_at_-10%_10%,color-mix(in_oklab,var(--primary)_12%,transparent),transparent_60%),radial-gradient(700px_400px_at_110%_20%,color-mix(in_oklab,var(--gold)_25%,transparent),transparent_60%)]"
-        />
-        <div className="mx-auto grid max-w-6xl gap-12 px-6 py-16 md:grid-cols-[1.05fr_0.95fr] md:py-24">
-          <div className="hidden md:block">
-            <motion.div
-              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
-            >
-              <Sparkles className="h-3 w-3" /> Free forever · 100 AI credits/mo
-            </motion.div>
-            <h1 className="mt-6 font-display text-5xl font-semibold tracking-tight leading-[1.05]">
-              Start studying <em className="not-italic text-primary">quieter</em>.
-            </h1>
-            <p className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground">
-              Every study tool is on the free plan — assignments, calendar, timetable, docs, focus timer, notes, cards, social. AI just scales when you need more.
-            </p>
-            <ul className="mt-8 space-y-3 text-sm">
-              {[
-                "No card. No trial. No feature paywalls.",
-                "Your work syncs offline and back online seamlessly.",
-                "Delete your account at any time — takes one click.",
-              ].map((s) => (
-                <li key={s} className="flex items-start gap-2 text-muted-foreground">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" /> {s}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
-            className="mx-auto w-full max-w-md"
-          >
-            <div className="rounded-[2rem] border border-border/60 bg-card p-8 shadow-xl">
-              <span className="text-[10px] font-semibold uppercase tracking-widest text-primary">Sign up</span>
-              <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight">Create your account</h2>
+      <AuthStage kicker="Free to start" headline="Start studying quieter." points={["No card, no trial", "Works offline and syncs back", "Delete your account anytime"]}>
+              <span className="workspace-kicker">Sign up</span>
+              <h2 className="mt-2 font-display text-4xl font-semibold tracking-tight">Create your account</h2>
               <p className="mt-1 text-sm text-muted-foreground">Free forever · 100 AI credits every month.</p>
 
               <form onSubmit={onSubmit} className="mt-6 space-y-3">
                 <input
                   type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
                   placeholder="Email"
-                  className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
+                  className="w-full rounded-md border border-input bg-card px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
                 />
                 <input
                   type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)}
                   placeholder="Password (8+ characters)"
-                  className="w-full rounded-xl border border-input bg-background px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
+                  className="w-full rounded-md border border-input bg-card px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
                 />
 
                 <label className="flex items-start gap-2 text-xs text-muted-foreground">
@@ -165,10 +130,7 @@ function SignupPage() {
               <p className="mt-6 text-center text-xs text-muted-foreground">
                 Already have an account? <Link to="/login" className="text-primary underline underline-offset-2">Sign in</Link>
               </p>
-            </div>
-          </motion.div>
-        </div>
-      </div>
+      </AuthStage>
     </div>
   );
 }
