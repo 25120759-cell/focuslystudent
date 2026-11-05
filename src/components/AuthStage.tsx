@@ -15,13 +15,13 @@ export function AuthStage({ kicker, headline, points, children }: { kicker: stri
         />
         <div>
           <p className="mb-6 text-xs opacity-70">{kicker}</p>
-          <h1 className="auth-headline font-display font-medium">
+          <h1 aria-label={headline} className="auth-headline font-display font-medium">
             {words.map((w, i) => (
               <motion.span key={i} className="mr-[0.25em] inline-block"
                 initial={reduce ? false : { opacity: 0, y: 24, filter: "blur(6px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 transition={{ delay: 0.15 + i * 0.12, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              >{w}</motion.span>
+              >{w}{i < words.length - 1 ? " " : ""}</motion.span>
             ))}
           </h1>
           <ul className="mt-10 hidden space-y-3 border-t border-current/15 pt-6 text-sm opacity-80 md:block">

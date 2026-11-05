@@ -71,6 +71,7 @@ function LoginPage() {
               <p className="mt-1 text-sm text-muted-foreground">Sync your study progress across devices.</p>
 
               <Button
+                variant="outline"
                 onClick={onGoogle}
                 className="mt-6 w-full rounded-full border border-border bg-background px-4 py-2.5 text-sm font-medium transition hover:bg-accent/40"
               >

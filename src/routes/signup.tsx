@@ -121,6 +121,7 @@ function SignupPage() {
               </div>
 
               <Button
+                variant="outline"
                 onClick={onGoogle}
                 className="w-full rounded-full border border-border bg-background px-4 py-2.5 text-sm font-medium transition hover:bg-accent/40"
               >
