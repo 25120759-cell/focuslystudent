@@ -1,12 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { PublicPage } from "@/components/PublicPage";
+import { Button } from "@/components/ui/button";
 import ReactMarkdown from "react-markdown";
 import { useServerFn } from "@tanstack/react-start";
 import { LifeBuoy, Send, MessageCircle, BookOpen, Clock, Trophy, Settings, Brain, X, Bug, ExternalLink } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { aiCredits, aiSupport } from "@/lib/ai.functions";
-import { PublicHeader } from "@/components/PublicHeader";
+
 
 export const Route = createFileRoute("/support")({
   ssr: false,
@@ -18,12 +20,12 @@ export const Route = createFileRoute("/support")({
       { property: "og:title", content: "Support — Cogni" },
       { property: "og:description", content: "Guides for the study clock, assignments, AI assistant, cards, social, and settings — plus a bug report link." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://focuslystudent.lovable.app/support" },
+      { property: "og:url", content: "https://cognistudent.lovable.app/support" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Support — Cogni" },
       { name: "twitter:description", content: "Guides for the study clock, assignments, AI assistant, cards, social, and settings." },
     ],
-    links: [{ rel: "canonical", href: "https://focuslystudent.lovable.app/support" }],
+    links: [{ rel: "canonical", href: "https://cognistudent.lovable.app/support" }],
   }),
 });
 
@@ -42,6 +44,8 @@ interface ChatMsg { role: "user" | "assistant"; content: string }
 
 function SupportPage() {
   const { user } = useAuth();
+  const reduce = useReducedMotion();
+  const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState("");
@@ -76,80 +80,50 @@ function SupportPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <PublicHeader />
-
-      <section className="relative overflow-hidden">
-        <div
-          aria-hidden
-          className="absolute inset-0 -z-10 bg-[radial-gradient(900px_500px_at_-10%_0%,color-mix(in_oklab,var(--primary)_10%,transparent),transparent_60%),radial-gradient(700px_400px_at_110%_10%,color-mix(in_oklab,var(--gold)_22%,transparent),transparent_60%)]"
-        />
-        <div className="mx-auto max-w-3xl px-6 pt-20 pb-10 md:pt-24">
-          <span className="text-xs font-semibold uppercase tracking-widest text-primary">Support</span>
-          <h1 className="mt-3 font-display text-5xl md:text-6xl font-semibold tracking-tight leading-[1.05]">
-            How can we <em className="not-italic text-primary">help</em>?
-          </h1>
-          <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground">
-            Browse the guides below, or ask the Support assistant — bottom-right. It only answers questions about Cogni.
-          </p>
-
-          <motion.a
-            href="https://luraapps.base44.app/feedback"
-            target="_blank" rel="noreferrer"
-            whileHover={{ y: -2 }}
-            className="mt-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-5 py-2.5 text-sm font-medium text-primary hover:bg-primary/15"
-          >
-            <Bug className="h-4 w-4" /> Report a glitch or request a feature
-            <ExternalLink className="h-3 w-3 opacity-60" />
-          </motion.a>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-6 pb-20">
-        <div className="grid gap-5 md:grid-cols-2">
-          {SECTIONS.map((s, i) => {
+    <PublicPage label="Support" title="A little clarity." description="Help with your study day, your account, and everything in between.">
+      <div className="grid items-start gap-10 py-10 lg:grid-cols-[280px_1fr]">
+        <aside className="lg:sticky lg:top-28">
+          <label htmlFor="guide-search" className="mb-3 block text-sm font-medium">Find an answer</label>
+          <input id="guide-search" type="search" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search guides…" className="h-11 w-full rounded-md border border-input bg-card px-3 text-sm" />
+          <div className="mt-7 border-t border-border pt-6">
+            <h2 className="font-display text-xl">Still need a hand?</h2>
+            <Button onClick={() => setOpen(true)} variant="outline" className="mt-4 w-full"><MessageCircle />Ask Cogni Support</Button>
+            <Button asChild variant="ghost" className="mt-2 h-auto w-full justify-start whitespace-normal py-3"><a href="https://luraapps.base44.app/feedback" target="_blank" rel="noreferrer"><Bug />Report a glitch<ExternalLink /></a></Button>
+          </div>
+        </aside>
+        <section aria-label="Support guides" className="min-w-0">
+          {SECTIONS.filter(s => `${s.title} ${s.body}`.toLowerCase().includes(search.toLowerCase())).map(s => {
             const Icon = s.icon;
-            return (
-              <motion.div
-                key={s.title}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.04 }}
-                whileHover={{ y: -3 }}
-                className="rounded-2xl border border-border/60 bg-card p-6"
-              >
-                <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-background text-primary">
-                  <Icon className="h-4 w-4" />
-                </div>
-                <h3 className="font-display text-lg font-semibold">{s.title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{s.body}</p>
-              </motion.div>
-            );
+            return <details key={s.title} className="group border-b border-border py-6">
+              <summary className="flex cursor-pointer list-none items-center gap-4"><Icon className="h-5 w-5 shrink-0 text-primary" /><h2 className="flex-1 font-display text-xl">{s.title}</h2><span aria-hidden className="text-xl text-muted-foreground group-open:rotate-180">⌄</span></summary>
+              <p className="mt-4 pl-9 text-sm leading-relaxed text-muted-foreground">{s.body}</p>
+            </details>;
           })}
-        </div>
-      </section>
+          {!SECTIONS.some(s => `${s.title} ${s.body}`.toLowerCase().includes(search.toLowerCase())) && <p role="status" className="py-8 text-sm text-muted-foreground">No guides match “{search}”. Try another search.</p>}
+        </section>
+      </div>
 
       {/* Floating support chat */}
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+      <Button
+        aria-label="Open Cogni Support"
+        title="Open Cogni Support"
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 z-40 rounded-full bg-primary p-4 text-primary-foreground shadow-lg"
+        size="icon" className="fixed bottom-6 right-6 z-40 h-12 w-12 rounded-full"
       >
         <MessageCircle className="h-5 w-5" />
-      </motion.button>
+      </Button>
 
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={reduce ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            className="fixed bottom-24 right-6 z-50 w-[360px] max-w-[calc(100vw-3rem)] rounded-3xl glass border border-border shadow-2xl flex flex-col max-h-[70vh]"
+            exit={reduce ? { opacity: 0 } : { opacity: 0, y: 20 }}
+            className="fixed bottom-24 right-6 z-50 w-[360px] max-w-[calc(100vw-3rem)] rounded-lg glass border border-border shadow-2xl flex flex-col max-h-[70vh]"
           >
             <div className="flex items-center justify-between border-b border-border px-4 py-3">
               <span className="font-display font-semibold text-sm flex items-center gap-2"><LifeBuoy className="h-4 w-4 text-primary" /> Cogni Support</span>
-              <button onClick={() => setOpen(false)} className="rounded-full p-1 hover:bg-accent"><X className="h-4 w-4" /></button>
+              <Button variant="ghost" size="icon" aria-label="Close Cogni Support" onClick={() => setOpen(false)}><X className="h-4 w-4" /></Button>
             </div>
             <div className="flex-1 overflow-y-auto p-3 space-y-2 text-sm">
               {messages.length === 0 && <p className="text-muted-foreground text-xs">Ask anything about how Cogni works. Off-topic questions will be redirected.</p>}
@@ -164,21 +138,21 @@ function SupportPage() {
                 </motion.div>
               ))}
               {loading && <div className="text-xs text-muted-foreground animate-pulse">Thinking…</div>}
-              {err && <div className="text-xs text-destructive">{err}</div>}
+              {err && <div role="alert" className="text-xs text-destructive">{err}</div>}
               <div ref={endRef} />
             </div>
             <div className="border-t border-border p-2 flex gap-2">
               <input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()}
-                placeholder={outOfCredits ? "AI credits are out" : user ? "Ask about Cogni..." : "Sign in to chat"} disabled={!user || loading || outOfCredits}
+                aria-label="Support message" placeholder={outOfCredits ? "AI credits are out" : user ? "Ask about Cogni..." : "Sign in to chat"} disabled={!user || loading || outOfCredits}
                 className="flex-1 rounded-full border border-input bg-background px-3 py-1.5 text-sm disabled:opacity-50" />
-              <button onClick={send} disabled={!user || loading || outOfCredits}
+              <Button aria-label="Send support message" onClick={send} disabled={!user || loading || outOfCredits || !input.trim()}
                 className="rounded-full bg-primary p-2 text-primary-foreground disabled:opacity-50">
                 <Send className="h-4 w-4" />
-              </button>
+              </Button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </PublicPage>
   );
 }
