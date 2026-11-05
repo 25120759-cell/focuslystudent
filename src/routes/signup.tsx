@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
-import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { ArrowRight } from "lucide-react";
@@ -17,12 +17,12 @@ export const Route = createFileRoute("/signup")({
       { property: "og:title", content: "Create your Cogni account" },
       { property: "og:description", content: "Free forever. 100 AI credits every month. All study tools included." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://focuslystudent.lovable.app/signup" },
+      { property: "og:url", content: "https://cognistudent.lovable.app/signup" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Create your Cogni account" },
       { name: "twitter:description", content: "Free forever. 100 AI credits every month. All study tools included." },
     ],
-    links: [{ rel: "canonical", href: "https://focuslystudent.lovable.app/signup" }],
+    links: [{ rel: "canonical", href: "https://cognistudent.lovable.app/signup" }],
   }),
 });
 
@@ -84,17 +84,17 @@ function SignupPage() {
       <PublicHeader />
       <AuthStage kicker="Free to start" headline="Start studying quieter." points={["No card, no trial", "Works offline and syncs back", "Delete your account anytime"]}>
               <span className="workspace-kicker">Sign up</span>
-              <h2 className="mt-2 font-display text-4xl font-semibold tracking-tight">Create your account</h2>
+              <h2 className="mt-2 font-display text-4xl font-semibold tracking-normal">Create your account</h2>
               <p className="mt-1 text-sm text-muted-foreground">Free forever · 100 AI credits every month.</p>
 
               <form onSubmit={onSubmit} className="mt-6 space-y-3">
                 <input
-                  type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
+                  aria-label="Email" autoComplete="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
                   placeholder="Email"
                   className="w-full rounded-md border border-input bg-card px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
                 />
                 <input
-                  type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)}
+                  aria-label="Password" autoComplete="new-password" type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)}
                   placeholder="Password (8+ characters)"
                   className="w-full rounded-md border border-input bg-card px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
                 />
@@ -107,25 +107,26 @@ function SignupPage() {
                   </span>
                 </label>
 
-                {err && <p className="text-xs text-destructive">{err}</p>}
-                <button
+                {err && <p role="alert" className="text-xs text-destructive">{err}</p>}
+                <Button
                   type="submit" disabled={loading}
                   className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90 disabled:opacity-50"
                 >
                   {loading ? "Creating..." : <>Create account <ArrowRight className="h-4 w-4" /></>}
-                </button>
+                </Button>
               </form>
 
-              <div className="my-5 flex items-center gap-3 text-[11px] uppercase tracking-widest text-muted-foreground">
+              <div className="my-5 flex items-center gap-3 text-[11px] uppercase tracking-normal text-muted-foreground">
                 <div className="h-px flex-1 bg-border" /> or <div className="h-px flex-1 bg-border" />
               </div>
 
-              <button
+              <Button
+                variant="outline"
                 onClick={onGoogle}
                 className="w-full rounded-full border border-border bg-background px-4 py-2.5 text-sm font-medium transition hover:bg-accent/40"
               >
                 Continue with Google
-              </button>
+              </Button>
 
               <p className="mt-6 text-center text-xs text-muted-foreground">
                 Already have an account? <Link to="/login" className="text-primary underline underline-offset-2">Sign in</Link>

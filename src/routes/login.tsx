@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
-import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { ArrowRight } from "lucide-react";
@@ -19,13 +19,13 @@ export const Route = createFileRoute("/login")({
       { property: "og:title", content: "Sign in — Cogni" },
       { property: "og:description", content: "Pick up your plan on any device. Google or email, up to you." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://focuslystudent.lovable.app/login" },
+      { property: "og:url", content: "https://cognistudent.lovable.app/login" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Sign in — Cogni" },
       { name: "twitter:description", content: "Pick up your plan on any device. Google or email, up to you." },
       { name: "robots", content: "noindex" },
     ],
-    links: [{ rel: "canonical", href: "https://focuslystudent.lovable.app/login" }],
+    links: [{ rel: "canonical", href: "https://cognistudent.lovable.app/login" }],
   }),
 });
 
@@ -67,38 +67,39 @@ function LoginPage() {
       <PublicHeader />
       <AuthStage kicker="Welcome back" headline="Pick up where you left off." points={["Assignments and timetable, everywhere", "AI credits that follow you", "Docs and authorship reports stay private"]}>
               <span className="workspace-kicker">Sign in</span>
-              <h2 className="mt-2 font-display text-4xl font-semibold tracking-tight">Welcome back</h2>
+              <h2 className="mt-2 font-display text-4xl font-semibold tracking-normal">Welcome back</h2>
               <p className="mt-1 text-sm text-muted-foreground">Sync your study progress across devices.</p>
 
-              <button
+              <Button
+                variant="outline"
                 onClick={onGoogle}
                 className="mt-6 w-full rounded-full border border-border bg-background px-4 py-2.5 text-sm font-medium transition hover:bg-accent/40"
               >
                 Continue with Google
-              </button>
+              </Button>
 
-              <div className="my-5 flex items-center gap-3 text-[11px] uppercase tracking-widest text-muted-foreground">
+              <div className="my-5 flex items-center gap-3 text-[11px] uppercase tracking-normal text-muted-foreground">
                 <div className="h-px flex-1 bg-border" /> or email <div className="h-px flex-1 bg-border" />
               </div>
 
               <form onSubmit={onSubmit} className="space-y-3">
                 <input
-                  type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
+                  aria-label="Email" autoComplete="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
                   placeholder="Email"
                   className="w-full rounded-md border border-input bg-card px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
                 />
                 <input
-                  type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
+                  aria-label="Password" autoComplete="current-password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
                   placeholder="Password"
                   className="w-full rounded-md border border-input bg-card px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
                 />
-                {err && <p className="text-xs text-destructive">{err}</p>}
-                <button
+                {err && <p role="alert" className="text-xs text-destructive">{err}</p>}
+                <Button
                   type="submit" disabled={loading}
                   className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90 disabled:opacity-50"
                 >
                   {loading ? "Signing in..." : <>Sign in <ArrowRight className="h-4 w-4" /></>}
-                </button>
+                </Button>
               </form>
 
               <p className="mt-6 text-center text-xs text-muted-foreground">

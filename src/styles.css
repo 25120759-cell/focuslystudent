@@ -339,3 +339,23 @@ html { font-size: var(--base-font-size); }
   .focus-digits { font-size: 64px; }
   .doc-sheet { min-height: 650px; padding: 24px 20px; }
 }
+
+/* Public flows share Cogni's editorial hierarchy, not its pinned landing stages. */
+.public-overview { display: flex; align-items: center; justify-content: space-between; gap: 40px; padding-block: 64px 48px; border-bottom: 1px solid var(--border); }
+.public-title { font-size: 64px; line-height: 1.04; font-weight: 500; letter-spacing: 0; overflow-wrap: anywhere; }
+.public-mark { width: 120px; height: 120px; flex-shrink: 0; object-fit: contain; }
+.public-editorial summary:focus-visible { outline: 2px solid var(--ring); outline-offset: 6px; }
+.public-editorial input:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
+.public-editorial .plan-item { transition: transform 350ms ease, border-color 350ms ease; }
+.public-editorial .plan-item:hover { transform: translateY(-4px); border-color: var(--primary); }
+.auth-headline { font-size: 56px; line-height: 1.08; letter-spacing: 0; overflow-wrap: anywhere; }
+@media (max-width: 767px) {
+  .public-overview { padding-block: 36px 32px; gap: 16px; align-items: flex-start; }
+  .public-title { font-size: 42px; }
+  .public-mark { width: 48px; height: 48px; }
+  .auth-headline { font-size: 32px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .public-editorial .plan-item { transition: none; }
+  .public-editorial .plan-item:hover { transform: none; }
+}
