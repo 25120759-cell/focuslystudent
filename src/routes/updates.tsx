@@ -1,13 +1,14 @@
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useServerFn } from "@tanstack/react-start";
-import { Calendar, LogIn, LogOut, Plus, Wand2, Loader2, ImageIcon, Trash2 } from "lucide-react";
+import { Calendar, Plus, Wand2, Loader2, ImageIcon, Trash2, ArrowUpRight, Search, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { slugify } from "@/lib/slug";
 import { adminGeneratePost, generatePostSummary, adminGeneratePostImage, adminDeletePost } from "@/lib/ai.functions";
-import { PublicHeader } from "@/components/PublicHeader";
+import { PublicPage } from "@/components/PublicPage";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/updates")({
   ssr: false,
@@ -19,12 +20,12 @@ export const Route = createFileRoute("/updates")({
       { property: "og:title", content: "Updates — Cogni" },
       { property: "og:description", content: "Release notes and product updates for Cogni." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://focuslystudent.lovable.app/updates" },
+      { property: "og:url", content: "https://cognistudent.lovable.app/updates" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Updates — Cogni" },
       { name: "twitter:description", content: "Release notes and product updates for Cogni." },
     ],
-    links: [{ rel: "canonical", href: "https://focuslystudent.lovable.app/updates" }],
+    links: [{ rel: "canonical", href: "https://cognistudent.lovable.app/updates" }],
   }),
 });
 
@@ -32,7 +33,10 @@ interface Post { id: string; title: string; body: string; created_at: string; sl
 
 function UpdatesPage() {
   const path = useRouterState({ select: (r) => r.location.pathname });
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, isAdmin } = useAuth();
+  const reduce = useReducedMotion();
+  const [search, setSearch] = useState("");
+  const [loadError, setLoadError] = useState(false);
   const [posts, setPosts] = useState<Post[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [composing, setComposing] = useState(false);
@@ -56,7 +60,7 @@ function UpdatesPage() {
       .select("id,title,body,created_at,slug,summary,cover_url")
       .eq("published", true)
       .order("created_at", { ascending: false });
-    if (error) console.error("load posts", error);
+    setLoadError(Boolean(error));
     setPosts((data as Post[]) ?? []);
     setLoaded(true);
   }
@@ -122,148 +126,86 @@ function UpdatesPage() {
     }
   }
 
-  return (
-    <div className="min-h-screen bg-background text-foreground">
-      <PublicHeader />
-
-      <section className="relative overflow-hidden">
-        <div
-          aria-hidden
-          className="absolute inset-0 -z-10 bg-[radial-gradient(900px_500px_at_-10%_0%,color-mix(in_oklab,var(--primary)_10%,transparent),transparent_60%),radial-gradient(700px_400px_at_110%_10%,color-mix(in_oklab,var(--gold)_22%,transparent),transparent_60%)]"
-        />
-        <div className="mx-auto max-w-3xl px-6 pt-20 pb-10 md:pt-24">
-          <span className="text-xs font-semibold uppercase tracking-widest text-primary">Changelog</span>
-          <h1 className="mt-3 font-display text-5xl md:text-6xl font-semibold tracking-tight leading-[1.05]">
-            What's <em className="not-italic text-primary">new</em>.
-          </h1>
-          <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground">
-            Product updates, fixes, and what we're shipping next.
-          </p>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-3xl px-6 pb-16">
-
-
+  const filtered = posts.filter((post) => `${post.title} ${post.summary || ""}`.toLowerCase().includes(search.toLowerCase()));
+  return <PublicPage label="Updates" title="Cogni updates." description="The latest releases, refinements, and news from Cogni For Students.">
+    <div className="grid gap-10 pt-10 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-16">
+      <aside className="space-y-6">
+        <div><p className="workspace-kicker">Release journal</p><p className="mt-3 text-sm leading-relaxed text-muted-foreground">A clearer place to study. A little better with every release.</p></div>
+        <label className="flex items-center gap-2 border-b border-border py-3"><Search className="size-4 shrink-0 text-muted-foreground" /><input aria-label="Search updates" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search updates" className="min-w-0 w-full bg-transparent text-sm outline-none" /></label>
+        <Button asChild variant="ghost" className="justify-start px-0"><Link to="/support">Visit support <ArrowUpRight /></Link></Button>
+      </aside>
+      <section className="min-w-0" aria-label="Release notes">
         {isAdmin && (
           <div className="mt-8">
             {!composing ? (
-              <button onClick={() => setComposing(true)} className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">
+              <Button onClick={() => setComposing(true)} className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">
                 <Plus className="h-4 w-4" /> New post
-              </button>
+              </Button>
             ) : (
-              <div className="rounded-3xl glass p-5 space-y-3">
-                <div className="rounded-xl border border-dashed border-primary/40 bg-primary/5 p-3 space-y-2">
+              <div className="border-y border-border py-8 space-y-3">
+                <div className="rounded-md border border-dashed border-primary/40 bg-primary/5 p-3 space-y-2">
                   <label className="text-xs font-medium text-primary flex items-center gap-1"><Wand2 className="h-3 w-3" /> Draft with AI</label>
                   <div className="flex gap-2">
-                    <input value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)} placeholder="What's the update about?"
-                      className="flex-1 rounded-xl border border-input bg-background px-3 py-2 text-sm" />
-                    <button onClick={aiDraft} disabled={generating || !aiPrompt.trim()}
-                      className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-2 text-xs text-primary-foreground disabled:opacity-50">
+                    <input aria-label="AI draft prompt" value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)} placeholder="What's the update about?"
+                      className="min-w-0 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm" />
+                    <Button onClick={aiDraft} disabled={generating || !aiPrompt.trim()}
+                      className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-2 text-xs text-primary-foreground disabled:opacity-50">
                       {generating ? <Loader2 className="h-3 w-3 animate-spin" /> : <Wand2 className="h-3 w-3" />} Draft
-                    </button>
+                    </Button>
                   </div>
                 </div>
 
-                <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title"
-                  className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm" />
-                <input value={summary} onChange={(e) => setSummary(e.target.value)} placeholder="Summary (auto-generated if blank)"
-                  className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm" />
+                <input aria-label="Post title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title"
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
+                <input aria-label="Post summary" value={summary} onChange={(e) => setSummary(e.target.value)} placeholder="Summary (auto-generated if blank)"
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
 
-                <div className="rounded-xl border border-dashed border-primary/40 bg-primary/5 p-3 space-y-2">
+                <div className="rounded-md border border-dashed border-primary/40 bg-primary/5 p-3 space-y-2">
                   <label className="text-xs font-medium text-primary flex items-center gap-1"><ImageIcon className="h-3 w-3" /> Cover image (AI)</label>
                   <div className="flex gap-2">
-                    <input value={imagePrompt} onChange={(e) => setImagePrompt(e.target.value)} placeholder="e.g. abstract calendar grid, gradient palette"
-                      className="flex-1 rounded-xl border border-input bg-background px-3 py-2 text-sm" />
-                    <button onClick={genImage} disabled={genImg}
-                      className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-2 text-xs text-primary-foreground disabled:opacity-50">
+                    <input aria-label="Cover image prompt" value={imagePrompt} onChange={(e) => setImagePrompt(e.target.value)} placeholder="e.g. abstract calendar grid, gradient palette"
+                      className="min-w-0 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm" />
+                    <Button onClick={genImage} disabled={genImg}
+                      className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-2 text-xs text-primary-foreground disabled:opacity-50">
                       {genImg ? <Loader2 className="h-3 w-3 animate-spin" /> : <ImageIcon className="h-3 w-3" />} Generate
-                    </button>
+                    </Button>
                   </div>
                   {coverUrl && (
                     <img src={coverUrl} alt="" loading="lazy" width={1024} height={576} className="aspect-video w-full rounded-lg object-cover" />
                   )}
                 </div>
 
-                <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Write your update (markdown supported)..." rows={8}
-                  className="w-full rounded-xl border border-input bg-background px-3 py-2 text-sm" />
+                <textarea aria-label="Update body" value={body} onChange={(e) => setBody(e.target.value)} placeholder="Write your update (markdown supported)..." rows={8}
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
                 {err && <p className="text-xs text-destructive">{err}</p>}
                 <div className="flex flex-wrap gap-2">
-                  <button onClick={submit} className="rounded-full bg-primary px-4 py-2 text-sm text-primary-foreground">Publish</button>
-                  <button onClick={autoSummary} disabled={generating} className="rounded-full border border-border bg-card px-4 py-2 text-sm">Auto-summary</button>
-                  <button onClick={() => { setComposing(false); setErr(null); }} className="rounded-full border border-border bg-card px-4 py-2 text-sm">Cancel</button>
+                  <Button onClick={submit} className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground">Publish</Button>
+                  <Button onClick={autoSummary} disabled={generating} className="rounded-md border border-border bg-card px-4 py-2 text-sm">Auto-summary</Button>
+                  <Button onClick={() => { setComposing(false); setErr(null); }} className="rounded-md border border-border bg-card px-4 py-2 text-sm">Cancel</Button>
                 </div>
               </div>
             )}
           </div>
         )}
 
-        <div className="mt-12 space-y-6">
-          {!loaded ? (
-            <p className="text-sm text-muted-foreground">Loading...</p>
-          ) : posts.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No updates yet.</p>
-          ) : (
-            <AnimatePresence>
-              {posts.map((p, i) => (
-                <motion.article
-                  key={p.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.96 }}
-                  transition={{ delay: i * 0.05 }}
-                  whileHover={{ y: -2 }}
-                  className="rounded-3xl glass overflow-hidden group relative"
-                >
-                  {p.cover_url && (
-                    <Link to="/updates/$slug" params={{ slug: p.slug }} className="block aspect-[2/1] overflow-hidden">
-                      <img src={p.cover_url} alt={p.title} loading="lazy" width={1024} height={512} className="h-full w-full object-cover transition-transform group-hover:scale-105" />
-                    </Link>
-                  )}
-                  <div className="p-7">
-                    <Link to="/updates/$slug" params={{ slug: p.slug }} className="block">
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Calendar className="h-3.5 w-3.5" />
-                        <time dateTime={p.created_at}>{new Date(p.created_at).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}</time>
-                      </div>
-                      <h2 className="mt-3 font-display text-2xl font-semibold group-hover:text-primary transition-colors">{p.title}</h2>
-                      {p.summary && <p className="mt-2 text-sm text-muted-foreground">{p.summary}</p>}
-                      <span className="mt-3 inline-block text-xs text-primary">Read more →</span>
-                    </Link>
-                  </div>
-                  {isAdmin && (
-                    <button
-                      onClick={(e) => { e.preventDefault(); removePost(p.id, p.title); }}
-                      title="Delete post"
-                      className="absolute top-3 right-3 rounded-full bg-background/90 p-2 text-muted-foreground opacity-0 backdrop-blur transition group-hover:opacity-100 hover:bg-destructive hover:text-destructive-foreground"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  )}
-                </motion.article>
-              ))}
-            </AnimatePresence>
-          )}
-        </div>
 
-        <div className="mt-16 flex justify-center gap-3">
-          {user ? (
-            <button onClick={signOut} className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-xs hover:bg-accent">
-              <LogOut className="h-3.5 w-3.5" /> Sign out ({user.email})
-            </button>
-          ) : (
-            <Link to="/login" className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-xs hover:bg-accent">
-              <LogIn className="h-3.5 w-3.5" /> Sign in
+        <div aria-live="polite">
+          {!loaded ? <div className="space-y-10" aria-label="Loading updates">{[0,1,2].map((i) => <div key={i} className="border-b border-border pb-8"><div className="skeleton h-4 w-32 rounded" /><div className="skeleton mt-5 h-9 w-3/4 rounded" /><div className="skeleton mt-4 h-4 w-full rounded" /></div>)}</div>
+          : loadError ? <div className="py-12"><h2 className="font-display text-2xl">Updates couldn't load.</h2><Button variant="outline" className="mt-4" onClick={() => { setLoaded(false); load(); }}>Try again</Button></div>
+          : filtered.length === 0 ? <div className="py-16"><h2 className="font-display text-3xl">{search ? "No matching updates." : "A new chapter is coming."}</h2><p className="mt-3 text-muted-foreground">{search ? "Try another search." : "Our next release note will appear here."}</p>{search && <Button variant="link" className="mt-4 px-0" onClick={() => setSearch("")}>Clear search</Button>}</div>
+          : <AnimatePresence>{filtered.map((post) => <motion.article key={post.id} initial={reduce ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }} className="group border-b border-border py-8 first:pt-0">
+            <div className="flex items-center justify-between gap-4"><time dateTime={post.created_at} className="flex items-center gap-2 text-xs text-muted-foreground"><Calendar className="size-3.5" />{new Date(post.created_at).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}</time>
+              {isAdmin && <Button variant="ghost" size="icon" aria-label={`Delete ${post.title}`} title="Delete post" onClick={() => removePost(post.id, post.title)}><Trash2 /></Button>}
+            </div>
+            <Link to="/updates/$slug" params={{ slug: post.slug }} className="mt-5 block focus-visible:outline-ring">
+              {post.cover_url && <img src={post.cover_url} alt={post.title} loading="lazy" width={1024} height={512} className="mb-6 aspect-[2/1] w-full rounded-md object-cover" />}
+              <h2 className="flex items-start justify-between gap-5 font-display text-3xl font-medium leading-tight sm:text-4xl"><span className="min-w-0 break-words">{post.title}</span><ArrowUpRight className="mt-1 size-6 shrink-0 transition-transform motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:translate-x-1" /></h2>
+              {post.summary && <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">{post.summary}</p>}
+              <span className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-primary">Read update <ArrowRight className="size-4" /></span>
             </Link>
-          )}
+          </motion.article>)}</AnimatePresence>}
         </div>
       </section>
-
-      <footer className="border-t border-border/50 px-6 py-10">
-        <div className="mx-auto max-w-3xl text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} Cogni · Part of the Cogni Suite
-        </div>
-      </footer>
     </div>
-  );
+  </PublicPage>;
 }
