@@ -2,7 +2,8 @@
 - [ ] Redesign signed-in pages and public pages around the Cogni landing identity, retaining functional controls.
   - [x] Console, Assignments list/detail, Docs library/editor, Classes and Usage.
   - [x] Sign-in/sign-up layouts checked; Plans, Support and Redeem redesigned; support search and invalid-code feedback verified.
-  - [ ] Remaining redesign: Calendar, Notes, Social, Cards, Settings, Admin, classroom details, engagement and updates pages.
+  - [ ] Remaining redesign: Calendar, Notes, Social, Cards, Settings, Admin, classroom details and shared authorship report.
+  - [x] Updates journal, update detail and Community redesigned; desktop/mobile layouts, update search, published article reading and return navigation verified. Landing unchanged.
   - [ ] Public account creation and successful plan activation need full-flow verification; this batch checked layouts and invalid codes only.
 - [ ] Complete Teacher integration: scoped profiles, owner-managed insights with explicit student visibility, returned feedback, six-character join codes, focus metrics.
 - [x] Provide a copy-ready Cogni Teacher redesign and shared-backend integration prompt.
